@@ -35,6 +35,7 @@
 - [Перегрузка виртуальных функций](#перегрузка-виртуальных-функций)
 - [From static\_cast and Virtual Inheritance to RTTI and dynamic\_cast](#from-static_cast-and-virtual-inheritance-to-rtti-and-dynamic_cast)
 - [Runtime Type Information](#runtime-type-information)
+- [typeid and typeinfo](#typeid-and-typeinfo)
 
 ### Not Sorted Notes
 
@@ -1152,3 +1153,9 @@ d.pow(1.5); // какой метод будет вызван?
 - В языке ровно два таких сомнительных механизма: RTTI и исключения
 - Много раз делались попытки завести к ним какой-нибудь третий, но других ошибок с 1998 года комитет ни разу не делал
 - И конечно основа RTTI это typeinfo
+
+### typeid and typeinfo
+
+- **typeinfo** нода лежит в каждом объекте, и в ней лежит информация о типе объекта.
+- Оператор `typeid` возвращает ссылку на эту ноду.
+- `typeid` выводит рантайм тип объекта, если в нем есть хотя бы одна виртуальная функция.

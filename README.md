@@ -1,16 +1,16 @@
 - [Not Sorted Notes](#not-sorted-notes)
-- [Заметка о RVO и конструкторах копирования](#заметка-о-rvo-и-конструкторах-копирования)
-- [Заметка о volatile](#заметка-о-volatile)
-- [Про `operator->`](#про-operator-)
-- [Заметка про R-Value и L-Value ссылки и выражения. `std::move`](#заметка-про-r-value-и-l-value-ссылки-и-выражения-stdmove)
-- [Note on Move Semantics and `std::exchange`](#note-on-move-semantics-and-stdexchange)
+- [RVO and copy constructors](#rvo-and-copy-constructors)
+- [volatile](#volatile)
+- [`operator->`](#operator-)
+- [R-Value и L-Value ссылки и выражения. `std::move`](#r-value-и-l-value-ссылки-и-выражения-stdmove)
+- [Move Semantics and `std::exchange`](#move-semantics-and-stdexchange)
 - [Move Assignment Operator Implementation](#move-assignment-operator-implementation)
 - [Why Self-assignment Check is Not Required for Move Assignment Operator](#why-self-assignment-check-is-not-required-for-move-assignment-operator)
 - [Default Special Member Functions Generation](#default-special-member-functions-generation)
-- [Заметка: Правило Нуля и Правило Пяти](#заметка-правило-нуля-и-правило-пяти)
+- [Правило Нуля и Правило Пяти](#правило-нуля-и-правило-пяти)
 - [Forwarding References and Perfect Forwarding](#forwarding-references-and-perfect-forwarding)
 - [Forwarding References Example](#forwarding-references-example)
-- [Заметка: Как устроен `std::move`](#заметка-как-устроен-stdmove)
+- [Как устроен `std::move`](#как-устроен-stdmove)
 - [Опасности Forwarding References](#опасности-forwarding-references)
 - [Overloading set using Forwarding References](#overloading-set-using-forwarding-references)
 - [`std::move` may prevent Return Value Optimization (RVO)](#stdmove-may-prevent-return-value-optimization-rvo)
@@ -21,7 +21,7 @@
 - [Complete Vector Implementation with Comments](#complete-vector-implementation-with-comments)
 - [Perfect Forwarding and Universal References (Josuttis Explanation)](#perfect-forwarding-and-universal-references-josuttis-explanation)
 - [Explanation of the Slide with `enable_if` and SFINAE in C++17](#explanation-of-the-slide-with-enable_if-and-sfinae-in-c17)
-- [Функторы быстрее указателей в Лямбда-выражениях](#функторы-быстрее-указателей-в-лямбда-выражениях)
+- [Функторы и лямбда выражения быстрее указателей функциях сортировки (inlining)](#функторы-и-лямбда-выражения-быстрее-указателей-функциях-сортировки-inlining)
 - [Указатели на методы классов](#указатели-на-методы-классов)
 - [Fold Expressions](#fold-expressions)
 - [chrono DATES](#chrono-dates)
@@ -29,7 +29,7 @@
 - [Empty Base Class Optimizations (EBCO)](#empty-base-class-optimizations-ebco)
 - [EBCO и unique\_pointer](#ebco-и-unique_pointer)
 - [Аргументы по умолчанию связываются статически (важно для виртуальных методов)](#аргументы-по-умолчанию-связываются-статически-важно-для-виртуальных-методов)
-- [Non-Virtual Interface (NVI) Pattern - решение проблемы с аргументами по умолчанию для виртуальных методов](#non-virtual-interface-nvi-pattern---решение-проблемы-с-аргументами-по-умолчанию-для-виртуальных-методов)
+- [Non-Virtual Interface (NVI) Pattern for Default Arguments](#non-virtual-interface-nvi-pattern-for-default-arguments)
 - [Pure Virtual Call](#pure-virtual-call)
 - [Два полиморфизма](#два-полиморфизма)
 - [Перегрузка виртуальных функций](#перегрузка-виртуальных-функций)
@@ -76,7 +76,7 @@ public:
 
 ```
 
-### Заметка о RVO и конструкторах копирования
+### RVO and copy constructors
 
 - Конструктор копирования может быть выброшен на уровне фронтенда языка. На этом основана специальная семантика копирования (**RVO, Return Value Optimization**).
 
@@ -99,7 +99,7 @@ int main() {
 
 ```
 
-### Заметка о volatile
+### volatile
 
 Слово `volatile` в языке C++ означает, что объект может измениться непредсказуемым образом, независимо от вашего кода. Это может произойти, например, из-за воздействия внешних процессов, прерываний, или аппаратных устройств.
 
@@ -118,7 +118,7 @@ while (sensorValue == 0) {
 
 В этом примере компилятор не будет оптимизировать цикл, полагая, что значение `sensorValue` не изменится, поскольку оно помечено как `volatile`.
 
-### Про `operator->`
+### `operator->`
 
 - **Оператор «стрелочка» не позволяет получать доступ к указателю, который она возвращает, но дает доступ к полям данного объекта по указателю.**
 
@@ -173,7 +173,7 @@ int main() {
 }
 ```
 
-### Заметка про R-Value и L-Value ссылки и выражения. `std::move`
+### R-Value и L-Value ссылки и выражения. `std::move`
 
 - **L-value** в C++ означает Location Value, т.е. значение, которое имеет локацию.
 - "Операция «Взятие выражения», «Связывание выражения с ссылкой» и в этот момент **материализация этого выражения называется R-value ссылкой**."
@@ -224,7 +224,7 @@ int main()
 - Правые ссылки (R-value references) дают нам возможность отличать объекты, которые мы не готовы перемещать или модифицировать (L-value references), от объектов, которые мы можем безопасно перемещать или временно использовать (R-value references). При этом **правая ссылка сама по себе задает имя и адрес и является L-value**.
 - После применения `std::move` объект переходит в **неконсистентное, но предсказуемое состояние**. В этом состоянии объект может корректно завершить свою жизнь. Либо этот объект можно переиспользовать.
 
-### Note on Move Semantics and `std::exchange`
+### Move Semantics and `std::exchange`
 
 - `std::exchange` удобно применять к сырым указателям.
 - В контексте move-семантики удобно использовать **`std::exchange`, чтобы обмениваться значениями**,
@@ -265,13 +265,13 @@ The slide in question shows an implementation of the move assignment operator wi
 
 ### Move Assignment Operator Implementation
 
-#### Goal:
+**Goal**
 
 - Clean up all visible resources.
 - Transfer the content of `w` into `this`.
 - Leave `w` in a valid but undefined state.
 
-#### Example:
+**Example**
 
 ```cpp
 class Widget {
@@ -354,7 +354,7 @@ This approach is generally safe and ensures that the object is correctly handled
 3. **User-defined Count:**
    - Using `=default` or `=delete` in the definition of these operations counts as user-defined. This affects the automatic generation of other special member functions.
 
-### Заметка: Правило Нуля и Правило Пяти
+### Правило Нуля и Правило Пяти
 
 **Правило Нуля:**
 - Вы не определяете никаких специальных методов (конструкторов, деструкторов, конструкторов копирования, операторов копирования/перемещения).
@@ -457,7 +457,7 @@ std::make_unique<int>(1); // Работает корректно
 
 Использование `Arg&&` и `std::forward<Arg>(arg)` позволяет корректно передавать и lvalue, и rvalue, обеспечивая правильное поведение и избежание ошибок компиляции.
 
-### Заметка: Как устроен `std::move`
+### Как устроен `std::move`
 
 `std::move` безусловно приводит свой входной параметр к rvalue ссылке. Само `std::move` ничего не перемещает, оно просто преобразует тип.
 
@@ -829,7 +829,7 @@ const Cust cc("Jim");      // Uses the template constructor with S1 = const char
 Cust h(cc);                // Error: The constructor is not enabled for S1 = Cust
 ```
 
-### Функторы быстрее указателей в Лямбда-выражениях
+### Функторы и лямбда выражения быстрее указателей функциях сортировки (inlining)
 
 1. **Инлайн-функции и оптимизация**:
    - **Функторы**: Поскольку функторы представляют собой объекты с перегруженным оператором `operator()`, компилятор может инлайнить вызовы этого оператора. Это устраняет накладные расходы на вызов функции и позволяет компилятору оптимизировать код лучше.
@@ -1041,7 +1041,7 @@ Base *pb = new Derived();
 std::cout << pb->foo() << std::endl; // на экране 14
 ```
 
-### Non-Virtual Interface (NVI) Pattern - решение проблемы с аргументами по умолчанию для виртуальных методов
+### Non-Virtual Interface (NVI) Pattern for Default Arguments
 
 Использование идиомы NVI (Non-Virtual Interface) позволяет избежать проблем с аргументами по умолчанию в виртуальных функциях. В этом примере интерфейс `foo` с аргументом по умолчанию невиртуальный, а внутренняя реализация `foo_impl` виртуальная и может быть переопределена в производных классах.
 - Закрытая виртуальная функция открыто переопределена. Это нормально

@@ -1,0 +1,39 @@
+BasedOnStyle: Microsoft
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlignEscapedNewlines: DontAlign
+AlignOperands: DontAlign
+AlignTrailingComments: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortLambdasOnASingleLine: Inline
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: Yes
+BreakStringLiterals: false
+ColumnLimit: 120
+ConstructorInitializerIndentWidth: 2
+EmptyLineBeforeAccessModifier: Never
+FixNamespaceComments: true
+IndentCaseBlocks: true
+IndentExternBlock: NoIndent
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+PointerAlignment: Left
+SortIncludes: false
+SortUsingDeclarations: false
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
+SpacesInParentheses: true
+UseTab: Never
+
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterUnion: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+  SplitEmptyFunction: false
+  SplitEmptyNamespace: false
+  SplitEmptyRecord: false
+
+WhitespaceSensitiveMacros:
+  - BOOST_PP_STRINGIZE

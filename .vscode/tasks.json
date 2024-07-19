@@ -1,0 +1,68 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "G010. Create Build Directory",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "if (-Not (Test-Path 'build')) { New-Item -ItemType Directory -Path 'build' }"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "G020. Compile to ASM",
+      "type": "shell",
+      "command": "clang",
+      "args": [
+        "-O1",
+        "-g0",
+        "-mllvm",
+        "--x86-asm-syntax=intel",
+        "-S",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasename}.s"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": [
+        "G010. Create Build Directory"
+      ]
+    },
+    {
+      "label": "G030. Build Current File",
+      "type": "shell",
+      "command": "clang",
+      "args": [
+        "-O2",
+        "-g",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasename}.exe",
+        "-I",
+        "${fileDirname}\\include"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": [
+        "G010. Create Build Directory"
+      ]
+    },
+    {
+      "label": "G040. Build and Run Current File",
+      "type": "shell",
+      "command": "${workspaceFolder}/build/${fileBasename}.exe",
+      "dependsOn": [
+        "G030. Build Current File"
+      ]
+    }
+  ]
+}

@@ -33,9 +33,10 @@
 - [Pure Virtual Call](#pure-virtual-call)
 - [Два полиморфизма](#два-полиморфизма)
 - [Перегрузка виртуальных функций](#перегрузка-виртуальных-функций)
-- [From static\_cast and Virtual Inheritance to RTTI and dynamic\_cast](#from-static_cast-and-virtual-inheritance-to-rtti-and-dynamic_cast)
+- [static\_cast and Virtual Inheritance](#static_cast-and-virtual-inheritance)
 - [Runtime Type Information](#runtime-type-information)
 - [typeid and typeinfo](#typeid-and-typeinfo)
+- [RTTI and dynamic\_cast](#rtti-and-dynamic_cast)
 
 ### Not Sorted Notes
 
@@ -1136,7 +1137,7 @@ d.pow(1.5); // какой метод будет вызван?
 
 - Теперь будет вызван метод 1, т.к. overload set из класса SparseMatrix включает в себя оба метода из базового класса Matrix.
 
-### From static_cast and Virtual Inheritance to RTTI and dynamic_cast
+### static_cast and Virtual Inheritance
 
 - `static_cast` может менять битовое представление объекта
 - `static_cast` может менять указатель при использовании множественного наследования
@@ -1144,7 +1145,7 @@ d.pow(1.5); // какой метод будет вызван?
 - При витуальном наследовании из за смердженных таблиц виртуальных функций `static_cast` не работает вниз.
   - Т.к. в нижнем объекте лежит оторванный кусок виртуально наследованного объекта.
   - Разный адрес по разным веткам иерархии ведет к одному и тому же объекту - поэтому `static_cast` не работает.
-  - Тут поможет `dynamic_cast` and RTTI, хотя это тоже overkill.
+  - Тут поможет `dynamic_cast` and RTTI, хотя это уже overkill.
 
 ### Runtime Type Information
 
@@ -1159,3 +1160,16 @@ d.pow(1.5); // какой метод будет вызван?
 - **typeinfo** нода лежит в каждом объекте, и в ней лежит информация о типе объекта.
 - Оператор `typeid` возвращает ссылку на эту ноду.
 - `typeid` выводит рантайм тип объекта, если в нем есть хотя бы одна виртуальная функция.
+- `typeid` может выводить статический и династический тип объекта.
+  - `typeid(pointer).name()` выводит статический тип (разрешается на этапе компиляции).
+  - `typeid(*pointer).name()` выводит динамический тип
+
+### RTTI and dynamic_cast
+
+- `dynamic_cast` - это самый распространенный способ использования RTTI. Он может **приводить типы внутри иерархий**.
+- Т.е. `dynamic_cast` умеет двигаться между веткаими иерархии и виртуальными базами.
+- Это очень дорогая операция и зависит от **O(n)** от глубины иерархии.
+- `dynamic_cast` ведет себя как `static_cast` при отсутствии виртуальных таблиц.
+- `dynamic_cast` работает для указателей и для ссылок.
+  - При ошибки приведения **для указателей** возвращает **`nullptr`**,
+  - При ошибки приведения **для ссылок** бросает исключение **`std::bad_cast`**.

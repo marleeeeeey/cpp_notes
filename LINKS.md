@@ -1,1 +1,15 @@
-- Alex Aiken - Compilers (Free Video Course) https://online.stanford.edu/courses/soe-ycscs1-compilers
+- Alex Aiken - Compilers (Free Video Course)
+  - https://online.stanford.edu/courses/soe-ycscs1-compilers
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 11. Исключения
+  - https://www.youtube.com/watch?v=P1LcWg6K3WE
+  - 00:00:00 Обработка ошибок в стиле C и её проблемы в C++
+  - 00:13:30 Нелокальные методы обработки и виды исключений
+  - 00:25:30 Знакомство с исключениями
+  - 00:30:50 Как правильно бросать и ловить исключения
+  - 00:44:50 Стандартная иерархия исключений
+  - 00:59:40 Нейтральность
+  - 01:08:25 Ложное чувство безопасности
+  - 01:15:30 Гарантии безопасности
+  - 01:22:45 Линия Калба
+  - 01:30:00 Обзор литературы

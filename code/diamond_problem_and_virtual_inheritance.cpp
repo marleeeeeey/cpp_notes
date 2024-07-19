@@ -2,12 +2,12 @@
 
 // Uncomment/Comment the following lines to see the difference
 #define USE_VIRTUAL_INHERITANCE
-#define IMPLEMENT_VIRTUAL_DESTRUCTOR
+#define USE_VIRTUAL_DESTRUCTOR
 
 struct A
 {
     A() { std::cout << "A constructor " << this << std::endl; }
-#ifdef IMPLEMENT_VIRTUAL_DESTRUCTOR
+#ifdef USE_VIRTUAL_DESTRUCTOR
     virtual ~A() = default;
 #endif
 };

@@ -10,8 +10,7 @@
 #include <vector>
 
 // Script options
-#define REPLACE_MY_VECTOR_WITH_STD_VECTOR 1
-#define VERBOSE_CLASS_A 0
+#define VERBOSE_CLASS_A 1
 
 void AskToThrowException()
 {
@@ -65,37 +64,37 @@ public:
     A()
     {
         if (verbose_)
-            std::cout << "A ctor " << this << std::endl;
+            std::cout << "A#" << objectNumber_ << " ctor " << this << std::endl;
         objectsCounter_++;
     }
     ~A()
     {
         if (verbose_)
-            std::cout << "A destructor " << this << std::endl;
+            std::cout << "A#" << objectNumber_ << " destructor " << this << std::endl;
         objectsCounter_--;
     }
     A([[maybe_unused]] const A& other)
     {
         if (verbose_)
-            std::cout << "A copy ctor " << this << std::endl;
+            std::cout << "A#" << objectNumber_ << " copy ctor " << this << std::endl;
         objectsCounter_++;
     }
     A([[maybe_unused]] A&& other)
     {
         if (verbose_)
-            std::cout << "A move ctor " << this << std::endl;
+            std::cout << "A#" << objectNumber_ << " move ctor " << this << std::endl;
         objectsCounter_++;
     }
     A& operator=([[maybe_unused]] const A& other)
     {
         if (verbose_)
-            std::cout << "A copy assigment from=" << &other << " to=" << this << std::endl;
+            std::cout << "A#" << objectNumber_ << " copy assigment from=" << &other << " to=" << this << std::endl;
         return *this;
     }
     A& operator=([[maybe_unused]] A&& other)
     {
         if (verbose_)
-            std::cout << "A move assigment from=" << &other << " to=" << this << std::endl;
+            std::cout << "A#" << objectNumber_ << " move assigment from=" << &other << " to=" << this << std::endl;
         return *this;
     }
 public: // Helpers
@@ -128,7 +127,19 @@ public:
     {
         data_ = new char[sizeof(T) * other.capacity_];
         // --- Kalb's line here ---
-        std::memcpy(data_, other.data_, sizeof(T) * other.size_);
+
+        // --------------------------------------------------------------------------------------
+        // This way of copying is not correct, because it doesn't call the copy constructor of T.
+        // The memory is copied, but the object T may have side effects in its constructor.
+        // std::memcpy(data_, other.data_, sizeof(T) * other.size_);
+        // --------------------------------------------------------------------------------------
+
+        // This way of copying is correct, because it calls the constructor for every T object.
+        for (size_t i = 0; i < other.size_; ++i)
+        {
+            placementConstruct(i, other[i]);
+        }
+
         capacity_ = other.capacity_;
         size_ = other.size_;
     }
@@ -253,9 +264,6 @@ void test()
         using Type = T::value_type;
 
         T vecA;
-        vecA.push_back(Type());
-        vecA.push_back(Type());
-        vecA.push_back(Type());
         vecA.push_back(Type());
         std::cout << convertToString(vecA) << std::endl;
 

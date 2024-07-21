@@ -4,65 +4,59 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "G010. Create Build Directory",
+      "label": "010. Set Current File As Sourse",
+      "command": "cmake -E echo code/${fileBasename} > file_to_build.txt",
       "type": "shell",
-      "command": "powershell",
-      "args": [
-        "if (-Not (Test-Path 'build')) { New-Item -ItemType Directory -Path 'build' }"
-      ],
-      "problemMatcher": []
     },
     {
-      "label": "G020. Compile to ASM",
-      "type": "shell",
-      "command": "clang",
-      "args": [
-        "-O1",
-        "-g0",
-        "-mllvm",
-        "--x86-asm-syntax=intel",
-        "-S",
-        "${file}",
-        "-o",
-        "${workspaceFolder}/build/${fileBasename}.s"
+      "label": "020. + Configure",
+      "command": [
+        "cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake -E copy build/Debug/compile_commands.json build/compile_commands.json"
       ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "Configure"
+        }
       },
+      "type": "shell"
+    },
+    {
+      "label": "030. + Build",
+      "command": " cmake --build build/Debug -- -k 0 ",
+      "dependsOn": [
+        "020. + Configure"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "Build"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "040. + Run",
+      "command": "${workspaceFolder}/build/Debug/cpp_file_example.exe",
+      "dependsOn": [
+        "030. + Build"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "Run"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "090. Compile ACTIVE file to ASM",
+      "type": "shell",
+      "command": "cmake -E make_directory build && clang -O1 -g0 -mllvm --x86-asm-syntax=intel -S ${file} -o ${workspaceFolder}/build/${fileBasename}.s",
+      "args": [],
       "dependsOn": [
         "G010. Create Build Directory"
       ]
     },
-    {
-      "label": "G030. Build Current File",
-      "type": "shell",
-      "command": "clang",
-      "args": [
-        "-O2",
-        "-g",
-        "${file}",
-        "-o",
-        "${workspaceFolder}/build/${fileBasename}.exe",
-        "-I",
-        "${fileDirname}\\include"
-      ],
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "dependsOn": [
-        "G010. Create Build Directory"
-      ]
-    },
-    {
-      "label": "G040. Build and Run Current File",
-      "type": "shell",
-      "command": "${workspaceFolder}/build/${fileBasename}.exe",
-      "dependsOn": [
-        "G030. Build Current File"
-      ]
-    }
   ]
 }

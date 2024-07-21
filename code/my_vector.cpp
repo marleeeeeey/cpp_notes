@@ -6,12 +6,34 @@
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
+
+void AskToThrowException()
+{
+    std::cout << "Should I throw?" << std::endl;
+    std::string line;
+    while (line.length() == 0)
+    {
+        std::getline(std::cin, line);
+    }
+    if (line[0] == 'y')
+    {
+        std::cout << "Throwing exception" << std::endl;
+        throw std::runtime_error("User decided to throw exception");
+    }
+    else
+    {
+        std::cout << "Not throwing exception" << std::endl;
+    }
+}
 
 class A
 {
     static size_t counter_;
+    static size_t incrementOnlyCounter_;
+    size_t objectNumber_ = incrementOnlyCounter_++;
 public:
     A()
     {
@@ -23,35 +45,37 @@ public:
         std::cout << "A destructor " << this << std::endl;
         counter_--;
     }
-    A(const A& other)
+    A([[maybe_unused]] const A& other)
     {
         std::cout << "A copy ctor " << this << std::endl;
         counter_++;
     }
-    A(A&& other)
+    A([[maybe_unused]] A&& other)
     {
         std::cout << "A move ctor " << this << std::endl;
         counter_++;
     }
-    A& operator=(const A& other)
+    A& operator=([[maybe_unused]] const A& other)
     {
         std::cout << "A copy assigment from=" << &other << " to=" << this << std::endl;
         return *this;
     }
-    A& operator=(A&& other)
+    A& operator=([[maybe_unused]] A&& other)
     {
         std::cout << "A move assigment from=" << &other << " to=" << this << std::endl;
         return *this;
     }
 public: // Helpers
     static size_t counter() { return counter_; }
+    size_t objectNumber() const { return objectNumber_; }
 };
 
 size_t A::counter_ = 0;
+size_t A::incrementOnlyCounter_ = 0;
 
 std::ostream& operator<<(std::ostream& os, const A& val)
 {
-    return os << &val;
+    return os << val.objectNumber() << "(" << &val << ")";
 }
 
 template <typename T>
@@ -114,7 +138,7 @@ public: // **************************  DEBUG ONLY **************************
     {
         std::ostringstream oss;
         oss << "size=" << size << " | capacity=" << capacity << " | data:";
-        for (int i = 0; i < size; ++i)
+        for (size_t i = 0; i < size; ++i)
         {
             oss << " " << get(i);
         }
@@ -124,7 +148,7 @@ public: // **************************  DEBUG ONLY **************************
     std::vector<T> dumpToStdVector() const
     {
         std::vector<T> result;
-        for (int i = 0; i < size; ++i)
+        for (size_t i = 0; i < size; ++i)
         {
             result.push_back(get(i));
         }
@@ -161,6 +185,7 @@ private: // ************************** HELPERS **************************
 };
 
 int main()
+try
 {
     {
         vector<int> vec;
@@ -177,12 +202,20 @@ int main()
 
         vector<A> veca;
         veca.push_back(A());
-        veca.push_back(A());
-        veca.push_back(A());
-        veca.push_back(A());
+        // veca.push_back(A());
+        // veca.push_back(A());
+        // veca.push_back(A());
         std::cout << veca.dumpToString() << std::endl;
     }
     std::cout << "counter=" << A::counter() << std::endl;
     assert(A::counter() == 0);
     std::cout << "test sucsessfull" << std::endl;
+}
+catch (const std::exception& e)
+{
+    std::cout << "Caught an exception: " << e.what() << std::endl;
+}
+catch (...)
+{
+    std::cout << "Caught an unknown exception" << std::endl;
 }

@@ -1181,8 +1181,8 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 
 **LINKS**
 
-- [code\diamond_problem_and_virtual_inheritance_and_typeid.cpp](code\diamond_problem_and_virtual_inheritance_and_typeid.cpp)
-- [code\typeid_nullptr.cpp](code\typeid_nullptr.cpp)
+- [code/diamond_problem_and_virtual_inheritance_and_typeid.cpp](code/diamond_problem_and_virtual_inheritance_and_typeid.cpp)
+- [code/typeid_nullptr.cpp](code/typeid_nullptr.cpp)
 
 ### RTTI and dynamic_cast
 
@@ -1204,7 +1204,7 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 4. Аннотация `noexcept` позволяет указать, что функция не бросает исключений. Это помогает компилятору оптимизировать код и помогает документировать код.
 5. Если мы даем обещание `noexcept` к виртуальной функции, то все переопределения этой функции также должны его выполнять (быть `noexcept`).
 6. Деструкторы всегда `noexcept`, просто они не аннотированы.
-7. В `try` блок можно поместить также функцию целиком и даже список инициализации конструктора [example](code\try_block_for_ctor_init_list.cpp).
+7. В `try` блок можно поместить также функцию целиком и даже список инициализации конструктора [example](code/try_block_for_ctor_init_list.cpp).
 8. Catch block как бы расширяет область видимости try блока, поэтому переменные из try блока видны в catch блоке.
 9. Выброшенный объект живет до конца блока catch, который его перехватил. #TODO: read more about it.
 
@@ -1220,9 +1220,9 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 **LINKS**
 
 - https://en.cppreference.com/w/cpp/error/exception
-- [code\exceptions_by_value.cpp](code\exceptions_by_value.cpp)
-- [code\exception_with_multiple_inheritance.cpp](code\exception_with_multiple_inheritance.cpp)
-- [code\try_block_for_ctor_init_list.cpp](code\try_block_for_ctor_init_list.cpp)
+- [code/exceptions_by_value.cpp](code/exceptions_by_value.cpp)
+- [code/exception_with_multiple_inheritance.cpp](code/exception_with_multiple_inheritance.cpp)
+- [code/try_block_for_ctor_init_list.cpp](code/try_block_for_ctor_init_list.cpp)
 
 ### Гарантии безопасности исключений
 

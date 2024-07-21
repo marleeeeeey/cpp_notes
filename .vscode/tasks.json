@@ -7,6 +7,12 @@
       "label": "010. Set Current File As Sourse",
       "command": "cmake -E echo code/${fileBasename} > file_to_build.txt",
       "type": "shell",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "SetCurrentFileAsSourse"
+        }
+      },
     },
     {
       "label": "020. + Configure",
@@ -15,7 +21,7 @@
       ],
       "options": {
         "statusbar": {
-          "hide": false,
+          "hide": true,
           "label": "Configure"
         }
       },

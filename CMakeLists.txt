@@ -27,5 +27,7 @@ target_compile_options(cpp_file_example PRIVATE
     # -Wconversion # search for implicit conversions. Hard to fix everything if not applying from scratch.
 
     # ################### Disable some warnings temporarily. ##################
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations> # TODO4. Remove this. glob/glob.hpp:173:28: warning: 'getenv' is deprecated
+    # TODO: Disable later.
+    # $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-copy-with-user-provided-dtor>
 )

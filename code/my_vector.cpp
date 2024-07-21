@@ -1,7 +1,6 @@
 #include <cassert>
 #include <cstddef>
 #include <cstring>
-#include <initializer_list>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -9,6 +8,10 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+// Script options
+#define REPLACE_MY_VECTOR_WITH_STD_VECTOR 1
+#define VERBOSE_CLASS_A 0
 
 void AskToThrowException()
 {
@@ -29,48 +32,79 @@ void AskToThrowException()
     }
 }
 
+template <typename VectorType>
+std::string convertToString(const VectorType& object)
+{
+    std::ostringstream oss;
+    oss << "size=" << object.size() << " | capacity=" << object.capacity() << " | data:";
+    for (size_t i = 0; i < object.size(); ++i)
+    {
+        oss << " " << object[i];
+    }
+    return oss.str();
+}
+
+template <typename VectorType>
+std::vector<typename VectorType::value_type> convertToStdVector(const VectorType& object)
+{
+    std::vector<typename VectorType::value_type> result;
+    for (size_t i = 0; i < object.size(); ++i)
+    {
+        result.push_back(object[i]);
+    }
+    return result;
+}
+
 class A
 {
-    static size_t counter_;
+    static const bool verbose_ = VERBOSE_CLASS_A;
+    static size_t objectsCounter_;
     static size_t incrementOnlyCounter_;
     size_t objectNumber_ = incrementOnlyCounter_++;
 public:
     A()
     {
-        std::cout << "A ctor " << this << std::endl;
-        counter_++;
+        if (verbose_)
+            std::cout << "A ctor " << this << std::endl;
+        objectsCounter_++;
     }
     ~A()
     {
-        std::cout << "A destructor " << this << std::endl;
-        counter_--;
+        if (verbose_)
+            std::cout << "A destructor " << this << std::endl;
+        objectsCounter_--;
     }
     A([[maybe_unused]] const A& other)
     {
-        std::cout << "A copy ctor " << this << std::endl;
-        counter_++;
+        if (verbose_)
+            std::cout << "A copy ctor " << this << std::endl;
+        objectsCounter_++;
     }
     A([[maybe_unused]] A&& other)
     {
-        std::cout << "A move ctor " << this << std::endl;
-        counter_++;
+        if (verbose_)
+            std::cout << "A move ctor " << this << std::endl;
+        objectsCounter_++;
     }
     A& operator=([[maybe_unused]] const A& other)
     {
-        std::cout << "A copy assigment from=" << &other << " to=" << this << std::endl;
+        if (verbose_)
+            std::cout << "A copy assigment from=" << &other << " to=" << this << std::endl;
         return *this;
     }
     A& operator=([[maybe_unused]] A&& other)
     {
-        std::cout << "A move assigment from=" << &other << " to=" << this << std::endl;
+        if (verbose_)
+            std::cout << "A move assigment from=" << &other << " to=" << this << std::endl;
         return *this;
     }
 public: // Helpers
-    static size_t counter() { return counter_; }
+    static size_t objectsCounter() { return objectsCounter_; }
+    static void resetObjectsCounter() { A::objectsCounter_ = 0; }
     size_t objectNumber() const { return objectNumber_; }
 };
 
-size_t A::counter_ = 0;
+size_t A::objectsCounter_ = 0;
 size_t A::incrementOnlyCounter_ = 0;
 
 std::ostream& operator<<(std::ostream& os, const A& val)
@@ -79,137 +113,168 @@ std::ostream& operator<<(std::ostream& os, const A& val)
 }
 
 template <typename T>
-class vector
+class MyVector
 {
-    char* data = nullptr;
-    size_t size = 0;
-    size_t capacity = 0;
+private: // ************************** STATE **************************
+    char* data_ = nullptr;
+    size_t size_ = 0;
+    size_t capacity_ = 0;
+public: //************************** TEMPLATE STUFF **************************
+    using value_type = T;
 public:
-    ~vector()
+    MyVector() {}
+
+    MyVector(const MyVector<T>& other)
     {
-        for (size_t i = 0; i < size; ++i)
+        data_ = new char[sizeof(T) * other.capacity_];
+        // --- Kalb's line here ---
+        std::memcpy(data_, other.data_, sizeof(T) * other.size_);
+        capacity_ = other.capacity_;
+        size_ = other.size_;
+    }
+
+    MyVector& operator=(const MyVector<T>& other)
+    {
+        MyVector<T> temp(other);
+        // --- Kalb's line here ---
+        this->swap(temp);
+        return *this;
+    }
+
+    ~MyVector()
+    {
+        for (size_t i = 0; i < size_; ++i)
         {
             placementDestroy(i);
         }
-        delete[] data;
+        delete[] data_;
     }
 
     void push_back(const T& value)
     {
-        if (!data)
+        if (!data_)
         {
-            assert(size == 0);
-            assert(capacity == 0);
-            capacity = 1;
-            data = new char[sizeof(T) * capacity];
+            assert(size_ == 0);
+            assert(capacity_ == 0);
+            size_t newCapacity = 1;
+            data_ = new char[sizeof(T) * newCapacity];
+            capacity_ = newCapacity;
         }
 
-        assert(data);
-        assert(size <= capacity);
-        if (size == capacity)
+        assert(data_);
+        assert(size_ <= capacity_);
+        if (size_ == capacity_)
         {
-            capacity *= 2;
-            char* newdata = new char[sizeof(T) * capacity];
-            std::memcpy(newdata, data, sizeof(T) * size);
-            delete[] data;
-            data = newdata;
+            size_t newCapacity = capacity_ * 2;
+            char* newdata = new char[sizeof(T) * newCapacity];
+            capacity_ = newCapacity;
+            std::memcpy(newdata, data_, sizeof(T) * size_);
+            delete[] data_;
+            data_ = newdata;
         }
 
-        placementConstruct(size, value);
-        size++;
+        placementConstruct(size_, value);
+        size_++;
+        assert(size_ <= capacity_);
     }
 
     void pop_back()
     {
-        if (size == 0)
+        if (size_ == 0)
         {
             throw std::logic_error("Vector is empty");
         }
-        placementDestroy(size - 1);
-        size--;
+        placementDestroy(size_ - 1);
+        size_--;
     }
     T& operator[](size_t index) { return const_cast<T&>(get(index)); }
     const T& operator[](size_t index) const { return get(index); }
 
-    T& back() { return operator[](size - 1); }
-    const T& back() const { return operator[](size - 1); }
-public: // **************************  DEBUG ONLY **************************
-    std::string dumpToString() const
+    T& back() { return operator[](size_ - 1); }
+    const T& back() const { return operator[](size_ - 1); }
+
+    size_t size() const noexcept { return size_; }
+    size_t capacity() const noexcept { return capacity_; }
+
+    void swap(const MyVector<T>& other) noexcept
     {
-        std::ostringstream oss;
-        oss << "size=" << size << " | capacity=" << capacity << " | data:";
-        for (size_t i = 0; i < size; ++i)
-        {
-            oss << " " << get(i);
-        }
-        return oss.str();
+        std::swap(data_, other.data_);
+        std::swap(size_, other.size_);
+        std::swap(capacity_, other.capacity_);
     }
 
-    std::vector<T> dumpToStdVector() const
-    {
-        std::vector<T> result;
-        for (size_t i = 0; i < size; ++i)
-        {
-            result.push_back(get(i));
-        }
-        return result;
-    }
+    friend void swap(const MyVector<T>& a, const MyVector<T>& b) noexcept { a.swap(b); }
 private: // ************************** HELPERS **************************
     const T& get(size_t index) const
     {
-        if (index >= size)
+        if (index >= size_)
         {
             throw std::logic_error("Index out of range");
         }
 
-        char* charPtr = data + (index) * sizeof(T);
+        char* charPtr = data_ + (index) * sizeof(T);
         T* objPtr = reinterpret_cast<T*>(charPtr);
         return *objPtr;
     }
 
     void placementDestroy(size_t index)
     {
-        if (index >= size)
-        {
-            throw std::logic_error("Index out of range");
-        }
+        assert(index < size_);
         (*this)[index].~T();
     }
 
     template <typename E>
     void placementConstruct(size_t pos, E&& element)
     {
-        assert(pos == size);
-        new (data + sizeof(T) * size) T(std::forward<E>(element));
+        assert(pos == size_);
+        new (data_ + sizeof(T) * size_) T(std::forward<E>(element));
+
+        std::vector<int> vec;
     }
 };
+
+template <typename T>
+void test()
+{
+    A::resetObjectsCounter();
+    {
+        // T<int> vecInt;
+        // assert(convertToStdVector(vecInt) == std::vector<int>({}));
+        // vecInt.push_back(10);
+        // assert(convertToStdVector(vecInt) == std::vector<int>({10}));
+        // assert(vecInt.back() == 10);
+        // vecInt.push_back(100);
+        // assert(vecInt.back() == 100);
+        // vecInt.push_back(200);
+        // assert(convertToStdVector(vecInt) == std::vector<int>({10, 100, 200}));
+        // vecInt.pop_back();
+        // assert(vecInt.back() == 100);
+
+        using Type = T::value_type;
+
+        T vecA;
+        vecA.push_back(Type());
+        vecA.push_back(Type());
+        vecA.push_back(Type());
+        vecA.push_back(Type());
+        std::cout << convertToString(vecA) << std::endl;
+
+        T vecB(vecA);
+        std::cout << convertToString(vecB) << std::endl;
+        assert(vecB.size() == vecA.size());
+    }
+    std::cout << "counter=" << A::objectsCounter() << std::endl;
+    assert(A::objectsCounter() == 0);
+    std::cout << "test sucsessfull" << std::endl;
+}
 
 int main()
 try
 {
-    {
-        vector<int> vec;
-        assert(vec.dumpToStdVector() == std::vector<int>({}));
-        vec.push_back(10);
-        assert(vec.dumpToStdVector() == std::vector<int>({10}));
-        assert(vec.back() == 10);
-        vec.push_back(100);
-        assert(vec.back() == 100);
-        vec.push_back(200);
-        assert(vec.dumpToStdVector() == std::vector<int>({10, 100, 200}));
-        vec.pop_back();
-        assert(vec.back() == 100);
-
-        vector<A> veca;
-        veca.push_back(A());
-        // veca.push_back(A());
-        // veca.push_back(A());
-        // veca.push_back(A());
-        std::cout << veca.dumpToString() << std::endl;
-    }
-    std::cout << "counter=" << A::counter() << std::endl;
-    assert(A::counter() == 0);
-    std::cout << "test sucsessfull" << std::endl;
+    std::cout << "\nStarting tests with std::vector" << std::endl;
+    test<std::vector<A>>();
+    std::cout << "\nStarting tests with MyVector" << std::endl;
+    test<MyVector<A>>();
 }
 catch (const std::exception& e)
 {

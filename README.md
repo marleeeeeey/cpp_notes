@@ -1,17 +1,20 @@
 # C++ theory and code examples
 
-This repository includes [my notes about C++](/THEORY.md), taken after watching presentations from CppCon and other conferences, as well as reading books. The complete list of references is available in this file [LINKS.md](/LINKS.md).
-
-In the [code folder](/code), there are examples of my programs illustrating the intricacies of the C++ language.
-
-*The notes are made in a single file, mixed in both English and Russian.
-
+- [Overview](#overview)
 - [Style guide](#style-guide)
 - [How to build the examples](#how-to-build-the-examples)
   - [Prerequisites](#prerequisites)
   - [Build examples with VSCode (preferred)](#build-examples-with-vscode-preferred)
   - [Build examples with CMake](#build-examples-with-cmake)
   - [Build examples manually](#build-examples-manually)
+
+## Overview
+
+This repository includes [my notes about C++](/THEORY.md), taken after watching presentations from CppCon and other conferences, as well as reading books. The complete list of references is available in this file [LINKS.md](/LINKS.md).
+
+In the [code folder](/code), there are examples of my programs illustrating the intricacies of the C++ language.
+
+*The notes are made in a single file, mixed in both English and Russian.
 
 ## Style guide
 

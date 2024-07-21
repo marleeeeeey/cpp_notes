@@ -32,7 +32,7 @@ void AskToThrowException()
 }
 
 template <typename VectorType>
-std::string convertToString(const VectorType& object)
+std::string ConvertToString(const VectorType& object)
 {
     std::ostringstream oss;
     oss << "size=" << object.size() << " | capacity=" << object.capacity() << " | data:";
@@ -44,7 +44,7 @@ std::string convertToString(const VectorType& object)
 }
 
 template <typename VectorType>
-std::vector<typename VectorType::value_type> convertToStdVector(const VectorType& object)
+std::vector<typename VectorType::value_type> ConvertToStdVector(const VectorType& object)
 {
     std::vector<typename VectorType::value_type> result;
     for (size_t i = 0; i < object.size(); ++i)
@@ -98,9 +98,9 @@ public:
         return *this;
     }
 public: // Helpers
-    static size_t objectsCounter() { return objectsCounter_; }
-    static void resetObjectsCounter() { A::objectsCounter_ = 0; }
-    size_t objectNumber() const { return objectNumber_; }
+    static size_t ObjectsCounter() { return objectsCounter_; }
+    static void ResetObjectsCounter() { A::objectsCounter_ = 0; }
+    size_t ObjectNumber() const { return objectNumber_; }
 };
 
 size_t A::objectsCounter_ = 0;
@@ -108,7 +108,7 @@ size_t A::incrementOnlyCounter_ = 0;
 
 std::ostream& operator<<(std::ostream& os, const A& val)
 {
-    return os << val.objectNumber() << "(" << &val << ")";
+    return os << val.ObjectNumber() << "(" << &val << ")";
 }
 
 template <typename T>
@@ -137,7 +137,7 @@ public:
         // This way of copying is correct, because it calls the constructor for every T object.
         for (size_t i = 0; i < other.size_; ++i)
         {
-            placementConstruct(i, other[i]);
+            PlacementConstruct(i, other[i]);
         }
 
         capacity_ = other.capacity_;
@@ -156,7 +156,7 @@ public:
     {
         for (size_t i = 0; i < size_; ++i)
         {
-            placementDestroy(i);
+            PlacementDestroy(i);
         }
         delete[] data_;
     }
@@ -184,7 +184,7 @@ public:
             data_ = newdata;
         }
 
-        placementConstruct(size_, value);
+        PlacementConstruct(size_, value);
         size_++;
         assert(size_ <= capacity_);
     }
@@ -195,11 +195,11 @@ public:
         {
             throw std::logic_error("Vector is empty");
         }
-        placementDestroy(size_ - 1);
+        PlacementDestroy(size_ - 1);
         size_--;
     }
-    T& operator[](size_t index) { return const_cast<T&>(get(index)); }
-    const T& operator[](size_t index) const { return get(index); }
+    T& operator[](size_t index) { return const_cast<T&>(Get(index)); }
+    const T& operator[](size_t index) const { return Get(index); }
 
     T& back() { return operator[](size_ - 1); }
     const T& back() const { return operator[](size_ - 1); }
@@ -216,7 +216,7 @@ public:
 
     friend void swap(const MyVector<T>& a, const MyVector<T>& b) noexcept { a.swap(b); }
 private: // ************************** HELPERS **************************
-    const T& get(size_t index) const
+    const T& Get(size_t index) const
     {
         if (index >= size_)
         {
@@ -228,14 +228,14 @@ private: // ************************** HELPERS **************************
         return *objPtr;
     }
 
-    void placementDestroy(size_t index)
+    void PlacementDestroy(size_t index)
     {
         assert(index < size_);
         (*this)[index].~T();
     }
 
     template <typename E>
-    void placementConstruct(size_t pos, E&& element)
+    void PlacementConstruct(size_t pos, E&& element)
     {
         assert(pos == size_);
         new (data_ + sizeof(T) * size_) T(std::forward<E>(element));
@@ -245,9 +245,9 @@ private: // ************************** HELPERS **************************
 };
 
 template <typename T>
-void test()
+void Test()
 {
-    A::resetObjectsCounter();
+    A::ResetObjectsCounter();
     {
         // T<int> vecInt;
         // assert(convertToStdVector(vecInt) == std::vector<int>({}));
@@ -265,14 +265,14 @@ void test()
 
         T vecA;
         vecA.push_back(Type());
-        std::cout << convertToString(vecA) << std::endl;
+        std::cout << ConvertToString(vecA) << std::endl;
 
         T vecB(vecA);
-        std::cout << convertToString(vecB) << std::endl;
+        std::cout << ConvertToString(vecB) << std::endl;
         assert(vecB.size() == vecA.size());
     }
-    std::cout << "counter=" << A::objectsCounter() << std::endl;
-    assert(A::objectsCounter() == 0);
+    std::cout << "counter=" << A::ObjectsCounter() << std::endl;
+    assert(A::ObjectsCounter() == 0);
     std::cout << "test sucsessfull" << std::endl;
 }
 
@@ -280,9 +280,9 @@ int main()
 try
 {
     std::cout << "\nStarting tests with std::vector" << std::endl;
-    test<std::vector<A>>();
+    Test<std::vector<A>>();
     std::cout << "\nStarting tests with MyVector" << std::endl;
-    test<MyVector<A>>();
+    Test<MyVector<A>>();
 }
 catch (const std::exception& e)
 {

@@ -13,3 +13,11 @@
   - 01:15:30 Гарантии безопасности
   - 01:22:45 Линия Калба
   - 01:30:00 Обзор литературы
+- CppCon 2014: Jon Kalb "Exception-Safe Code, Part I"
+  - https://www.youtube.com/watch?v=W7fIy_54y-w&t
+  - The problem
+  - Solution that don't use exceptions
+  - Problems with the exceptions as a solution
+  - How not to write Exception-Safe Code
+  - Exception-Safe Coding Guidelines
+  - Implementation Techniques

@@ -35,9 +35,9 @@ I aim to align my coding style with the [Google C++ Style Guide](https://google.
 CMake build preferred before manual build because it generates `compile_commands.json` for better integration with VSCode.
 
 1. Open the repository in VSCode.
-2. Open `*.cpp` file you want to build and start task `010. Set Current File As Source`.
-3. Start task `040. + Run` to build and run the program. See settings in `.vscode/tasks.json`.
-4. For debugging press `F5`. It will build the program and start debugging with `lldb`. See settings in `.vscode/launch.json`.
+2. Open `code/*.cpp` file you want to build and start task `010. Set Current File As Source`.
+3. Start task `040. + Run` to build and run the program. See settings in [.vscode/tasks.json](.vscode/tasks.json).
+4. For debugging press `F5`. It will build the program and start debugging with `lldb`. See settings in [.vscode/launch.json](.vscode/launch.json).
 
 ### Build examples with CMake
 

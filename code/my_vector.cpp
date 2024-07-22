@@ -12,7 +12,8 @@
 
 // Script options
 #define VERBOSE_CLASS_A 1
-#define VERBOSE_CLASS_MY_VECTOR 1
+#define VERBOSE_CLASS_A_SHOW_ADDRS 0
+#define VERBOSE_CLASS_MY_VECTOR 0
 
 // TODO LIST
 // 1. Fix differences berween std::vector and MyVector in runtime
@@ -68,44 +69,54 @@ class A
 public:
     A()
     {
-        if (verbose_)
-            std::cout << "A#" << objectNumber_ << " ctor " << this << std::endl;
+        PrintToConsole("default constructor");
         objectsCounter_++;
     }
     ~A()
     {
-        if (verbose_)
-            std::cout << "A#" << objectNumber_ << " destructor " << this << std::endl;
+        PrintToConsole("destructor");
         objectsCounter_--;
     }
     A([[maybe_unused]] const A& other)
     {
-        if (verbose_)
-            std::cout << "A#" << objectNumber_ << " copy ctor " << this << std::endl;
+        PrintToConsole("copy constructor", &other);
         objectsCounter_++;
     }
     A([[maybe_unused]] A&& other)
     {
-        if (verbose_)
-            std::cout << "A#" << objectNumber_ << " move ctor " << this << std::endl;
+        PrintToConsole("move constructor", &other);
         objectsCounter_++;
     }
     A& operator=([[maybe_unused]] const A& other)
     {
-        if (verbose_)
-            std::cout << "A#" << objectNumber_ << " copy assigment from=" << &other << " to=" << this << std::endl;
+        PrintToConsole("copy assigment", &other);
         return *this;
     }
     A& operator=([[maybe_unused]] A&& other)
     {
-        if (verbose_)
-            std::cout << "A#" << objectNumber_ << " move assigment from=" << &other << " to=" << this << std::endl;
+        PrintToConsole("move assigment", &other);
         return *this;
     }
 public: // Helpers
     static size_t ObjectsCounter() { return objectsCounter_; }
-    static void ResetObjectsCounter() { A::objectsCounter_ = 0; }
+    static void ResetCounters()
+    {
+        A::objectsCounter_ = 0;
+        A::incrementOnlyCounter_ = 0;
+    }
     size_t ObjectNumber() const { return objectNumber_; }
+    void PrintToConsole(const std::string& methodName, const A* const other = nullptr) const
+    {
+        if (!verbose_)
+            return;
+
+        std::cout << "A#" << ObjectNumber() << " " << methodName;
+
+        if (other)
+            std::cout << " from A#" << other->ObjectNumber();
+
+        std::cout << std::endl;
+    }
 };
 
 size_t A::objectsCounter_ = 0;
@@ -113,7 +124,11 @@ size_t A::incrementOnlyCounter_ = 0;
 
 std::ostream& operator<<(std::ostream& os, const A& val)
 {
-    return os << val.ObjectNumber() << "(" << &val << ")";
+    return os << "A#" << val.ObjectNumber()
+#if VERBOSE_CLASS_A_SHOW_ADDRS
+              << "(" << &val << ")"
+#endif
+        ;
 }
 
 template <typename T>
@@ -288,7 +303,7 @@ private: // ************************** HELPERS **************************
 template <typename T>
 void Test()
 {
-    A::ResetObjectsCounter();
+    A::ResetCounters();
     {
         // T<int> vecInt;
         // assert(convertToStdVector(vecInt) == std::vector<int>({}));
@@ -305,14 +320,14 @@ void Test()
         using Type = T::value_type;
 
         T vecA;
-        for (size_t i = 0; i < 10; ++i)
+        for (size_t i = 0; i < 1; ++i)
         {
             vecA.push_back(Type());
         }
-        std::cout << ConvertToString(vecA) << std::endl;
+        std::cout << "Test: " << ConvertToString(vecA) << std::endl;
 
         T vecB(vecA);
-        std::cout << ConvertToString(vecB) << std::endl;
+        std::cout << "Test: " << ConvertToString(vecB) << std::endl;
         assert(vecB.size() == vecA.size());
 
         vecA.push_back(vecA[0]);

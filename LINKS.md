@@ -36,3 +36,15 @@
     - Implementation Techniques
   - Part 2: https://www.youtube.com/watch?v=b9xMIKb1jMk
   - Part 3: https://www.youtube.com/watch?v=MiKxfdkMJW8
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 12. Безопасность исключений - 2021
+  - https://www.youtube.com/watch?v=d0iqsUx_Aow
+    - 00:00:00 В предыдущей серии
+    - 00:06:20 Условный noexcept
+    - 00:24:25 Коварное извлечение
+    - 00:31:30 Перегрузка new/delete
+    - 00:47:05 Присваивание Степанова
+    - 00:52:15 Буфер для вектора
+    - 01:07:40 Перемещение для push
+    - 01:14:05 Static asserts
+    - 01:18:30 Обзор литературы

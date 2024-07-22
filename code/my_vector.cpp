@@ -15,9 +15,6 @@
 #define VERBOSE_CLASS_A_SHOW_ADDRS 0
 #define VERBOSE_CLASS_MY_VECTOR 0
 
-// TODO LIST
-// 1. Fix differences berween std::vector and MyVector in runtime
-
 void AskToThrowException()
 {
     std::cout << "Should I throw?" << std::endl;
@@ -140,13 +137,18 @@ private: // ****************************** STATE ******************************
     size_t capacity_ = 0;
 public: // ************************** TEMPLATE STUFF **************************
     using value_type = T;
-public: // ************************ DEFAULT CONSTRUCTOR ************************
+public: // *************************** CONSTRUCTORS ***************************
     MyVector() {}
+    explicit MyVector(size_t capacity)
+    {
+        data_ = new char[sizeof(T) * capacity]; // May throw exception.
+        size_ = 0;
+        capacity_ = capacity;
+    }
 public: // ************************ RULE OF FIVE IMPL ************************
     MyVector(const MyVector<T>& other)
     {
-        data_ = new char[sizeof(T) * other.capacity_]; // May throw exception.
-        capacity_ = other.capacity_;
+        MyVector tmp(other.capacity_); // May throw exception.
 
         // --------------------------------------------------------------------------------------
         // This way of copying is not correct, because it doesn't call the copy constructor of T.
@@ -154,19 +156,14 @@ public: // ************************ RULE OF FIVE IMPL ************************
         // std::memcpy(data_, other.data_, sizeof(T) * other.size_);
         // --------------------------------------------------------------------------------------
 
-        try
+        for (size_t i = 0; i < other.size_; ++i)
         {
-            for (size_t i = 0; i < other.size_; ++i)
-            {
-                PlacementConstruct(i, other[i]); // May throw exception.
-                size_++;
-            }
+            tmp.PlacementPush(other[i]); // May throw exception.
         }
-        catch (...)
-        {
-            DestroyAllElementsAndFree();
-            throw;
-        }
+
+        // --- Kalb's line here ---
+
+        swap(tmp);
     }
 
     MyVector(MyVector<T>&& other) noexcept
@@ -178,14 +175,14 @@ public: // ************************ RULE OF FIVE IMPL ************************
     {
         MyVector<T> temp(other); // May throw exception.
         // --- Kalb's line here ---
-        this->swap(temp);
+        swap(temp);
         return *this;
     }
 
     MyVector& operator=(MyVector<T>&& other) noexcept
     {
         MyVector<T> temp(std::move(other));
-        this->swap(temp);
+        swap(temp);
         return *this;
     }
 
@@ -194,52 +191,32 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
     template <typename Args>
     void push_back(Args&& value)
     {
-        char* oldData = nullptr;
-
-        if (!data_)
+        // Commit/rollback strategy
+        // Remove old data after element is created to support cases like this:
+        // `std::vector<int> foo = {1,2,3,4}; foo.push_back(foo[2]);`
+        if (capacity_ == 0)
         {
-            assert(size_ == 0);
-            assert(capacity_ == 0);
-            size_t newCapacity = 1;
-            data_ = new char[sizeof(T) * newCapacity];
+            MyVector<T> tmp(1);
+            tmp.PlacementPush(std::forward<Args>(value));
             // --- Kalb's line here ---
-            capacity_ = newCapacity;
+            swap(tmp);
         }
-
-        assert(data_);
-        assert(size_ <= capacity_);
-        if (size_ == capacity_)
+        else if (size_ == capacity_)
         {
-            size_t newCapacity = capacity_ * 2;
-            char* newdata = new char[sizeof(T) * newCapacity];
+            MyVector<T> tmp(capacity_ * 2);
+            for (size_t i = 0; i < size_; ++i)
+            {
+                tmp.PlacementPush((*this)[i]);
+            }
+            tmp.PlacementPush(std::forward<Args>(value));
             // --- Kalb's line here ---
-            capacity_ = newCapacity;
-            std::memcpy(newdata, data_, sizeof(T) * size_);
-            oldData = data_;
-            data_ = newdata;
-
-#if VERBOSE_CLASS_MY_VECTOR
-            std::cout << "MyVector: Realocated. New capacity=" << newCapacity << std::endl;
-#endif
+            swap(tmp);
         }
-
-        try
+        else // size < capacity
         {
-            // Remove old data after element is created to support cases like this:
-            // `std::vector<int> foo = {1,2,3,4}; foo.push_back(foo[2]);`
-            PlacementConstruct(size_, std::forward<Args>(value));
-            size_++;
+            PlacementPush(std::forward<Args>(value));
+            // --- Kalb's line here ---
         }
-        catch (...)
-        {
-            delete[] oldData;
-            throw;
-        }
-
-        delete[] oldData;
-        oldData = nullptr;
-
-        assert(size_ <= capacity_);
     }
 
     void pop_back()
@@ -260,14 +237,14 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
     size_t size() const noexcept { return size_; }
     size_t capacity() const noexcept { return capacity_; }
 
-    void swap(const MyVector<T>& other) noexcept
+    void swap(MyVector<T>& other) noexcept
     {
         std::swap(data_, other.data_);
         std::swap(size_, other.size_);
         std::swap(capacity_, other.capacity_);
     }
 
-    friend void swap(const MyVector<T>& a, const MyVector<T>& b) noexcept { a.swap(b); }
+    friend void swap(MyVector<T>& a, MyVector<T>& b) noexcept { a.swap(b); }
 private: // ************************** HELPERS **************************
     const T& Get(size_t index) const
     {
@@ -293,10 +270,10 @@ private: // ************************** HELPERS **************************
     }
 
     template <typename E>
-    void PlacementConstruct(size_t pos, E&& element)
+    void PlacementPush(E&& element)
     {
-        assert(pos == size_);
         new (data_ + sizeof(T) * size_) T(std::forward<E>(element));
+        size_++;
     }
 };
 
@@ -305,18 +282,6 @@ void Test()
 {
     A::ResetCounters();
     {
-        // T<int> vecInt;
-        // assert(convertToStdVector(vecInt) == std::vector<int>({}));
-        // vecInt.push_back(10);
-        // assert(convertToStdVector(vecInt) == std::vector<int>({10}));
-        // assert(vecInt.back() == 10);
-        // vecInt.push_back(100);
-        // assert(vecInt.back() == 100);
-        // vecInt.push_back(200);
-        // assert(convertToStdVector(vecInt) == std::vector<int>({10, 100, 200}));
-        // vecInt.pop_back();
-        // assert(vecInt.back() == 100);
-
         using Type = T::value_type;
 
         T vecA;

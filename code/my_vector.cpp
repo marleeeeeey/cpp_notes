@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstring>
+#include <exception>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -11,6 +12,9 @@
 
 // Script options
 #define VERBOSE_CLASS_A 1
+
+// TODO LIST
+// 1. Fix differences berween std::vector and MyVector in runtime
 
 void AskToThrowException()
 {
@@ -118,15 +122,15 @@ private: // ************************** STATE **************************
     char* data_ = nullptr;
     size_t size_ = 0;
     size_t capacity_ = 0;
-public: //************************** TEMPLATE STUFF **************************
+public: // ************************** TEMPLATE STUFF **************************
     using value_type = T;
-public:
+public: // ************************ RULE OF FIVE IMPL ************************
     MyVector() {}
 
     MyVector(const MyVector<T>& other)
     {
-        data_ = new char[sizeof(T) * other.capacity_];
-        // --- Kalb's line here ---
+        data_ = new char[sizeof(T) * other.capacity_]; // May throw exception.
+        capacity_ = other.capacity_;
 
         // --------------------------------------------------------------------------------------
         // This way of copying is not correct, because it doesn't call the copy constructor of T.
@@ -134,41 +138,55 @@ public:
         // std::memcpy(data_, other.data_, sizeof(T) * other.size_);
         // --------------------------------------------------------------------------------------
 
-        // This way of copying is correct, because it calls the constructor for every T object.
-        for (size_t i = 0; i < other.size_; ++i)
+        try
         {
-            PlacementConstruct(i, other[i]);
+            for (size_t i = 0; i < other.size_; ++i)
+            {
+                PlacementConstruct(i, other[i]); // May throw exception.
+                size_++;
+            }
         }
-
-        capacity_ = other.capacity_;
-        size_ = other.size_;
+        catch (...)
+        {
+            DestroyAllElementsAndFree();
+            throw;
+        }
     }
+
+    MyVector(MyVector<T>&& other) noexcept
+      : data_(std::exchange(other.data_, nullptr)), size_(std::exchange(size_, 0)),
+        capacity_(std::exchange(capacity_, 0))
+    {}
 
     MyVector& operator=(const MyVector<T>& other)
     {
-        MyVector<T> temp(other);
+        MyVector<T> temp(other); // May throw exception.
         // --- Kalb's line here ---
         this->swap(temp);
         return *this;
     }
 
-    ~MyVector()
+    MyVector& operator=(MyVector<T>&& other) noexcept
     {
-        for (size_t i = 0; i < size_; ++i)
-        {
-            PlacementDestroy(i);
-        }
-        delete[] data_;
+        MyVector<T> temp(std::move(other));
+        this->swap(temp);
+        return *this;
     }
 
-    void push_back(const T& value)
+    ~MyVector() { DestroyAllElementsAndFree(); }
+public: // ******************* STD VECTOR LIKE INTERFACE IMPL *******************
+    template <typename Args>
+    void push_back(Args&& value)
     {
+        char* oldData = nullptr;
+
         if (!data_)
         {
             assert(size_ == 0);
             assert(capacity_ == 0);
             size_t newCapacity = 1;
             data_ = new char[sizeof(T) * newCapacity];
+            // --- Kalb's line here ---
             capacity_ = newCapacity;
         }
 
@@ -178,14 +196,29 @@ public:
         {
             size_t newCapacity = capacity_ * 2;
             char* newdata = new char[sizeof(T) * newCapacity];
+            // --- Kalb's line here ---
             capacity_ = newCapacity;
             std::memcpy(newdata, data_, sizeof(T) * size_);
-            delete[] data_;
+            oldData = data_;
             data_ = newdata;
         }
 
-        PlacementConstruct(size_, value);
-        size_++;
+        try
+        {
+            // Remove old data after element is created to support cases like this:
+            // `std::vector<int> foo = {1,2,3,4}; foo.push_back(foo[2]);`
+            PlacementConstruct(size_, std::forward<Args>(value));
+            size_++;
+        }
+        catch (...)
+        {
+            delete[] oldData;
+            throw;
+        }
+
+        delete[] oldData;
+        oldData = nullptr;
+
         assert(size_ <= capacity_);
     }
 
@@ -198,6 +231,7 @@ public:
         PlacementDestroy(size_ - 1);
         size_--;
     }
+
     T& operator[](size_t index) { return const_cast<T&>(Get(index)); }
     const T& operator[](size_t index) const { return Get(index); }
 
@@ -228,7 +262,14 @@ private: // ************************** HELPERS **************************
         return *objPtr;
     }
 
-    void PlacementDestroy(size_t index)
+    void DestroyAllElementsAndFree() noexcept
+    {
+        for (size_t i = 0; i < size_; ++i)
+            PlacementDestroy(i);
+        delete[] data_;
+    }
+
+    void PlacementDestroy(size_t index) noexcept
     {
         assert(index < size_);
         (*this)[index].~T();
@@ -239,8 +280,6 @@ private: // ************************** HELPERS **************************
     {
         assert(pos == size_);
         new (data_ + sizeof(T) * size_) T(std::forward<E>(element));
-
-        std::vector<int> vec;
     }
 };
 
@@ -270,6 +309,8 @@ void Test()
         T vecB(vecA);
         std::cout << ConvertToString(vecB) << std::endl;
         assert(vecB.size() == vecA.size());
+
+        vecA.push_back(vecA[0]);
     }
     std::cout << "counter=" << A::ObjectsCounter() << std::endl;
     assert(A::ObjectsCounter() == 0);

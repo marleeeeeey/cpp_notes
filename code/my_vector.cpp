@@ -12,6 +12,7 @@
 
 // Script options
 #define VERBOSE_CLASS_A 1
+#define VERBOSE_CLASS_MY_VECTOR 1
 
 // TODO LIST
 // 1. Fix differences berween std::vector and MyVector in runtime
@@ -118,15 +119,15 @@ std::ostream& operator<<(std::ostream& os, const A& val)
 template <typename T>
 class MyVector
 {
-private: // ************************** STATE **************************
+private: // ****************************** STATE ******************************
     char* data_ = nullptr;
     size_t size_ = 0;
     size_t capacity_ = 0;
 public: // ************************** TEMPLATE STUFF **************************
     using value_type = T;
-public: // ************************ RULE OF FIVE IMPL ************************
+public: // ************************ DEFAULT CONSTRUCTOR ************************
     MyVector() {}
-
+public: // ************************ RULE OF FIVE IMPL ************************
     MyVector(const MyVector<T>& other)
     {
         data_ = new char[sizeof(T) * other.capacity_]; // May throw exception.
@@ -201,6 +202,10 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
             std::memcpy(newdata, data_, sizeof(T) * size_);
             oldData = data_;
             data_ = newdata;
+
+#if VERBOSE_CLASS_MY_VECTOR
+            std::cout << "MyVector: Realocated. New capacity=" << newCapacity << std::endl;
+#endif
         }
 
         try
@@ -225,9 +230,8 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
     void pop_back()
     {
         if (size_ == 0)
-        {
             throw std::logic_error("Vector is empty");
-        }
+
         PlacementDestroy(size_ - 1);
         size_--;
     }
@@ -253,9 +257,7 @@ private: // ************************** HELPERS **************************
     const T& Get(size_t index) const
     {
         if (index >= size_)
-        {
             throw std::logic_error("Index out of range");
-        }
 
         char* charPtr = data_ + (index) * sizeof(T);
         T* objPtr = reinterpret_cast<T*>(charPtr);
@@ -303,7 +305,10 @@ void Test()
         using Type = T::value_type;
 
         T vecA;
-        vecA.push_back(Type());
+        for (size_t i = 0; i < 10; ++i)
+        {
+            vecA.push_back(Type());
+        }
         std::cout << ConvertToString(vecA) << std::endl;
 
         T vecB(vecA);

@@ -14,17 +14,10 @@ file(STRINGS ${SOURCES_FILE} cpp_file_example_SOURCES)
 add_executable(cpp_file_example ${cpp_file_example_SOURCES})
 
 target_compile_options(cpp_file_example PRIVATE
-    -Wall
-    -Wextra
-    -Werror
-    -Wpedantic
 
-    # ################ Some warnings from HolyBlackCat's code. ################
-    -Wdeprecated # search for deprecated functions.
-    -Wextra-semi # search for unused `;` in the code.
-    -Wimplicit-fallthrough # search for missing `break` and `cases` in switch cases.
-
-    # -Wconversion # search for implicit conversions. Hard to fix everything if not applying from scratch.
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Werror -Wpedantic -Wdeprecated -Wextra-semi -Wimplicit-fallthrough -Wconversion>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Werror -Wpedantic -Wdeprecated -Wextra-semi -Wimplicit-fallthrough -Wconversion>
 
     # ################### Disable some warnings temporarily. ##################
     # TODO: Disable later.

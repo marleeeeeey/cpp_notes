@@ -1,7 +1,9 @@
 __*
-.cache
+.cache/
+.vs/
 build/
 **/*.exe
 **/*.ilk
 **/*.pdb
 **/~*
+CMakeSettings.json

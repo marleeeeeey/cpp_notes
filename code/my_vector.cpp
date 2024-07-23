@@ -11,8 +11,10 @@
 #include <vector>
 
 // Script options
-#define VERBOSE_CLASS_A 1
-#define VERBOSE_CLASS_A_SHOW_ADDRS 0
+#define OBJECTS_COUNTER 100
+#define CLASS_A_VERBOSE 1
+#define CLASS_A_VERBOSE_SHOW_ADDRS 0
+#define CLASS_A_THROW_EXCEPTION_ON_CONSTRUCT_EVERY_X_OBJECT 40
 #define VERBOSE_CLASS_MY_VECTOR 0
 
 void AskToThrowException()
@@ -59,10 +61,11 @@ std::vector<typename VectorType::value_type> ConvertToStdVector(const VectorType
 
 class A
 {
-    static const bool verbose_ = VERBOSE_CLASS_A;
+    static const bool verbose_ = CLASS_A_VERBOSE;
     static size_t objectsCounter_;
     static size_t incrementOnlyCounter_;
     size_t objectNumber_ = incrementOnlyCounter_++;
+    static const size_t exceptionOnConstructEveryXElement = CLASS_A_THROW_EXCEPTION_ON_CONSTRUCT_EVERY_X_OBJECT;
 public:
     A()
     {
@@ -79,17 +82,17 @@ public:
         PrintToConsole("copy constructor", &other);
         objectsCounter_++;
     }
-    A([[maybe_unused]] A&& other)
-    {
-        PrintToConsole("move constructor", &other);
-        objectsCounter_++;
-    }
     A& operator=([[maybe_unused]] const A& other)
     {
         PrintToConsole("copy assigment", &other);
         return *this;
     }
-    A& operator=([[maybe_unused]] A&& other)
+    A([[maybe_unused]] A&& other)
+    {
+        PrintToConsole("move constructor", &other);
+        objectsCounter_++;
+    }
+    A& operator=([[maybe_unused]] A&& other) noexcept
     {
         PrintToConsole("move assigment", &other);
         return *this;
@@ -104,15 +107,24 @@ public: // Helpers
     size_t ObjectNumber() const { return objectNumber_; }
     void PrintToConsole(const std::string& methodName, const A* const other = nullptr) const
     {
-        if (!verbose_)
-            return;
+        if (verbose_)
+        {
+            std::cout << "A#" << ObjectNumber() << " " << methodName;
+            if (other)
+                std::cout << " from A#" << other->ObjectNumber();
+            std::cout << std::endl;
+        }
 
-        std::cout << "A#" << ObjectNumber() << " " << methodName;
-
-        if (other)
-            std::cout << " from A#" << other->ObjectNumber();
-
-        std::cout << std::endl;
+        if (exceptionOnConstructEveryXElement && objectNumber_)
+        {
+            if (objectNumber_ % exceptionOnConstructEveryXElement == 0)
+            {
+                std::ostringstream oss;
+                oss << "Throwing exception on construct of A#" << objectNumber_;
+                std::cout << oss.str() << std::endl;
+                throw std::runtime_error(oss.str());
+            }
+        }
     }
 };
 
@@ -122,7 +134,7 @@ size_t A::incrementOnlyCounter_ = 0;
 std::ostream& operator<<(std::ostream& os, const A& val)
 {
     return os << "A#" << val.ObjectNumber()
-#if VERBOSE_CLASS_A_SHOW_ADDRS
+#if CLASS_A_VERBOSE_SHOW_ADDRS
               << "(" << &val << ")"
 #endif
         ;
@@ -148,7 +160,7 @@ public: // *************************** CONSTRUCTORS ***************************
 public: // ************************ RULE OF FIVE IMPL ************************
     MyVector(const MyVector<T>& other)
     {
-        MyVector tmp(other.capacity_); // May throw exception.
+        MyVector tmp(other.size_); // May throw exception.
 
         // --------------------------------------------------------------------------------------
         // This way of copying is not correct, because it doesn't call the copy constructor of T.
@@ -157,12 +169,8 @@ public: // ************************ RULE OF FIVE IMPL ************************
         // --------------------------------------------------------------------------------------
 
         for (size_t i = 0; i < other.size_; ++i)
-        {
             tmp.PlacementPush(other[i]); // May throw exception.
-        }
-
         // --- Kalb's line here ---
-
         swap(tmp);
     }
 
@@ -186,7 +194,12 @@ public: // ************************ RULE OF FIVE IMPL ************************
         return *this;
     }
 
-    ~MyVector() { DestroyAllElementsAndFree(); }
+    ~MyVector()
+    {
+        for (size_t i = size_; i > 0; --i)
+            PlacementDestroy(i - 1);
+        delete[] data_;
+    }
 public: // ******************* STD VECTOR LIKE INTERFACE IMPL *******************
     template <typename Args>
     void push_back(Args&& value)
@@ -194,20 +207,11 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
         // Commit/rollback strategy
         // Remove old data after element is created to support cases like this:
         // `std::vector<int> foo = {1,2,3,4}; foo.push_back(foo[2]);`
-        if (capacity_ == 0)
+        if (size_ == capacity_)
         {
-            MyVector<T> tmp(1);
-            tmp.PlacementPush(std::forward<Args>(value));
-            // --- Kalb's line here ---
-            swap(tmp);
-        }
-        else if (size_ == capacity_)
-        {
-            MyVector<T> tmp(capacity_ * 2);
+            MyVector<T> tmp(capacity_ * 2 + 1);
             for (size_t i = 0; i < size_; ++i)
-            {
                 tmp.PlacementPush((*this)[i]);
-            }
             tmp.PlacementPush(std::forward<Args>(value));
             // --- Kalb's line here ---
             swap(tmp);
@@ -256,13 +260,6 @@ private: // ************************** HELPERS **************************
         return *objPtr;
     }
 
-    void DestroyAllElementsAndFree() noexcept
-    {
-        for (size_t i = 0; i < size_; ++i)
-            PlacementDestroy(i);
-        delete[] data_;
-    }
-
     void PlacementDestroy(size_t index) noexcept
     {
         assert(index < size_);
@@ -285,7 +282,7 @@ void Test()
         using Type = T::value_type;
 
         T vecA;
-        for (size_t i = 0; i < 1; ++i)
+        for (size_t i = 0; i < OBJECTS_COUNTER; ++i)
         {
             vecA.push_back(Type());
         }
@@ -305,14 +302,33 @@ void Test()
 int main()
 try
 {
-    std::cout << "\nStarting tests with std::vector" << std::endl;
-    Test<std::vector<A>>();
-    std::cout << "\nStarting tests with MyVector" << std::endl;
-    Test<MyVector<A>>();
-}
-catch (const std::exception& e)
-{
-    std::cout << "Caught an exception: " << e.what() << std::endl;
+    try
+    {
+        std::cout << "\nStarting tests with std::vector" << std::endl;
+        Test<std::vector<A>>();
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "Caught an exception: " << e.what() << std::endl;
+    }
+
+    std::cout << "counter=" << A::ObjectsCounter() << std::endl;
+    assert(A::ObjectsCounter() == 0);
+    std::cout << "test sucsessfull" << std::endl;
+
+    try
+    {
+        std::cout << "\nStarting tests with MyVector" << std::endl;
+        Test<MyVector<A>>();
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "Caught an exception: " << e.what() << std::endl;
+    }
+
+    std::cout << "counter=" << A::ObjectsCounter() << std::endl;
+    assert(A::ObjectsCounter() == 0);
+    std::cout << "test sucsessfull" << std::endl;
 }
 catch (...)
 {

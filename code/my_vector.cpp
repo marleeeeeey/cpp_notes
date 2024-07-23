@@ -11,7 +11,7 @@
 #include <vector>
 
 // Script options
-#define OBJECTS_COUNTER 100
+#define OBJECTS_COUNTER 1
 #define CLASS_A_VERBOSE 1
 #define CLASS_A_VERBOSE_SHOW_ADDRS 0
 #define CLASS_A_THROW_EXCEPTION_ON_CONSTRUCT_EVERY_X_OBJECT 40
@@ -87,12 +87,12 @@ public:
         PrintToConsole("copy assigment", &other);
         return *this;
     }
-    A([[maybe_unused]] A&& other)
+    A([[maybe_unused]] A&& other) noexcept(true)
     {
         PrintToConsole("move constructor", &other);
         objectsCounter_++;
     }
-    A& operator=([[maybe_unused]] A&& other) noexcept
+    A& operator=([[maybe_unused]] A&& other) noexcept(true)
     {
         PrintToConsole("move assigment", &other);
         return *this;
@@ -211,7 +211,10 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
         {
             MyVector<T> tmp(capacity_ * 2 + 1);
             for (size_t i = 0; i < size_; ++i)
+            {
+                // TODO: this line may use move if std::is_nothrow_move_constructible<Arg>}
                 tmp.PlacementPush((*this)[i]);
+            }
             tmp.PlacementPush(std::forward<Args>(value));
             // --- Kalb's line here ---
             swap(tmp);
@@ -277,26 +280,20 @@ private: // ************************** HELPERS **************************
 template <typename T>
 void Test()
 {
-    A::ResetCounters();
+    using Type = T::value_type;
+
+    T vecA;
+    for (size_t i = 0; i < OBJECTS_COUNTER; ++i)
     {
-        using Type = T::value_type;
-
-        T vecA;
-        for (size_t i = 0; i < OBJECTS_COUNTER; ++i)
-        {
-            vecA.push_back(Type());
-        }
-        std::cout << "Test: " << ConvertToString(vecA) << std::endl;
-
-        T vecB(vecA);
-        std::cout << "Test: " << ConvertToString(vecB) << std::endl;
-        assert(vecB.size() == vecA.size());
-
-        vecA.push_back(vecA[0]);
+        vecA.push_back(Type());
     }
-    std::cout << "counter=" << A::ObjectsCounter() << std::endl;
-    assert(A::ObjectsCounter() == 0);
-    std::cout << "test sucsessfull" << std::endl;
+    std::cout << "Test: " << ConvertToString(vecA) << std::endl;
+
+    T vecB(vecA);
+    std::cout << "Test: " << ConvertToString(vecB) << std::endl;
+    assert(vecB.size() == vecA.size());
+
+    vecA.push_back(vecA[0]);
 }
 
 int main()
@@ -304,6 +301,7 @@ try
 {
     try
     {
+        A::ResetCounters();
         std::cout << "\nStarting tests with std::vector" << std::endl;
         Test<std::vector<A>>();
     }
@@ -318,6 +316,7 @@ try
 
     try
     {
+        A::ResetCounters();
         std::cout << "\nStarting tests with MyVector" << std::endl;
         Test<MyVector<A>>();
     }

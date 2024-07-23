@@ -24,7 +24,7 @@ I aim to align my coding style with the [Google C++ Style Guide](https://google.
 
 ### Prerequisites
 
-- C++ compiler with C++17 support (Clang, GCC, MSVC)
+- C++ compiler with C++23 support (Clang, GCC, MSVC)
 - CMake (optional)
 - Ninja (optional)
 - VSCode (optional)

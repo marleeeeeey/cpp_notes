@@ -7,3 +7,4 @@ build/
 **/*.pdb
 **/~*
 CMakeSettings.json
+leak_report.xml

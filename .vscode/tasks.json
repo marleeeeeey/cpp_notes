@@ -56,6 +56,20 @@
       "type": "shell"
     },
     {
+      "label": "050. + Run with Deleaker",
+      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/Debug/cpp_file_example.exe /someOption && python ${workspaceFolder}/parse_deleaker_report.py",
+      "dependsOn": [
+        "030. + Build"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "RunWithDeleaker"
+        }
+      },
+      "type": "shell"
+    },
+    {
       "label": "090. Compile ACTIVE file to ASM",
       "type": "shell",
       "command": "cmake -E make_directory build && clang -O1 -g0 -mllvm --x86-asm-syntax=intel -S ${file} -o ${workspaceFolder}/build/${fileBasename}.s",

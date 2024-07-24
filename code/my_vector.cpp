@@ -17,6 +17,7 @@
 #define CLASS_A_VERBOSE_SHOW_ADDRS 0
 #define CLASS_A_THROW_EXCEPTION_ON_CONSTRUCT_EVERY_X_OBJECT 40
 #define VERBOSE_CLASS_MY_VECTOR 0
+#define MY_VECTOR_ENABLE_MEMORY_LEAK_FOR_TEST 0
 
 void AskToThrowException()
 {
@@ -199,7 +200,9 @@ public: // ************************ RULE OF FIVE IMPL ************************
     {
         for (size_t i = size_; i > 0; --i)
             PlacementDestroy(i - 1);
+#if not MY_VECTOR_ENABLE_MEMORY_LEAK_FOR_TEST
         delete[] data_;
+#endif
     }
 public: // ******************* STD VECTOR LIKE INTERFACE IMPL *******************
     template <typename Args>

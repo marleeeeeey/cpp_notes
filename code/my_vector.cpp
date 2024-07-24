@@ -7,6 +7,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -212,8 +213,10 @@ public: // ******************* STD VECTOR LIKE INTERFACE IMPL ******************
             MyVector<T> tmp(capacity_ * 2 + 1);
             for (size_t i = 0; i < size_; ++i)
             {
-                // TODO: this line may use move if std::is_nothrow_move_constructible<Arg>}
-                tmp.PlacementPush((*this)[i]);
+                if (std::is_nothrow_move_constructible_v<T>)
+                    tmp.PlacementPush(std::move((*this)[i]));
+                else
+                    tmp.PlacementPush((*this)[i]);
             }
             tmp.PlacementPush(std::forward<Args>(value));
             // --- Kalb's line here ---

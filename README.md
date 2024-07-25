@@ -25,10 +25,14 @@ I aim to align my coding style with the [Google C++ Style Guide](https://google.
 ### Prerequisites
 
 - C++ compiler with C++23 support (Clang, GCC, MSVC)
-- CMake (optional)
-- Ninja (optional)
-- VSCode (optional)
-- lldb (optional)
+- CMake (optional*)
+- Ninja (optional*)
+- VSCode (optional*)
+- lldb (optional*)
+- python (optional*) - for VSCode task automation.
+- Deleaker (optional*) - for memory leak detection on Windows (analog of Valgrind).
+
+_* Optional tools are used for better integration with VSCode and debugging._
 
 ### Build examples with VSCode (preferred)
 

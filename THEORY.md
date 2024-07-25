@@ -45,6 +45,11 @@
 - [`std::uncaught_exceptions()` - определение, просиходит ли размотка стека в данный момент](#stduncaught_exceptions---определение-просиходит-ли-размотка-стека-в-данный-момент)
 - [Vector top and pop - правильное проектирование для защиты от исключений](#vector-top-and-pop---правильное-проектирование-для-защиты-от-исключений)
 - [Три основные формы оператора `new`, которые нужно знать](#три-основные-формы-оператора-new-которые-нужно-знать)
+- [Контексты и интерфейсы](#контексты-и-интерфейсы)
+- [UML Basics](#uml-basics)
+- [Проектирование: важность минимизации зависимости между модулями](#проектирование-важность-минимизации-зависимости-между-модулями)
+- [SOLID: Open/Closed Principle (OCP)](#solid-openclosed-principle-ocp)
+- [Good SOLID step by step](#good-solid-step-by-step)
 
 ### Not Sorted Notes
 
@@ -1433,4 +1438,361 @@ public:
    void *raw = ::operator new(sizeof(Widget)); // возможно bad_alloc
    // только конструирование в готовой памяти
    Widget *w = new (raw) Widget;
+```
+
+### Контексты и интерфейсы
+
+- Контекст нужен чтобы сохранять инвариант.
+
+**Контекст (C-style): matrix.h**
+
+- Используем forward declaration для указателя на структуру `M`, чтобы не раскрывать внутреннюю реализацию.
+- Так устроеные многие С-API, например OpenGL.
+
+```c
+struct M;
+M* create_diag(size_t);
+M* prod(const M*, const M*);
+double det(const M*);
+void destroy(M*);
+// .....
+```
+
+**Контекст (C-style): matrix.c**
+
+```cpp
+struct M {
+    double *contents;
+    size_t x, y;
+};
+
+#define Msz sizeof(M);
+
+M* create_diag(size_t w) {
+    M* ret = malloc(Msz);
+    // .....
+}
+```
+
+**Интерфейс (C++ style): imatrix.h**
+
+- Метод `clone` является по сути виртуальным конструктором. Потому что в базовом классе вы не знаете, как правильно скопировать наследника.
+- Обратите внимание, что шаблон появляется только в реализации, а не в интерфейсе. Потому что конретное содержимое не важно для интерфейса.
+
+```cpp
+struct IM {
+    virtual IM& clone(const IM&) = 0;
+    virtual ~IM() = 0;
+// .....
+};
+```
+
+**Контекст (C++ style): matrix.hpp**
+
+```cpp
+template <typename T>
+class M : public IM {
+    T *contents;
+    size_t x, y;
+
+public:
+    M(M& rhs);
+    M& clone(const IM&) override;
+    // все реализации в том же файле
+};
+```
+
+### UML Basics
+
+**MERMAID TOOL**
+
+https://mermaid.js.org/syntax/classDiagram.html
+
+```mermaid
+classDiagram
+classA <|-- classB
+classC *-- classD
+classE o-- classF
+classG <-- classH
+classI -- classJ
+classK <.. classL
+classM <|.. classN
+classO .. classP
+```
+
+**RELATIONSHIPS**
+
+```mermaid
+classDiagram
+    Professor "*" -- "*" Book : Association
+    IMatrix <|-- Matrix : Generalization
+    IMatrix <|-- LazyMatrix : Generalization
+    Folder "1" *-- "*" File : Composition
+    Triangle "*" o-- "3" Segment : Aggregation
+```
+
+### Проектирование: важность минимизации зависимости между модулями
+
+- Ваши сущности должны быть внутренне связаны (cohesive) и внешне разделены.
+- Разделяйте всё, что может быть разделено без создания жёстких внешних связей. Пример: отделение алгоритмов от контейнеров.
+
+> "Связанность - это мера силы ассоциации элементов внутри модуля. Высокосвязанный модуль - это набор операторов и данных, которые должны рассматриваться как единое целое, потому что они тесно связаны между собой."
+> - Том ДеМарко
+
+### SOLID: Open/Closed Principle (OCP)
+
+Хороший класс открыт для расширения и закрыт для модификации. То есть это значит то, что если ты хочешь поддержать какой-то новый набор геометрических примитивов для рисования, тебе для этого не нужно лезть внутрь класса и менять его там, а достаточно добавить снаружи какой-то код, который добавит функциональность к этому классу.
+
+### Good SOLID step by step
+
+**01. Bad SRP: Polygon3D has 3 reasons to change: geometry, screen, serialization**
+- [code/kv/ocp-bad.cc](code/kv/ocp-bad.cc)
+
+```mermaid
+classDiagram
+    class Vector3D {
+        + x, y, z
+    }
+
+    class Quaternion {
+        +Vector3D v
+        +int w
+    }
+
+    class Polygon3D {
+        -std::vector~Vector3D~ vs_
+        +void translate(const Vector3D &t)
+        +void rotate(const Quaternion &q)
+        +void draw(Screen &s)
+        +void serialize(ByteStream &bs)
+    }
+
+    Screen -- Polygon3D : 1st BAD
+    ByteStream -- Polygon3D: 2nd BAD
+    Polygon3D "1" *-- "*" Vector3D
+    Quaternion *-- Vector3D
+    Quaternion -- Polygon3D
+```
+
+**02. Good SRP: Add methods begin() and end() to Polygon3D**
+- [code/kv/ocp-good.cc](code/kv/ocp-good.cc)
+- Теперь эти методы позволяют итерироваться по вершинам многоугольника извне.
+- Но не дают менять его внутреннее состояние.
+- Таким образом мы убрали дополнительные причины менять класс.
+
+```mermaid
+classDiagram
+    class Vector3D {
+        + x, y, z
+    }
+
+    class Quaternion {
+        +Vector3D v
+        +int w
+    }
+
+    class Polygon3D {
+        -std::vector<::Vector3D::> vs_
+        +void translate(const Vector3D &t)
+        +void rotate(const Quaternion &q)
+        +It begin()
+        +It end()
+    }
+
+    Polygon3D "1" *-- "*" Vector3D
+    Quaternion *-- Vector3D
+    Quaternion -- Polygon3D
+```
+
+**03. Bad OCP**
+- [code/kv/ocp-bad.cc](code/kv/ocp-bad.cc)
+- Проблема 1: Класс закрыт для расширения - приходится изменять метод `render` при добавлении новых фигур. Открыт только для модификации. Должно быть наоборот.
+- Проблема 2: `Vector3D` при наследовании от `IFigure` перестает быть агрегатом. Приходится писать для него конструкторы и деструкторы.
+  - **Агрегаты** хороши тем, что их можно передавать в C-интерфейсы.
+
+```mermaid
+classDiagram
+    class Shape {
+        <<enumeration>>
+        VECTOR
+        POLYGON
+        ...
+    }
+
+    class IFigure {
+        +Shape shape()
+    }
+
+    class Vector3D {
+        + x, y, z
+    }
+
+    class Polygon3D {
+        +vs: std::vector~Vector3D~
+    }
+
+    class IScreen {
+        +draw(f: const IFigure&)
+    }
+
+    class Screen {
+        +figures_: std::vector~IFigure*~
+        +void drawVector(v: const Vector3D&)
+        +void drawPolygon(p: const Polygon3D&)
+        +void draw(f: const IFigure&) - means ADD
+        +void render()
+    }
+
+    Shape -- IFigure
+    IFigure <|-- Vector3D
+    IFigure <|-- Polygon3D
+    IScreen <|-- Screen
+    IScreen o-- IFigure
+```
+
+**04. Good OCP (but conflict with SRP)**
+- [code/kv/ocp-good.cc](code/kv/ocp-good.cc)
+- Используем виртуальные функции вместо switch-case. Интерфейс `IDrawable`. По сути заменяем `IFigure` на `IDrawable`.
+- Используем `std::shared_ptr` для хранения фигур в `Screen`, чтобы избежать утечек памяти.
+- Проблема 1: Класс `Vector3D` теперь вынужден не просто хранить данные, но и знать, как себя рисовать. Это нарушает принцип единственной ответственности (SRP). **Мы пришли к конфликту между OCP и SRP.** Эту проблему годами не видел Мартин Фаулер. Первый доклад, в котором это противоречение было замечено - это CppCon 2017: Klaus Iglberger.
+- Хотя на wiki учебниках данный пример считается хорошим, на самом деле он плохой. Потому что нарушает SRP.
+
+```mermaid
+classDiagram
+    class IDrawable {
+        +draw(f: const IScreen &): void
+    }
+
+    class IScreen {
+        +draw(f: std::shared_ptr~IDrawable~): void
+    }
+
+    class Vector3D {
+        + x, y, z
+        +draw(s: const IScreen &): void
+    }
+
+    class Polygon3D {
+        +vs_: std::vector~Vector3D~
+        +draw(s: const IScreen &): void
+    }
+
+    class Screen {
+        +figures_: std::vector~std::shared_ptr~IDrawable~~
+        +draw(f: const IDrawable &): void - means ADD
+        +render(): void
+    }
+
+    IDrawable <|-- Vector3D
+    IDrawable <|-- Polygon3D
+    IScreen <|-- Screen
+    IScreen "1" o-- "*" IDrawable
+
+```
+
+**05. Good OCP and SRP**
+- [code/kv/str-model.cc](code/kv/str-model.cc)
+- **Sean Parent (Adobe)** - придумал **модель с нормальной value semantics**. Чтобы избежать проблемы хранения указателей на данные и incedental data structures (когда возникают циклы и кросс ссылки между данными). Наследование и динамический полиморфизм не должны быть частью интерфеса, они должны быть частью реализации.
+  - У него есть цель в проектировании: **no sinchronization primitives** TODO (watch later).
+  - Выражение: **Inheritance is the base class of evil**.
+- **Tony Van Eerd** TODO(watch later): **When choosing a container, remember vector is best; leave a comment to explain if you choose from the rest!**
+- Фишка подхода
+  - Наследование теперь деталь реализации (виртуальный метод Draw).
+  - Он **делеагирует рисование внешним фукциям** - за счет этого происходит разрешение проблемы (OCR) прошлой дигараммы.
+  - Мы внутри храним unique_ptr на интерфейс, за которым скрывается реализация (не доступна извне).
+  - Осталось только решить проблему необходимости писать конструкторы с конкретными объектами - это **решается через шаблонны**.
+  - **Мы сделаем шаблонный наследник от общего нешаблонного интерфейса.**
+
+```cpp
+    Drawable(int x) : self_(std::make_unique<DrawableInt>(std::move(x))) {}
+    Drawable(Vector3D x) : self_(std::make_unique<DrawableVector3D>(std::move(x))) {}
+```
+
+```mermaid
+classDiagram
+
+    note for Screen "free func:\nvoid draw(int x, Screen &out)\nvoid draw(Vector3D, Screen &out)"
+
+    class Drawable {
+        -std::unique_ptr~IDrawable~ self
+        +Drawable(v: Vector3D)
+        +Drawable(x: int)
+    }
+
+    class IDrawable {
+        +draw(s: Screen &): void
+    }
+
+    class Vector3D {
+        x, y, z
+    }
+
+    class DrawableVector3D {
+        +Vector3D data
+    }
+
+    class DrawableInt {
+        +int data
+    }
+
+    Screen "1" -- "*" Drawable
+    Drawable *-- IDrawable
+    IDrawable <|-- DrawableVector3D
+    IDrawable <|-- DrawableInt
+```
+
+**06. Good OCP and SRP (add template)**
+- [code/kv/common-model.cc](code/kv/common-model.cc)
+- Добавили шаблонный конструктор в Drawable.
+- Итого: у нас реализована value semantics.
+- Мы можем добавлять значения в документ по значению и не боятся реккурсивной вложенности.
+
+```cpp
+int main()
+{
+    Model document;
+    document.push_back(0);
+    document.push_back(Polygon3D{{2, 1, 6}, {-3, 7, 4}});
+    document.push_back(document);
+    document.push_back(Vector3D{-3, 7, 4});
+    draw(document, std::cout, 0);
+}
+```
+
+```mermaid
+classDiagram
+
+    note for Screen "free func:\nvoid draw(int x, Screen &out)\nvoid draw(Vector3D, Screen &out)"
+
+    class Drawable {
+        +std::unique_ptr~IDrawable~ self
+        +template~typename T~ Drawable(T x)
+    }
+
+    class IDrawable {
+        +void draw(Screen &): void
+    }
+
+    class DrawableObject~T~ {
+        +T data
+        +void draw(Screen &): void
+    }
+
+    class Vector3D {
+        x, y, z
+    }
+
+    class Polygon3D {
+        +std::vector~Vector3D~ vs_
+        +void translate(const Vector3D &)
+        +void rotate(const Quaternion &)
+        +It begin()
+        +It end()
+    }
+
+    Drawable *-- IDrawable
+    IDrawable <|-- DrawableObject
+    Screen "1" *-- "*" Drawable
+    DrawableObject -- Vector3D : as Template
+    DrawableObject -- Polygon3D : as Template
 ```

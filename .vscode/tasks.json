@@ -5,7 +5,7 @@
   "tasks": [
     {
       "label": "010. Set Current File As Sourse",
-      "command": "cmake -E echo code/${fileBasename} > file_to_build.txt",
+      "command": "cmake -E echo ${file} > file_to_build.txt && python ${workspaceFolder}/replace_slashes.py",
       "type": "shell",
       "options": {
         "statusbar": {
@@ -17,7 +17,7 @@
     {
       "label": "020. + Configure",
       "command": [
-        "cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake -E copy build/Debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake -E copy build/Debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {

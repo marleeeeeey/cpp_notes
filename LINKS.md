@@ -141,7 +141,7 @@
   - https://arne-mertz.de/2016/01/modern-c-features-keyword-noexcept/ [TODO]
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 13. Проектирование - 2021
-  - https://www.youtube.com/watch?v=D6nn1PLJrzg [DONE]
+  - https://www.youtube.com/watch?v=D6nn1PLJrzg
     - 00:00:00 Снова контексты и интерфейсы
     - 00:08:30 Проектирование
     - 00:11:06 UML
@@ -152,9 +152,74 @@
     - 00:44:45 Инцидентные структуры данных
     - 00:52:10 Parent inversion
     - 01:06:30 Подстановка Лисков
-    - 01:09:20 Ковариантность к генерализации
+    - 01:09:20 Ковариантность к генерализации [TODO - Пересмотреть]
     - 01:15:20 Разделение интерфейса
     - 01:17:45 Инверсия зависимостей
     - 01:24:10 Немного о хорошем коде
     - 01:30:05 POLI и POLA
     - 01:36:10 Литература и заключение
+
+- GOF - Design Patterns: Elements of Reusable Object-Oriented Software - 1994
+  - https://www.oreilly.com/library/view/design-patterns-elements/0201633612/ [TODO]
+
+- Robert C. Martin - Design Principles and Design Patterns - 2000 [TODO]
+
+- Kent Beck - Test-Driven Development by Example - 2000 [TODO]
+
+- Martin Reddy - API Design for C++ - 2011
+  - https://www.amazon.com/API-Design-C-Martin-Reddy/dp/0123850037 [TODO]
+
+- Steve McConnell - Code Complete: A Practical Handbook of Software Construction - 1993
+  - https://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670 [TODO]
+
+- Klaus Iglberger - Breaking Dependencies: The SOLID Principles - CppCon 2019
+  - https://www.youtube.com/watch?v=Ntraj80qN2k [DONE]
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 14 (доп). OpenGL и Vulkan - 2022
+  - https://www.youtube.com/watch?v=yJE34EuZNzs [TODO]
+    - 00:00:00 Первый квадрат
+    - 00:09:56 Фиксированный конвейер
+    - 00:14:04 Понятие "расширения"
+    - 00:23:04 Нефиксированный конвейер и вершинные шейдеры
+    - 00:31:35 Фрагментные шейдеры
+    - 00:39:30 Трёхмерная графика
+    - 00:47:52 Culling и Depth
+    - 00:52:05 Логическая модель и проектирование
+    - 00:59:40 Проблемы OpenGL
+    - 01:04:38 Vulkan API: основы
+    - 01:12:30 Конвейер Вулкана и шейдеры
+    - 01:22:00 Цикл отображения и синхронизация
+    - 01:31:05 Управление памятью
+    - 01:38:38 Пример
+    - 01:41:21 Объектная модель Вулкана
+    - 01:46:44 VulkanHPP и C++API
+    - 01:55:13 Обзор литературы и cliffhanger
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 15. Вычисления на GPU. - 2022
+  - https://www.youtube.com/watch?v=Ccclo1GCX0A [TODO]
+    - 00:00:00 Гетерогенные вычисления и OpenCL
+    - 00:09:31 Владение ресурсами и контексты
+    - 00:14:40 Пересылка данных и C++API
+    - 00:24:30 Модель вычислений SIMT
+    - 00:34:10 На пути к vector add
+    - 00:51:00 Матрицы: локальная и приватная память
+    - 01:04:15 Барьеры и демонстрация GEMM
+    - 01:13:25 Оффлайн-компиляция и ассемблер GPU
+    - 01:20:50 Гистограмма и атомики
+    - 01:33:15 Битоническая сортировка
+    - 01:38:10 Литература и расширения OpenCL
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 16. Специализация и инстанцирование - 2022
+  - https://www.youtube.com/watch?v=UrL5gdW2JOM
+    - 00:00:00 Снова про OpenCL C++ API
+    - 00:03:30 Идея шаблонной специализации
+    - 00:12:30 Соглашение о namespace detail
+    - 00:21:06 Идея характеристик типов
+    - 00:29:22 Инстанцирование и специализации
+    - 00:38:32 Ленивость инстанцирования
+    - 00:48:25 Частичная специализация
+    - 00:59:57 Unique pointers и частичные специализации
+    - 01:04:50 Специализация и LSP
+    - 01:07:41 Двухфазное разрешение имён
+    - 01:15:31 Устранение неоднозначности
+    - 01:21:40 Cliffhanger

@@ -1,57 +1,65 @@
 - [Not Sorted Notes](#not-sorted-notes)
-- [RVO and copy constructors](#rvo-and-copy-constructors)
-- [volatile](#volatile)
-- [`operator->`](#operator-)
-- [R-Value и L-Value ссылки и выражения. `std::move`](#r-value-и-l-value-ссылки-и-выражения-stdmove)
-- [Move Semantics and `std::exchange`](#move-semantics-and-stdexchange)
-- [Move Assignment Operator Implementation](#move-assignment-operator-implementation)
-- [Why Self-assignment Check is Not Required for Move Assignment Operator](#why-self-assignment-check-is-not-required-for-move-assignment-operator)
-- [Default Special Member Functions Generation](#default-special-member-functions-generation)
-- [Правило Нуля и Правило Пяти](#правило-нуля-и-правило-пяти)
-- [Forwarding References and Perfect Forwarding](#forwarding-references-and-perfect-forwarding)
-- [Forwarding References Example](#forwarding-references-example)
-- [Как устроен `std::move`](#как-устроен-stdmove)
-- [Опасности Forwarding References](#опасности-forwarding-references)
-- [Overloading set using Forwarding References](#overloading-set-using-forwarding-references)
-- [`std::move` may prevent Return Value Optimization (RVO)](#stdmove-may-prevent-return-value-optimization-rvo)
-- [Copy-and-Swap to the Rescue!](#copy-and-swap-to-the-rescue)
-- [Copy-and-Swap приводит к дублированию](#copy-and-swap-приводит-к-дублированию)
-- [By-Value Assignment Operator](#by-value-assignment-operator)
-- [Правило четырех с половиной (Rule of Four and a Half)](#правило-четырех-с-половиной-rule-of-four-and-a-half)
-- [Complete Vector Implementation with Comments](#complete-vector-implementation-with-comments)
-- [Perfect Forwarding and Universal References (Josuttis Explanation)](#perfect-forwarding-and-universal-references-josuttis-explanation)
-- [Explanation of the Slide with `enable_if` and SFINAE in C++17](#explanation-of-the-slide-with-enable_if-and-sfinae-in-c17)
-- [Функторы и лямбда выражения быстрее указателей функциях сортировки (inlining)](#функторы-и-лямбда-выражения-быстрее-указателей-функциях-сортировки-inlining)
-- [Указатели на методы классов](#указатели-на-методы-классов)
-- [Fold Expressions](#fold-expressions)
-- [chrono DATES](#chrono-dates)
-- [Таблица виртуальных функций (vtable)](#таблица-виртуальных-функций-vtable)
-- [Empty Base Class Optimizations (EBCO)](#empty-base-class-optimizations-ebco)
-- [EBCO и unique\_pointer](#ebco-и-unique_pointer)
-- [Аргументы по умолчанию связываются статически (важно для виртуальных методов)](#аргументы-по-умолчанию-связываются-статически-важно-для-виртуальных-методов)
-- [Non-Virtual Interface (NVI) Pattern for Default Arguments](#non-virtual-interface-nvi-pattern-for-default-arguments)
-- [Pure Virtual Call](#pure-virtual-call)
-- [Два полиморфизма](#два-полиморфизма)
-- [Перегрузка виртуальных функций](#перегрузка-виртуальных-функций)
-- [static\_cast and Virtual Inheritance](#static_cast-and-virtual-inheritance)
-- [Runtime Type Information](#runtime-type-information)
-- [typeid and typeinfo](#typeid-and-typeinfo)
-- [RTTI and dynamic\_cast](#rtti-and-dynamic_cast)
-- [Exceptions](#exceptions)
-- [Гарантии безопасности исключений](#гарантии-безопасности-исключений)
-- [Документировать методы static\_assert очень полезно](#документировать-методы-static_assert-очень-полезно)
-- [Вызывает ли вектор конструторы объектов при создании вектора заданного размера без инициализации?](#вызывает-ли-вектор-конструторы-объектов-при-создании-вектора-заданного-размера-без-инициализации)
-- [Оператор noexcept, аннотация noexcept и условный noexcept](#оператор-noexcept-аннотация-noexcept-и-условный-noexcept)
-- [`std::uncaught_exceptions()` - определение, просиходит ли размотка стека в данный момент](#stduncaught_exceptions---определение-просиходит-ли-размотка-стека-в-данный-момент)
-- [Vector top and pop - правильное проектирование для защиты от исключений](#vector-top-and-pop---правильное-проектирование-для-защиты-от-исключений)
-- [Три основные формы оператора `new`, которые нужно знать](#три-основные-формы-оператора-new-которые-нужно-знать)
-- [Контексты и интерфейсы](#контексты-и-интерфейсы)
-- [UML Basics](#uml-basics)
-- [Проектирование: важность минимизации зависимости между модулями](#проектирование-важность-минимизации-зависимости-между-модулями)
-- [SOLID: Open/Closed Principle (OCP)](#solid-openclosed-principle-ocp)
-- [Good SOLID step by step](#good-solid-step-by-step)
+- [Basics](#basics)
+  - [RVO and copy constructors](#rvo-and-copy-constructors)
+  - [volatile](#volatile)
+  - [`operator->`](#operator-)
+  - [R-Value и L-Value ссылки и выражения. `std::move`](#r-value-и-l-value-ссылки-и-выражения-stdmove)
+  - [Move Semantics and `std::exchange`](#move-semantics-and-stdexchange)
+  - [Move Assignment Operator Implementation](#move-assignment-operator-implementation)
+  - [Why Self-assignment Check is Not Required for Move Assignment Operator](#why-self-assignment-check-is-not-required-for-move-assignment-operator)
+  - [Default Special Member Functions Generation](#default-special-member-functions-generation)
+  - [Правило Нуля и Правило Пяти](#правило-нуля-и-правило-пяти)
+  - [Forwarding References and Perfect Forwarding](#forwarding-references-and-perfect-forwarding)
+  - [Forwarding References Example](#forwarding-references-example)
+  - [Как устроен `std::move`](#как-устроен-stdmove)
+  - [Опасности Forwarding References](#опасности-forwarding-references)
+  - [Overloading set using Forwarding References](#overloading-set-using-forwarding-references)
+  - [`std::move` may prevent Return Value Optimization (RVO)](#stdmove-may-prevent-return-value-optimization-rvo)
+  - [Copy-and-Swap to the Rescue!](#copy-and-swap-to-the-rescue)
+  - [Copy-and-Swap приводит к дублированию](#copy-and-swap-приводит-к-дублированию)
+  - [By-Value Assignment Operator](#by-value-assignment-operator)
+  - [Правило четырех с половиной (Rule of Four and a Half)](#правило-четырех-с-половиной-rule-of-four-and-a-half)
+  - [Complete Vector Implementation with Comments](#complete-vector-implementation-with-comments)
+  - [Perfect Forwarding and Universal References (Josuttis Explanation)](#perfect-forwarding-and-universal-references-josuttis-explanation)
+  - [Explanation of the Slide with `enable_if` and SFINAE in C++17](#explanation-of-the-slide-with-enable_if-and-sfinae-in-c17)
+  - [Функторы и лямбда выражения быстрее указателей функциях сортировки (inlining)](#функторы-и-лямбда-выражения-быстрее-указателей-функциях-сортировки-inlining)
+  - [Указатели на методы классов](#указатели-на-методы-классов)
+  - [Fold Expressions](#fold-expressions)
+  - [chrono DATES](#chrono-dates)
+- [Virtual Functions and Polymorphism](#virtual-functions-and-polymorphism)
+  - [Таблица виртуальных функций (vtable)](#таблица-виртуальных-функций-vtable)
+  - [Empty Base Class Optimizations (EBCO)](#empty-base-class-optimizations-ebco)
+  - [EBCO и unique\_pointer](#ebco-и-unique_pointer)
+  - [Аргументы по умолчанию связываются статически (важно для виртуальных методов)](#аргументы-по-умолчанию-связываются-статически-важно-для-виртуальных-методов)
+  - [Non-Virtual Interface (NVI) Pattern for Default Arguments](#non-virtual-interface-nvi-pattern-for-default-arguments)
+  - [Pure Virtual Call](#pure-virtual-call)
+  - [Два полиморфизма](#два-полиморфизма)
+  - [Перегрузка виртуальных функций](#перегрузка-виртуальных-функций)
+  - [static\_cast and Virtual Inheritance](#static_cast-and-virtual-inheritance)
+- [Very expensive stuff in C++ (RTTI, Exceptions)](#very-expensive-stuff-in-c-rtti-exceptions)
+  - [Runtime Type Information](#runtime-type-information)
+  - [typeid and typeinfo](#typeid-and-typeinfo)
+  - [RTTI and dynamic\_cast](#rtti-and-dynamic_cast)
+  - [Exceptions](#exceptions)
+  - [Гарантии безопасности исключений](#гарантии-безопасности-исключений)
+  - [Документировать методы static\_assert очень полезно](#документировать-методы-static_assert-очень-полезно)
+  - [Вызывает ли вектор конструторы объектов при создании вектора заданного размера без инициализации?](#вызывает-ли-вектор-конструторы-объектов-при-создании-вектора-заданного-размера-без-инициализации)
+  - [Оператор noexcept, аннотация noexcept и условный noexcept](#оператор-noexcept-аннотация-noexcept-и-условный-noexcept)
+  - [`std::uncaught_exceptions()` - определение, просиходит ли размотка стека в данный момент](#stduncaught_exceptions---определение-просиходит-ли-размотка-стека-в-данный-момент)
+  - [Vector top and pop - правильное проектирование для защиты от исключений](#vector-top-and-pop---правильное-проектирование-для-защиты-от-исключений)
+  - [Три основные формы оператора `new`, которые нужно знать](#три-основные-формы-оператора-new-которые-нужно-знать)
+- [Проектирование](#проектирование)
+  - [Контексты и интерфейсы](#контексты-и-интерфейсы)
+  - [UML Basics](#uml-basics)
+  - [Принципы SOLID](#принципы-solid)
+  - [Проектирование: важность минимизации зависимости между модулями](#проектирование-важность-минимизации-зависимости-между-модулями)
+  - [SOLID: 2. Open/Closed Principle (OCP)](#solid-2-openclosed-principle-ocp)
+  - [SRP and OCP Conflict and Resolution](#srp-and-ocp-conflict-and-resolution)
+  - [SOLID: 3. Liskov Substitution Principle (LSP)](#solid-3-liskov-substitution-principle-lsp)
+  - [SOLID: 4. Interface Segregation Principle (ISP)](#solid-4-interface-segregation-principle-isp)
+  - [SOLID: 5. Dependency Inversion Principle (DIP)](#solid-5-dependency-inversion-principle-dip)
 
-### Not Sorted Notes
+## Not Sorted Notes
 
 - Если добавить 1 к указателю на массив, то у нас произойдет **скачок равный размеру массива**.
 - **Манглирование**, которое существует в языке C++, позволяет делать перегрузку функций, добавлять методы к классам, и создавать семейство шаблонных функций. Язык C, в отличие от C++, не имеет манглирования, но он имеет **строгую гарантию по именам**. Поэтому язык C используется для создания согласованных API.
@@ -88,6 +96,8 @@ public:
 };
 
 ```
+
+## Basics
 
 ### RVO and copy constructors
 
@@ -959,6 +969,8 @@ constexpr auto today = 2018y/September/25;
 
 In this example, the `std::chrono` namespace is used to define date literals in different formats. The DSL (Domain-Specific Language) allows for clear and concise date definitions using user-defined literals (UDLs) and the `/` operator to separate day, month, and year.
 
+## Virtual Functions and Polymorphism
+
 ### Таблица виртуальных функций (vtable)
 
 - При создании класса с хотя бы одним виртуальным методом в него добавляется vptr.
@@ -1159,6 +1171,8 @@ d.pow(1.5); // какой метод будет вызван?
   - Т.к. в нижнем объекте лежит оторванный кусок виртуально наследованного объекта.
   - Разный адрес по разным веткам иерархии ведет к одному и тому же объекту - поэтому `static_cast` не работает.
   - Тут поможет `dynamic_cast` and RTTI, хотя это уже overkill.
+
+## Very expensive stuff in C++ (RTTI, Exceptions)
 
 ### Runtime Type Information
 
@@ -1440,6 +1454,8 @@ public:
    Widget *w = new (raw) Widget;
 ```
 
+## Проектирование
+
 ### Контексты и интерфейсы
 
 - Контекст нужен чтобы сохранять инвариант.
@@ -1531,6 +1547,23 @@ classDiagram
     Triangle "*" o-- "3" Segment : Aggregation
 ```
 
+### Принципы SOLID
+
+- **SRP** – single responsibility principle
+  - каждый контекст должен иметь одну ответственность
+
+- **OCP** – open-close principle
+  - каждый контекст должен быть закрыт для изменения и открыт для расширения
+
+- **LSP** – Liskov substitution principle
+  - частный класс должен иметь возможность свободно заменять общий
+
+- **ISP** – interface separation principle
+  - Тип не должен зависеть от тех интерфейсов, которые он не использует
+
+- **DIP** – dependency inversion principle
+  - Высокоуровневые классы не должны зависеть от низкоуровневых
+
 ### Проектирование: важность минимизации зависимости между модулями
 
 - Ваши сущности должны быть внутренне связаны (cohesive) и внешне разделены.
@@ -1539,11 +1572,11 @@ classDiagram
 > "Связанность - это мера силы ассоциации элементов внутри модуля. Высокосвязанный модуль - это набор операторов и данных, которые должны рассматриваться как единое целое, потому что они тесно связаны между собой."
 > - Том ДеМарко
 
-### SOLID: Open/Closed Principle (OCP)
+### SOLID: 2. Open/Closed Principle (OCP)
 
 Хороший класс открыт для расширения и закрыт для модификации. То есть это значит то, что если ты хочешь поддержать какой-то новый набор геометрических примитивов для рисования, тебе для этого не нужно лезть внутрь класса и менять его там, а достаточно добавить снаружи какой-то код, который добавит функциональность к этому классу.
 
-### Good SOLID step by step
+### SRP and OCP Conflict and Resolution
 
 **01. Bad SRP: Polygon3D has 3 reasons to change: geometry, screen, serialization**
 - [code/kv/ocp-bad.cc](code/kv/ocp-bad.cc)
@@ -1654,7 +1687,7 @@ classDiagram
 - [code/kv/ocp-good.cc](code/kv/ocp-good.cc)
 - Используем виртуальные функции вместо switch-case. Интерфейс `IDrawable`. По сути заменяем `IFigure` на `IDrawable`.
 - Используем `std::shared_ptr` для хранения фигур в `Screen`, чтобы избежать утечек памяти.
-- Проблема 1: Класс `Vector3D` теперь вынужден не просто хранить данные, но и знать, как себя рисовать. Это нарушает принцип единственной ответственности (SRP). **Мы пришли к конфликту между OCP и SRP.** Эту проблему годами не видел Мартин Фаулер. Первый доклад, в котором это противоречение было замечено - это CppCon 2017: Klaus Iglberger.
+- Проблема 1: Класс `Vector3D` теперь вынужден не просто хранить данные, но и знать, как себя рисовать. Это нарушает принцип единственной ответственности (SRP). **Мы пришли к конфликту между OCP и SRP.** Эту проблему годами не видел Мартин Фаулер. Первый доклад, в котором это противоречение было замечено - это CppCon 2017: Klaus Iglberger - Breaking Dependencies: The SOLID Principles.
 - Хотя на wiki учебниках данный пример считается хорошим, на самом деле он плохой. Потому что нарушает SRP.
 
 ```mermaid
@@ -1745,7 +1778,9 @@ classDiagram
 - [code/kv/common-model.cc](code/kv/common-model.cc)
 - Добавили шаблонный конструктор в Drawable.
 - Итого: у нас реализована value semantics.
-- Мы можем добавлять значения в документ по значению и не боятся реккурсивной вложенности.
+- Мы можем добавлять значения в документ по значению и не боятся реккурсивной вложенности - побороли проблему incedental data structures.
+- Единственное ограничение на тип, которые может быть добавлен в документ это наличие для него внешней фукнции draw. Это прекрасно!
+- Техника **Parent Reversal** - когда конкретное уточнение выносится в шаблонный параметр. Первым ее ввел Sean Parent.
 
 ```cpp
 int main()
@@ -1796,3 +1831,65 @@ classDiagram
     DrawableObject -- Vector3D : as Template
     DrawableObject -- Polygon3D : as Template
 ```
+
+### SOLID: 3. Liskov Substitution Principle (LSP)
+
+- Более общие классы должны быть более общими и по составу и по поведению.
+
+class Polygon3D : public Polygon2D;
+
+- Это читается как: трёхмерный полигон может быть использован во всех контекстах, где нам нужен двумерный полигон. Если это некорректно, наследовать нельзя.
+- **Предусловия алгоритмов не могут быть усилены производным классом**.
+- **Постусловия алгоритмов не могут быть ослаблены производным классом**.
+- Важной концепцией для LSP является ковариантность.
+
+### SOLID: 4. Interface Segregation Principle (ISP)
+
+**Пример плохого проектирования**
+- Здесь менеджер зависит от интерфейса eat. В итоге его должны реализовать роботы.
+- Как только мы где то видим виртуальный метод, который ничего не делает, это означает, что нам надо разбить интерфейс.
+
+```cpp
+struct IWorker {
+    virtual void work() = 0;
+    virtual void eat() = 0;
+    // .....
+};
+
+class Robot : public IWorker {
+    void work() override;
+    void eat() override {
+        // do nothing
+    }
+};
+
+class Manager {
+    IWorker *subdue;
+public:
+    void manage() {
+        subdue->work();
+    }
+};
+```
+
+**Пример хорошего проектирования**
+- Более общие классы должны быть более общими
+- Такое чувство, что это SRP restated
+
+```cpp
+struct IWorkable {
+    virtual void work() = 0;
+    // .....
+};
+
+class Robot : public IWorkable {
+    void work() override;
+};
+```
+
+### SOLID: 5. Dependency Inversion Principle (DIP)
+
+- Kent Beck: "Dependency is the key problem in software development at all scales."
+- Высокоуровневые классы не должны зависеть от низкоуровневых. Оба должны зависеть от абстракций.
+- Все зависимости вида композиции, агрегации и т.д. (кроме последнего узла наследования) должны идти на уровне абстрактных классов.
+- Пример: розетка и штекер.

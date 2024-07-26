@@ -58,6 +58,15 @@
   - [SOLID: 3. Liskov Substitution Principle (LSP)](#solid-3-liskov-substitution-principle-lsp)
   - [SOLID: 4. Interface Segregation Principle (ISP)](#solid-4-interface-segregation-principle-isp)
   - [SOLID: 5. Dependency Inversion Principle (DIP)](#solid-5-dependency-inversion-principle-dip)
+- [Шаблоны](#шаблоны)
+  - [C Api Wrapper](#c-api-wrapper)
+  - [Type traits для единого интерфейса вокруг разногодного API](#type-traits-для-единого-интерфейса-вокруг-разногодного-api)
+  - [Специализация и инстанцирование](#специализация-и-инстанцирование)
+  - [Частичная специализация классов](#частичная-специализация-классов)
+  - [Специализация по non-type параметрам](#специализация-по-non-type-параметрам)
+  - [Специализация по семейству похожих типов](#специализация-по-семейству-похожих-типов)
+  - [Специализация для всех фукнций](#специализация-для-всех-фукнций)
+  - [Пример частичной специализации для массивов](#пример-частичной-специализации-для-массивов)
 
 ## Not Sorted Notes
 
@@ -1893,3 +1902,211 @@ class Robot : public IWorkable {
 - Высокоуровневые классы не должны зависеть от низкоуровневых. Оба должны зависеть от абстракций.
 - Все зависимости вида композиции, агрегации и т.д. (кроме последнего узла наследования) должны идти на уровне абстрактных классов.
 - Пример: розетка и штекер.
+
+## Шаблоны
+
+### C Api Wrapper
+
+- [code/template_specialisation_for_c_api.cpp](code/template_specialisation_for_c_api.cpp)
+
+```cpp
+
+// STEP I - REFERENCE HANDLER WITH SPECIALISATION's
+template <typename T>
+struct ReferenceHandler
+{};
+
+template <>
+struct ReferenceHandler<c_api::A>
+{
+    static int retain(c_api::A a) { return c_api::retainA(a); }
+    static int release(c_api::A a) { return c_api::releaseA(a); }
+    static int alive(c_api::A a) { return c_api::aliveA(a); }
+};
+
+// STEP II - WRAPPER
+template <typename CApiType>
+class Wrapper
+{
+    CApiType obj_;
+public:
+    Wrapper(CApiType obj) : obj_(obj) {}
+    ~Wrapper()
+    {
+        if (ReferenceHandler<CApiType>::alive(obj_))
+            release();
+    }
+
+    Wrapper(const Wrapper& other)
+    {
+        obj_ = other.obj_;
+        retain();
+    }
+
+    // ...
+}
+
+// STEP III - DEVICE
+// Hide the hadles from the c api and wrapper internals
+// TODO. До конца не понял зачем нам этот класс.
+template <typename CApiType>
+class Device : public details::Wrapper<c_api::A>
+{
+    // Device is a wrapper. This means we can create base class with the same type as Device.
+    Device(const Device& other) : details::Wrapper<CApiType>(other) {}
+
+    Device& operator=(const Device& other)
+    {
+        details::Wrapper<CApiType>::operator=(other);
+        return *this;
+    }
+};
+
+```
+
+### Type traits для единого интерфейса вокруг разногодного API
+
+**Проблема**
+
+```cpp
+// У нас есть возможность запросить информацию о девайсе уродливым способом:
+char buf[STRING_BUFSIZE];
+::clGetPlatformInfo(pid, CL_PLATFORM_NAME,
+                    sizeof(buf), buf, NULL);
+
+cl_uint ubuf;
+::clGetDeviceInfo(devid, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
+                  sizeof(ubuf), &ubuf, NULL);
+
+// Мы бы хотели:
+
+std::string pname = p.getInfo<CL_PLATFORM_NAME>();
+unsigned md = d.getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>();
+```
+
+**Решение**
+
+- [code/template_type_traits.cpp](code/template_type_traits.cpp)
+
+```cpp
+
+// Empty primary template to generate an error by default
+template <typename T, int Name> struct param_traits {};
+
+// One of many specialisations to match specific Tag::Value to return type.
+// Example: `EnvInfoTag::Pressure` should return `double`.
+template <> struct param_traits<EnvInfoTag, Pressure>
+{
+    enum { value = Pressure };
+    using type = double;
+};
+
+class DeviceWrapper
+{
+    Device* dev_;
+public:
+    DeviceWrapper(Device* dev) : dev_(dev) {}
+
+    template <DeviceInfoTag name>
+    typename param_traits<DeviceInfoTag, name>::type getInfo()
+    {
+        get_info(dev_, name);
+    }
+};
+
+int main()
+{
+    DeviceWrapper devWrapper(&dev);
+    // TODO - doesn't compile. See https://youtu.be/UrL5gdW2JOM?t=1281
+    devWrapper.getInfo<Pressure>();
+}
+```
+
+### Специализация и инстанцирование
+
+- **Шаблон** - это чертеж финального кода, но не сам код.
+  - **Шаблон класса**
+  - **Шаблон функции**
+  - **Шаблон переменной**
+  - **Шаблон алиаса** (using)
+  - **Шаблон лямбда-функции**
+
+- **Primary template** - это шаблон класса или функции, который определяет общий случай.
+- **Специализация** - шаблон класса может быть специализирован, т.е. его частный случай для конретного типа может быть указан непосредственно.
+  - **Явная специализация** - это когда мы указываем компилятору, что для конкретного типа надо использовать другую реализацию.
+  - **Специализации можно удалять** `template <> void foo<int>(int t) = delete;`.
+  - Потобным образом можно удалять и перегрузки функций: `void foo(int) = delete;`.
+  - **Частичная специализация** - Доступна только для шаблонов классов.
+
+- **Инстанцирование (экземплифицирование)** - это процесс порождения специализации (по чертежу гайки делаем гайку).
+  - **Явное инстанцирование** - это когда мы явно указываем компилятору, что надо сгенерировать функцию для конкретного типа.
+    - **Шаблоны инстанцируются лениво** https://youtu.be/UrL5gdW2JOM?t=2330
+  - **Неявное инстанцирование** - компилятор порождает экземпляр через **подтановку** указанного типа в шаблон. Тело ровно такое же, как указано в шаблоне. У каждой инстанцированной функции уникальное манглированное имя.
+  - **Явно блокировать неявное инстанцирование** можно через `extern template void foo<int>(int t);`. Это говорит компилятору, что инстанцировать эту функцию не надо, потому что она уже инстанцирована в другом модуле и надо использовать её оттуда.
+
+```cpp
+template <typename T> void foo(T t) { std::cout << t; } // primary template
+template <> void foo<int>(int t) { std::cout << "int: " << t; } // явная специализация
+foo<double>(3.14); // неявное инстанцирование
+template <> void foo<double>(double t) { std::cout << "double: " << t; } // Явная специализация. Ошибка: ODR violation. Неявное инстанцирование уже было на предыдущей строке.
+// Если поменять строки 3 и 4 местами, то все будет хорошо. Потому что сначала пройдет явное инстанцирование, а неявного не будет, будет переиспользование явного.
+// https://godbolt.org/z/Y8zc7xdsd
+```
+
+### Частичная специализация классов
+
+```cpp
+template <typename T, typename U>
+class Foo {};  // primary template
+
+template <typename T>
+class Foo<T, T> {};  // case T == U
+
+template <typename T>
+class Foo<T, int> {};  // case U == int
+
+template <typename T, typename U>
+class Foo<T*, U*> {};  // case pointers
+```
+
+### Специализация по non-type параметрам
+
+```cpp
+template <typename T, int N> class Array {};  // primary template
+template <typename T> class Array<T, 3> {};   // case N == 3
+```
+
+### Специализация по семейству похожих типов
+
+```cpp
+template <typename T> class X;
+template <typename T> class X<std::vector<T>>;
+
+X<int> x1; // Foo<int>
+X<std::vector<int>> x2; // Foo<std::vector<int>>
+```
+
+### Специализация для всех фукнций
+
+```cpp
+template <typename R, typename T> struct Y;
+template <typename R, typename T> struct Y<R(T)>; // Специализация для функции, которая принимает T и возвращает R. Именно так устроен std::function.
+```
+
+### Пример частичной специализации для массивов
+
+```cpp
+
+template <typename T> struct default_delete {
+    void operator()(T *ptr) { delete ptr; }
+};
+template <typename T> struct default_delete<T[]> {
+    void operator()(T *ptr) { delete [] ptr; }
+};
+
+int main()
+{
+    std::unique_ptr<int> ui{new int()};
+    std::unique_ptr<int[]> ui2{new int[1000]()};
+}
+```

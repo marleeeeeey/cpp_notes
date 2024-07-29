@@ -87,6 +87,18 @@
   - [Идиома `for-loop&&` и AAARR (Almost Always Auto Ref Ref)](#идиома-for-loop-и-aaarr-almost-always-auto-ref-ref)
   - [`decltype(auto)` - точный вывод типа из правой части](#decltypeauto---точный-вывод-типа-из-правой-части)
   - [Perfect Forwarding and `std::forward`](#perfect-forwarding-and-stdforward)
+- [Определители типов и SFINAE](#определители-типов-и-sfinae)
+  - [Правило для `{}`](#правило-для-)
+  - [Проблема при конструировании из итераторов (для написания своего `std::vector`)](#проблема-при-конструировании-из-итераторов-для-написания-своего-stdvector)
+  - [SFINAE - Substitution Failure Is Not An Error (провал подстановки не является ошибкой)](#sfinae---substitution-failure-is-not-an-error-провал-подстановки-не-является-ошибкой)
+  - [SFINAE описатель состоит из трех компонентов](#sfinae-описатель-состоит-из-трех-компонентов)
+  - [Пишем свои `is_same`, `is_reference`, `remove_reference`, `integral_constant`, `true_type`, `false_type`](#пишем-свои-is_same-is_reference-remove_reference-integral_constant-true_type-false_type)
+  - [Проблемы и решения std::copy](#проблемы-и-решения-stdcopy)
+- [Вариабельные шаблоны](#вариабельные-шаблоны)
+  - [Возможные значения `...` до С++11](#возможные-значения--до-с11)
+  - [Пачки аргументов в шаблонах `...` в современном C++](#пачки-аргументов-в-шаблонах--в-современном-c)
+  - [Прозрачная оболочка для вариабельных шаблонов](#прозрачная-оболочка-для-вариабельных-шаблонов)
+  - [Шаблонные методы в классах - это зло - они нарушают инкапсуляцию](#шаблонные-методы-в-классах---это-зло---они-нарушают-инкапсуляцию)
 
 ## Not Sorted Notes
 
@@ -2497,4 +2509,276 @@ transparent(Fun fun, Arg&& arg)         // && - универсальная сс�
     return fun(std::forward<Arg>(arg)); // Вызывает move, если rvalue, иначе copy.
 }
 
+```
+
+## Определители типов и SFINAE
+
+### Правило для `{}`
+
+```cpp
+struct S { int x, y; };
+S s = {1, 2}; // aggregate
+
+struct S {
+    int x, y;
+    S(std::initializer_list<int> v) { /* ... */ }
+};
+// S s = {1, 2}; // calls initializer_list constructor
+
+struct S {
+    int x, y;
+    S(int n) : x(n), y(n) {}
+};
+S s = {3}; // calls constructor S(int)
+```
+
+Таким образом, порядок приоритета для выбора конструктора следующий:
+01. Если нет конструкторов, используется агрегатная инициализация.
+02. Если есть конструктор из `initializer_list`, используется он.
+03. Если есть любой другой конструктор, используется он.
+
+### Проблема при конструировании из итераторов (для написания своего `std::vector`)
+
+```cpp
+template <typename T>
+class MyVector {
+    // ....
+public:
+    MyVector(size_t nelts, T value);  // 1
+    template <typename Iter>
+    MyVector(Iter fst, Iter lst);     // 2
+    // ....
+};
+
+MyVector<int> mvec(2, 2); // ошибка, выбран 2
+```
+
+В данном примере, при попытке создать вектор `MyVector<int> mvec(2, 2);` возникает ошибка, так как компилятор выбирает второй конструктор (шаблонный) вместо первого, что приводит к неверной интерпретации параметров.
+
+Проблема заключается в том, что компилятор не может правильно различить вызов конструктора для задания размера и значения по умолчанию (конструктор 1) и конструктора для копирования элементов из диапазона, задаваемого итераторами (конструктор 2).
+
+### SFINAE - Substitution Failure Is Not An Error (провал подстановки не является ошибкой)
+
+- Если в результате подстановки в непосредственном контексте класса (функции, alias, переменной) возникает невидимая конструкция, эта подстановка неуспешна, но не ошибочна.
+- В этом случае второй фазы поиска имён просто не выполняется.
+
+```cpp
+template <typename T> T max(T a, T b);
+template <typename T, typename U> auto max(T a, U b);
+
+int g = max(1, 1.0); // подстановка в 1 провалена
+                     // подстановка в 2 успешна
+```
+
+**SFINAE и ошибки**
+
+- Не любая ошибочная конструкция это SFINAE. Важен контекст подстановки.
+- Здесь в контексте сигнатуры и шаблонных параметров нет никакой невалидности.
+
+```cpp
+int negate (int i) { return -i; }
+
+template <typename T> T negate(const T& t) {
+    typename T::value_type n = -t();
+    // тут используем n
+}
+
+negate(2.0); // ошибка второй фазы
+```
+
+### SFINAE описатель состоит из трех компонентов
+
+01. Primary template - основной шаблон, который описывает общий случай.
+02. Partial specialization - частичная специализация, которая описывает частный случай.
+03. Удобный type alias - для удобства использования.
+
+```cpp
+template<typename T, typename U>
+struct is_same : std::false_type {};        // primary template
+
+template<typename T>
+struct is_same<T, T> : std::true_type {};   // partial specialization
+
+template<typename T, typename U>
+using is_same_t = typename is_same<T, U>::type; // type alias
+```
+
+### Пишем свои `is_same`, `is_reference`, `remove_reference`, `integral_constant`, `true_type`, `false_type`
+
+- [code/sfinae_is_same.cpp](code/sfinae_is_same.cpp)
+- Набор type_traits предопределенных в библиотеке: https://en.cppreference.com/w/cpp/header/type_traits
+
+```cpp
+
+template <typename T, T v> struct integral_constant
+{
+    static const T value = v;
+    using value_type = T;
+    using type = integral_constant;
+    operator value_type() const noexcept { return value; }
+};
+
+using true_type = integral_constant<bool, true>;
+using false_type = integral_constant<bool, false>;
+
+template <typename T, typename U>
+struct is_same : false_type {};
+
+template<typename T>
+struct is_same<T, T> : true_type {};    // for T == T
+
+template<typename T, typename U>
+using is_same_t = typename is_same<T, U>::type;
+
+// *** is_reference (определитель) ***
+
+template<typename T> struct is_reference : false_type {};
+template<typename T> struct is_reference<T&> : true_type {};
+template<typename T> struct is_reference<T&&> : true_type {};
+
+// *** remove_reference (модификатор) ***
+
+template <typename T> struct remove_reference { using type = T; };
+template <typename T> struct remove_reference<T&> { using type = T; };
+template <typename T> struct remove_reference<T&&> { using type = T; };
+
+template <typename T>
+using remove_reference_t = typename remove_reference<T>::type;
+
+int main()
+{
+    assert(!(is_same<char, double>::value));
+    assert((is_same<char, char>::value));
+
+    assert(is_reference<int&>::value == true);
+    assert(is_reference<int&&>::value == true);
+    assert(is_reference<int>::value == false);
+
+    remove_reference_t<int&> r = 5;
+    (void)r;
+}
+```
+
+### Проблемы и решения std::copy
+
+- [code/kv/13-sfinae/benchcopy-2.cc](code/kv/13-sfinae/benchcopy-2.cc)
+- https://quick-bench.com
+
+```cpp
+
+template <typename In, typename Out>
+Out nonnaive_copy(In begin, In end, Out out) {
+  using in_type = typename std::iterator_traits<In>::value_type;
+  using out_type = typename std::iterator_traits<Out>::value_type;
+  enum {
+    Sel = std::is_trivially_copyable<in_type>::value &&             // enum можно заменить на constexpr. Но он так же известен на этапе компиляции.
+          std::is_trivially_copyable<out_type>::value &&
+          std::is_same<in_type, out_type>::value
+  };
+  return CpSel<Sel, In, Out>::select(begin, end, out);
+}
+
+template <typename InputIt, typename OutputIt>
+OutputIt long_copy(InputIt first, InputIt last, OutputIt d_first) {
+  while (first != last)
+    *d_first++ = *first++;
+  return d_first;
+}
+
+template <bool Type, typename In, typename Out> struct CpSel {      // SLOW COPY
+  static Out select(In begin, In end, Out out) {
+    return long_copy(begin, end, out);
+  }
+};
+
+template <typename In, typename Out> struct CpSel<true, In, Out> {  // FAST COPY
+  static Out select(In begin, In end, Out out) {
+    using in_type = typename std::iterator_traits<In>::value_type;
+    auto sz = (end - begin) * sizeof(in_type);
+    memcpy(&*out, &*begin, sz);                                     // &* - сначала разыменовываем итератор, получая ссылку, а потом берем адрес.
+    return out;
+  }
+};
+
+```
+
+## Вариабельные шаблоны
+
+### Возможные значения `...` до С++11
+
+- Какие возможные значения `...` мы уже знаем
+  - vararg in C: `int printf(const char* fmt, ...);`
+  - in macros: `#define LOG(fmt, ...) printf(fmt, __VA_ARGS__);`
+  - До С++11 `catch ...`
+
+### Пачки аргументов в шаблонах `...` в современном C++
+
+- Введение пачки: `template <typename... Args> void foo(Args... args);`
+  - `typename ... Args` - это пачка типов.
+  - `Args... args` - это пачка аргументов с праивльными типами.
+- `sizeof...(Args)` - количество аргументов в пачке в штуках, не в байтах.
+- Раскрытие пачки: `foo(args...);` - перечесление агрументов через запятую. **`...` Применяется к максимальному синтаксически корректному полному выражению слева от себя.**
+  - `foo(args...)` - раскрывает пачку аргументов в список аргументов.
+  - `foo(&args...)` - **составной паттерн раскрытия**. Раскрывает пачку аргументов в список аргументов с **взятием адреса**.
+  - `foo(f(args)...)` - **составной паттерн раскрытия**. Раскрывает пачку аргументов в список аргументов с **применением функции**.
+
+```cpp
+template <typename... Types> void g(Types... args) {
+    f(args...);                             // -> f(a1, a2, a3, ...)
+    f(&args...);                            // -> f(&a1, &a2, &a3, ...)
+    f(f(args)...);                          // -> f(f(a1), f(a2), f(a3), ...)
+    f(const_cast<const Types*>(&args)...);  // -> f(const_cast<const T1*>(&a1), const_cast<const T2*>(&a2), ...)
+}
+```
+
+**Задача: раскрытие пачек**
+
+```cpp
+f(h(args...) + h(args)...); // f(h(x,y,z) + h(x), h(x,y,z) + h(y), h(x,y,z) + h(z))
+f(h(args, args...)...);     // f(h(x,x,y,z),
+                            //   h(y,x,y,z),
+                            //   h(z,x,y,z));
+```
+
+### Прозрачная оболочка для вариабельных шаблонов
+
+```cpp
+
+template <typename Fun, typename... Arg>
+decltype(auto) transparent_variadic(Fun&& fun, Arg&&... arg)
+{
+    return std::forward<Fun>(fun)(std::forward<Arg>(arg)...);
+}
+
+```
+
+### Шаблонные методы в классах - это зло - они нарушают инкапсуляцию
+
+- https://godbolt.org/z/dbsPj593f
+- Такие методы нарушают инкасуляцию. И позволяют любому коду извне менять внутреннее состояние объекта.
+
+```cpp
+#include <iostream>
+
+class Foo {
+  int donottouch_ = 42;
+
+public:
+  template <typename T> void foo() {
+    std::cout << donottouch_ << std::endl;
+  }
+};
+
+struct MyTag {};
+
+template <>
+void Foo::foo<MyTag>() {
+  donottouch_ = 14;
+}
+
+int main() {
+  Foo f;
+  f.foo<MyTag>(); // change private data
+  f.foo<int>();
+}
 ```

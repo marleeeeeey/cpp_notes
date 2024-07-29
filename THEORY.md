@@ -60,13 +60,33 @@
   - [SOLID: 5. Dependency Inversion Principle (DIP)](#solid-5-dependency-inversion-principle-dip)
 - [Шаблоны](#шаблоны)
   - [C Api Wrapper](#c-api-wrapper)
-  - [Type traits для единого интерфейса вокруг разногодного API](#type-traits-для-единого-интерфейса-вокруг-разногодного-api)
+  - [Type traits для единого интерфейса вокруг разногодного API или возврат разных типов в зависимости от входного non-type параметра](#type-traits-для-единого-интерфейса-вокруг-разногодного-api-или-возврат-разных-типов-в-зависимости-от-входного-non-type-параметра)
   - [Специализация и инстанцирование](#специализация-и-инстанцирование)
   - [Частичная специализация классов](#частичная-специализация-классов)
   - [Специализация по non-type параметрам](#специализация-по-non-type-параметрам)
   - [Специализация по семейству похожих типов](#специализация-по-семейству-похожих-типов)
   - [Специализация для всех фукнций](#специализация-для-всех-фукнций)
   - [Пример частичной специализации для массивов](#пример-частичной-специализации-для-массивов)
+- [Разрешение имен в шаблонах](#разрешение-имен-в-шаблонах)
+  - [Двухфазное разрешение имен в шаблонах](#двухфазное-разрешение-имен-в-шаблонах)
+  - [Disambiguation #1: use `this->`](#disambiguation-1-use-this-)
+  - [Disambiguation #2: use `typename`](#disambiguation-2-use-typename)
+  - [Disambiguation #3: use `template`](#disambiguation-3-use-template)
+- [Вывод типов](#вывод-типов)
+  - [Вывод неуточнённого типа режет ссылки и константность](#вывод-неуточнённого-типа-режет-ссылки-и-константность)
+  - [Уточненные типы](#уточненные-типы)
+  - [Хинты для вывода через `->` (C++17)](#хинты-для-вывода-через---c17)
+  - [Хинты для вывода можно применять для агрегатов](#хинты-для-вывода-можно-применять-для-агрегатов)
+  - [`decltype` не режет типы, как `auto`](#decltype-не-режет-типы-как-auto)
+  - [`decltype` может добавлять ссылки (Четыре формы decltype)](#decltype-может-добавлять-ссылки-четыре-формы-decltype)
+  - [Расширенный синтаксис объявления фукнции для вывода типа возращаемого значения](#расширенный-синтаксис-объявления-фукнции-для-вывода-типа-возращаемого-значения)
+  - [Идиома `for-auto` режет типы](#идиома-for-auto-режет-типы)
+  - [Идиома `AAA initializers` (Almost Always Auto). `prvalue` elision](#идиома-aaa-initializers-almost-always-auto-prvalue-elision)
+  - [Правила светки ссылок `&&` и `&`](#правила-светки-ссылок--и-)
+  - [Универсальные ссылки `auto &&` (forwarding references or universal references)](#универсальные-ссылки-auto--forwarding-references-or-universal-references)
+  - [Идиома `for-loop&&` и AAARR (Almost Always Auto Ref Ref)](#идиома-for-loop-и-aaarr-almost-always-auto-ref-ref)
+  - [`decltype(auto)` - точный вывод типа из правой части](#decltypeauto---точный-вывод-типа-из-правой-части)
+  - [Perfect Forwarding and `std::forward`](#perfect-forwarding-and-stdforward)
 
 ## Not Sorted Notes
 
@@ -1964,19 +1984,17 @@ class Device : public details::Wrapper<c_api::A>
 
 ```
 
-### Type traits для единого интерфейса вокруг разногодного API
+### Type traits для единого интерфейса вокруг разногодного API или возврат разных типов в зависимости от входного non-type параметра
 
-**Проблема**
+**Возможная проблема**
 
 ```cpp
 // У нас есть возможность запросить информацию о девайсе уродливым способом:
 char buf[STRING_BUFSIZE];
-::clGetPlatformInfo(pid, CL_PLATFORM_NAME,
-                    sizeof(buf), buf, NULL);
+::clGetPlatformInfo(pid, CL_PLATFORM_NAME, sizeof(buf), buf, NULL);
 
 cl_uint ubuf;
-::clGetDeviceInfo(devid, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
-                  sizeof(ubuf), &ubuf, NULL);
+::clGetDeviceInfo(devid, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS, sizeof(ubuf), &ubuf, NULL);
 
 // Мы бы хотели:
 
@@ -1984,41 +2002,42 @@ std::string pname = p.getInfo<CL_PLATFORM_NAME>();
 unsigned md = d.getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>();
 ```
 
-**Решение**
+**Решение (упрощенный пример)**
 
 - [code/template_type_traits.cpp](code/template_type_traits.cpp)
 
 ```cpp
 
+enum class ReturnTypeTag { String, Int, Double };
+
 // Empty primary template to generate an error by default
-template <typename T, int Name> struct param_traits {};
+template <ReturnTypeTag tag> struct TypeTraits {};
 
-// One of many specialisations to match specific Tag::Value to return type.
-// Example: `EnvInfoTag::Pressure` should return `double`.
-template <> struct param_traits<EnvInfoTag, Pressure>
+// Specialization #1 for ReturnTypeTag::String returns std::string.
+template<> struct TypeTraits<ReturnTypeTag::String>
 {
-    enum { value = Pressure };
-    using type = double;
+    ReturnTypeTag tag = ReturnTypeTag::String;
+    using type = std::string;
 };
 
-class DeviceWrapper
+// Specialization #2 for ReturnTypeTag::Int returns int.
+template<> struct TypeTraits<ReturnTypeTag::Int>
 {
-    Device* dev_;
-public:
-    DeviceWrapper(Device* dev) : dev_(dev) {}
-
-    template <DeviceInfoTag name>
-    typename param_traits<DeviceInfoTag, name>::type getInfo()
-    {
-        get_info(dev_, name);
-    }
+    ReturnTypeTag tag = ReturnTypeTag::Int;
+    using type = int;
 };
+
+// Return type of method depeds on templates non-type parameter.
+template<ReturnTypeTag tag>
+typename TypeTraits<tag>::type getType() { return {}; }
 
 int main()
 {
-    DeviceWrapper devWrapper(&dev);
-    // TODO - doesn't compile. See https://youtu.be/UrL5gdW2JOM?t=1281
-    devWrapper.getInfo<Pressure>();
+    auto shouldBeStdString = getType<ReturnTypeTag::String>();
+    std::cout << typeid(shouldBeStdString).name() << std::endl; // std::string
+
+    auto shouldBeInt = getType<ReturnTypeTag::Int>();
+    std::cout << typeid(shouldBeInt).name() << std::endl; // int
 }
 ```
 
@@ -2109,4 +2128,373 @@ int main()
     std::unique_ptr<int> ui{new int()};
     std::unique_ptr<int[]> ui2{new int[1000]()};
 }
+```
+
+## Разрешение имен в шаблонах
+
+### Двухфазное разрешение имен в шаблонах
+
+- **Первая фаза** - до инстанцирования. Общая синтаксическая проверка и разрешение **независимых** имен.
+- **Вторая фаза** - во время инстанцирования. Специальная синтаксическая проверка и разрешение **зависимых** имен.
+- **Зависимые имена** - это имена, которые зависят от параметров шаблона.
+- **Разрешение зависимых имен откладывается до подстановки шаблонного параметра**.
+
+```cpp
+
+template <typename T> struct Foo
+{
+    int use() { return illegal_name; } // Первая фаза разрешения имен
+};
+
+template <typename T> struct Foo
+{
+    int use() { return T::illegal_name; } // Вторая фаза разрешения имен
+};
+
+```
+
+### Disambiguation #1: use `this->`
+
+- [code/template_ambiguity_001.cpp](code/template_ambiguity_001.cpp)
+- Если на первой фазе компилятор находит имя, то он связывает его.
+- Поэтому если имя валиндно на первой фазе и на второй фазе, то связано будет на первой фазе.
+- Для указания компилятору, что имя зависимое он базового класса, используется `this->`. Это единственный случай, когда **разумно использовать явный `this->`**.
+
+```cpp
+template <typename T> struct Base {
+    void exit(int i) {}
+};
+
+template<typename T> struct Derived : Base<T> {
+    void foo() {
+        exit(1); // Произойдет связывание с внешней функцией exit, т.к. оно не зависимое но было найдено на первой фазе.
+    }
+};
+
+template<typename T> struct Derived2 : Base<T> {
+    void foo() {
+        this->exit(1); // Произойдет связывание с методом Base::exit, т.к. оно зависимое благодаря this->.
+    }
+};
+```
+
+### Disambiguation #2: use `typename`
+
+- [code/template_ambiguity_002.cpp](code/template_ambiguity_002.cpp)
+- **Все что может трактоваться как поле класса, по умолчанию тракуется как поле класса**.
+- Чтобы указать, что это тип (который мы пока не знаем), используется `typename`.
+
+```cpp
+struct S { struct subtype {}; };
+
+template<typename T>
+void foo1 (const T& x) {
+    T::subtype *y; // Ошибка: компилятор не знает, что T::subtype - это тип. Трактуется как умножение.
+}
+
+template<typename T>
+void foo2 (const T& x) {
+    typename T::subtype *y; // Используем `typename`, чтобы явно указать компилятору, что T::subtype - это тип.
+}
+
+int main()
+{
+    foo1<S>(S{});
+    foo2<S>(S{});
+}
+```
+
+### Disambiguation #3: use `template`
+
+- [code/template_ambiguity_003.cpp](code/template_ambiguity_003.cpp)
+- **Все что может трактоваться как поле класса, по умолчанию тракуется как поле класса**.
+- Поэтому в примере `s.foo<T>()` знак `<` трактуется как оператор сравнения.
+- Чтобы помочь компилятору догадаться, что это шаблонный метод, используется `template`.
+
+```cpp
+template<typename T> struct S {
+    template<typename U> void foo() {}
+};
+
+template<typename T> void bar1() {
+    S<T> s;
+    s.foo<T>(); // error: use 'template' keyword to treat 'foo' as a dependent template name [-Werror]
+}
+
+template<typename T> void bar2() {
+    S<T> s;
+    s.template foo<T>(); // OK. Use 'template' keyword to treat 'foo' as a dependent template name
+}
+
+int main()
+{
+    bar1<int>();
+    bar2<int>();
+}
+```
+
+## Вывод типов
+
+### Вывод неуточнённого типа режет ссылки и константность
+
+- Это сделано, чтобы уменьшить число неоднозначностей.
+
+```cpp
+template <typename T>
+T max(T x, T y) { return x > y ? x : y; }
+
+int main()
+{
+    int e = 5; const int& d = e; // Типы разные, но вывод работает. T = int.
+    int a = max(d, e); // -> template<> int max<int>(int, int).
+}
+```
+
+### Уточненные типы
+
+- Всё меняется когда мы уточняем тип левой ссылкой или указателем.
+- Особая статья это уточнение правой ссылкой (универсальная ссылка), это мы пока отложим.
+
+```cpp
+template <typename T> void foo(T& x);
+const int x = 42; // T = const int
+foo(x); // -> template<> void foo<const int>(const int& x)
+```
+
+### Хинты для вывода через `->` (C++17)
+
+- Пользователь может помочь выводу в сложных случаях.
+- Например, когда тип закопан в недрах итератора.
+
+```cpp
+template<typename T> struct container {
+    template<typename Iter> container(Iter beg, Iter end); // ПРОБЛЕМА
+};
+
+template<typename Iter> container(Iter b, Iter e) ->
+    container<typename iterator_traits<Iter>::value_type>; // ХИНТ
+
+std::vector<double> v;
+auto d = container(v.begin(), v.end()); // -> container<double>
+```
+
+### Хинты для вывода можно применять для агрегатов
+
+- Агрегатное значение может и не иметь конструктора (вывод без конструктора).
+
+```cpp
+template <typename T> struct NamedValue {
+    T value;
+    std::string name;
+};
+
+NamedValue(const char*, const char*) -> NamedValue<std::string>; // ХИНТ
+
+NamedValue n{"hello", "world"}; // ПРИМЕНЕНИЕ: T = std::string
+```
+
+### `decltype` не режет типы, как `auto`
+
+- Для локальных переменных ключевое слово `auto` работает по правилам вывода типов шаблонами.
+- `auto` делает `decay` типа.
+- Для точного вывода существует `decltype`.
+
+```cpp
+template <typename T> foo(T x);
+const int &t;
+
+foo(t); // -> foo<int>(int x)           - СРЕЗАЕТСЯ ССЫЛКА
+auto s = t; // -> int s                 - СРЕЗАЕТСЯ ССЫЛКА
+
+// Для точного вывода существует decltype
+decltype(t) u = 1; // -> const int& u   - НЕТ СРЕЗКИ
+```
+
+### `decltype` может добавлять ссылки (Четыре формы decltype)
+
+- `decltype` может добавлять ссылку при выводе типа.
+
+- decltype существует в двух основных видах:
+  - 1) для имени
+    - `decltype(name)` выводит тип, с которым было объявлено имя.
+  - 2) для выражения `decltype(expression)` - работает чуточку сложнее:
+    - `decltype(lvalue)` это тип выражения + левая ссылка
+    - `decltype(xvalue)` это тип выражения + правая ссылка
+    - `decltype(prvalue)` это тип выражения
+
+- В итоге левые или правые ссылки встречаются в неожиданных местах:
+
+```cpp
+  int a[10];
+  decltype(a[0]) b = a[0]; // -> int& b
+```
+
+- Это может выглядеть странно, но это логично - ссылка определяет lvalueness
+
+### Расширенный синтаксис объявления фукнции для вывода типа возращаемого значения
+
+```cpp
+int foo(); // обычный синтаксис
+auto foo() -> int; // расширенный синтаксис
+template <typename T>
+
+// ПРИМЕР ИСПОЛЬЗОВАНИЯ
+auto makeAndProcessObject(const T& builder) -> decltype(builder.makeObject())
+{
+    auto val = builder.makeObject();
+    // ... что-то делаем с val
+    return val;
+}
+```
+
+### Идиома `for-auto` режет типы
+
+- Обход итератором начиная с C++11 скрыт за for-auto идиомой.
+- Что если use берет ссылку?
+  - Первый вариант отдаст ссылку перевязав её.
+  - Второй вариант, увы, срежет тип и, значит, скопирует значение.
+
+```cpp
+// (1)
+for (auto it = v.begin(), ite = v.end(); it != ite; ++it)
+    use(*it);
+
+// (2)
+for (auto elt : v)
+    use(elt);
+```
+
+### Идиома `AAA initializers` (Almost Always Auto). `prvalue` elision
+
+- Аналогично работает `AAA initializers` (Almost Always Auto) идиома.
+- Предложенный Гербом Саттером принцип AAA состоит в том, чтобы делать любую инициализацию через auto.
+- Начиная с C++17 он действительно работает (вспоминаем prvalue elision).
+
+```cpp
+auto x = 1;
+auto y = 1u;
+auto c = Customer{"Jim", 42};
+auto p = v.cbegin();
+
+auto a = std::atomic<int>{}; // ок только в C++17
+auto arr = std::array<int, 10>{}; // быстро с C++17
+```
+
+**ПРОБЛЕМЫ с AAA**
+
+- Проблема 1: **Non-fixed ABI** - не следует тянуть AAA в нестатические функции. Эта идиома только для инициализации локальных переменных.
+
+```cpp
+auto foo(int x); // non-fixed ABI (from C++14)
+int foo(auto x); // non-fixed ABI (from C++20)
+```
+
+- Проблема 2: Использование `auto` с левой стороны **всегда срезает нам тип**. Не важно, что мы делаем с правой стороны. Даже `static_cast` в этом случае не помогает. Происходит **decays**.
+
+```cpp
+auto x = long long {42}; // FAIL
+auto x = static_cast<long long>(42); // ok, but...
+
+const int& foo();
+auto x = foo(); // decays
+auto x = static_cast<const int&>(foo()); // still decays
+```
+
+### Правила светки ссылок `&&` и `&`
+
+- Зачем это нужно:
+  - `auto&` - всегда `lvalue ref`.
+  - `auto&&` - либо `lvalue ref`, либо `rvalue ref` (зависит от контекста).
+
+- Правила свертки (Левая ссылка выигрывает, если она есть):
+  - `T&  & ` -> `T& `
+  - `T&  &&` -> `T& `
+  - `T&& & ` -> `T& `
+  - `T&& &&` -> `T&&`
+
+### Универсальные ссылки `auto &&` (forwarding references or universal references)
+
+```cpp
+int x;
+auto &&y = x; // --> int & && y = x; -> int & y = x;
+
+decltype(x) && z = x; // int & && z -> int & z;
+
+// foo<int&>(int& t) Как вы думаете, чему равен T?
+template <typename T> void foo(T&& t);
+foo(x);
+
+```
+
+- Это в целом работает и для `decltype` и для шаблонов (**но для шаблонов есть одна техническая трудность**).
+- При сворачивании типов шаблонами мы должны также вывести тип шаблонного параметра.
+  - В шаблонах тип **выводится по правилам `decltype`** - в некоторых случаях добавляется левая ссылка.
+  - Для консистентности он выводится в ссылку для `lvalue`, но не для `rvalue`.
+
+```cpp
+template <typename T> int foo(T&&);
+
+int x;
+const int y = 5;
+
+foo(x); // --> int foo<int&>(int&)
+foo(y); // --> int foo<const int&>(const int&)
+foo(5); // --> int foo<int>(int&&)
+```
+
+### Идиома `for-loop&&` и AAARR (Almost Always Auto Ref Ref)
+
+- **Almost Always Auto Ref Ref (AAARR)** это расширение идиомы AAA, отлично справляющееся с большинством случаев.
+- `auto&&` можно использовать везде, где мы передаём по ссылке.
+- Только если нужно копирование по значению, то можно использовать `auto` без имперсантов.
+
+```cpp
+// Допустимый вариант:
+for (auto elt : v)
+    use(elt);
+
+// Куда лучший вариант:
+for (auto &&elt : v) // elt это T& или T&&
+    use(elt);
+
+auto&& y = 1u;
+auto&& c = Customer("Jim", 42);
+auto&& p = v.cbegin();
+
+const int& foo();
+auto&& f = foo(); // ok, const int& inferred
+```
+
+### `decltype(auto)` - точный вывод типа из правой части
+
+- [code/template_decltype_auto.cpp](code/template_decltype_auto.cpp)
+- `decltype(auto)` - совмещает преимущества `auto` и `decltype`.
+- `decltype(auto)` - выводит по правилам `decltype`, но при этом пользуется **правой частью** выражения.
+- `decltype(auto)` - очень опасная штука.
+
+```cpp
+    double x = 1.0;
+    decltype(x) tmp1 = x;       // -> double
+    decltype(auto) tmp2 = x;    // -> double (without code duplication)
+    decltype(auto) tmp3 = (x);  // -> double&
+```
+
+### Perfect Forwarding and `std::forward`
+
+- [code/template_forward.cpp](code/template_forward.cpp)
+- `std::forward` - это условный move, который управляется типом аргумента.
+- Пример внизу называетя **perfect forwarding**. Для него нужно 3 вещи:
+  - (1) Контекст вывода: `typename Arg`.
+  - (2) Учтонение только правой ссылкой: `Arg&&`.
+  - (3) Использование `std::forward`: `std::forward<Arg>(arg)`.
+
+```cpp
+
+template <typename Fun, typename Arg>
+decltype(auto)                          // Добавляет ссылку, если она нужна.
+transparent(Fun fun, Arg&& arg)         // && - универсальная ссылка.
+{
+    return fun(std::forward<Arg>(arg)); // Вызывает move, если rvalue, иначе copy.
+}
+
 ```

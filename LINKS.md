@@ -1,3 +1,48 @@
+- Konstantin Vladimirov #1
+
+- ISO/IEC 14882 - "Information technology – Programming languages – C++" - 2011
+  - https://www.open-std.org/jtc1/sc22/wg21/docs/standards [TODO]
+
+- Bjarne Stroustrup - "The C++ Programming Language (4th Edition)" - 2013
+  - https://www.amazon.com/C-Programming-Language-4th/dp/0321563840 [TODO]
+
+- Stanley Lippman - "C++ Primer (5th Edition)" - 2012
+  - https://www.amazon.com/Primer-5th-Stanley-B-Lippman/dp/0321714113 [TODO]
+
+- Konstantin Vladimirov #2
+
+- Grady Booch - "Object-Oriented Analysis and Design with Applications" - 2007
+  - https://www.amazon.com/Object-Oriented-Analysis-Design-Applications-3rd/dp/020189551X [TODO]
+
+- Gilbert Strang - "Introduction to Linear Algebra" 5th - 2016
+  - https://www.amazon.com/Introduction-Linear-Algebra-Gilbert-Strang/dp/0980232775 [TODO]
+
+- Ben Saks - Back to Basics: Pointers and Memory, CppCon - 2020
+  - https://www.youtube.com/watch?v=rqVWj0aVSxg [TODO]
+
+- Konstantin Vladimirov #3
+- Konstantin Vladimirov #4
+
+- Thomas H. Cormen - "Introduction to Algorithms" - 2009
+  - https://www.amazon.com/Introduction-Algorithms-Thomas-H-Cormen/dp/0262033844 [TODO]
+
+- Donald E. Knuth - "The Art of Computer Programming" - 2011
+  - https://www.amazon.com/Art-Computer-Programming-Volumes-Boxed/dp/0321751043 [TODO]
+
+- Charles Bay - Instruction Re-ordering Everywhere: The C++ 'As-If' Rule and the Role of Sequence - 2016
+  - https://www.youtube.com/watch?v=8yUSMJWlEsk [TODO]
+
+- Konstantin Vladimirov #5
+
+- Edsger W. Dijkstra – Go To Statement Considered Harmful - 1968
+  - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf [TODO]
+
+- Edsger W. Dijkstra – The Humble Programmer - 1972
+  - https://www.cs.utexas.edu/users/EWD/transcriptions/EWD03xx/EWD340.html [TODO]
+
+- Kris van Rens - Understanding value categories in C++ - 2020
+  - https://www.youtube.com/watch?v=U7HdZkqRuZk [DONE]
+
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 6. Приведение типов - 2021
   - https://www.youtube.com/watch?v=LDoCQzSd3xo [DONE]
     - 00:00:00 Статические функции и друзья
@@ -210,7 +255,7 @@
     - 01:38:10 Литература и расширения OpenCL
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 16. Специализация и инстанцирование - 2022
-  - https://www.youtube.com/watch?v=UrL5gdW2JOM
+  - https://www.youtube.com/watch?v=UrL5gdW2JOM [DONE]
     - 00:00:00 Снова про OpenCL C++ API
     - 00:03:30 Идея шаблонной специализации
     - 00:12:30 Соглашение о namespace detail
@@ -223,3 +268,30 @@
     - 01:07:41 Двухфазное разрешение имён
     - 01:15:31 Устранение неоднозначности
     - 01:21:40 Cliffhanger
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 17. Вывод типов и свёртка ссылок - 2022
+  - https://www.youtube.com/watch?v=MsuddUd7E2A
+    - 00:00:00 Вывод типов шаблонами
+    - 00:07:20 Вывод конструкторами классов и хинты
+    - 00:17:27 Auto и decltype
+    - 00:28:15 Немного о сигнатурах функций
+    - 00:34:34 Идиомы for-auto и AAA
+    - 00:43:48 Свёртка ссылок
+    - 00:51:20 Неуниверсальные ссылки
+    - 00:55:33 Снова for-auto и AAARR
+    - 00:58:35 Прозрачная оболочка и decltype(auto)
+    - 01:02:00 Совершенный проброс и std::forward
+    - 01:15:46 Обзор литературы и cliffhanger
+
+- Scott Meyers - "Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14"
+  - https://www.amazon.com/Effective-Modern-Specific-Ways-Improve/dp/1491903996 [TODO]
+
+- Scott Meyers - "Type Deduction and Why You Care", CppCon - 2014
+  - https://www.youtube.com/watch?v=wQxj20X-tIU [TODO]
+
+- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017
+  - https://www.amazon.com/C-Templates-Complete-Guide-2nd/dp/0321714121 [TODO]
+
+- Bob Steagall - "Back to Basics: Templates" CppCon - 2021
+  - Part 1: https://www.youtube.com/watch?v=XN319NYEOcE [TODO]
+  - Part 2: https://www.youtube.com/watch?v=2Y9XbltAfXs [TODO]

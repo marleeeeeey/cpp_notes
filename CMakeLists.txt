@@ -25,5 +25,8 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-copy-with-user-provided-dtor>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-copy-with-dtor>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-parameter>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-variable>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-but-set-variable>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-switch>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-sign-conversion>
 )

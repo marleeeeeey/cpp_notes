@@ -12,13 +12,26 @@ struct A
 };
 // clang-format on
 
-template <typename T>
-void foo(const T& lvalue)
+void foo(const A& lvalue)
+{
+    (void)lvalue;
+}
+
+void bar(A&& lvalue)
+{
+    (void)lvalue;
+}
+
+void nik(A& lvalue)
 {
     (void)lvalue;
 }
 
 int main()
 {
-    foo(A{});
+    foo(A{}); // создается временный объект, который привязывается к `const int&`
+    // nik(A{}); // Compile error:
+    A lvalue{};
+    // bar(lvalue); // Compilation error.
+    bar(std::move(lvalue));
 }

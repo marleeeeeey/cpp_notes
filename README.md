@@ -10,7 +10,7 @@
 
 ## Overview
 
-This repository includes [my notes about C++](/THEORY.md), taken after watching presentations from CppCon and other conferences, as well as reading books. The complete list of references is available in this file [LINKS.md](/LINKS.md).
+This repository includes [my notes about C++](/THEORY.md), taken after watching presentations from CppCon and other conferences, as well as reading books. The complete list of references is available in this file [LINKS.md](/LINKS.md). Very short notes are in the [THOUGHTS.md](/THOUGHTS.md) file.
 
 In the [code folder](/code), there are examples of my programs illustrating the intricacies of the C++ language.
 

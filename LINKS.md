@@ -1,4 +1,14 @@
-- Konstantin Vladimirov #1
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 1. Scent of C++ - 2021
+  - https://youtu.be/Bym7UMqpVEY?si=xNOZhxDSlzMIByr1
+  - 00:00:00 Начало
+  - 00:01:55 Кеши
+  - 00:09:50 LRU на языке C и её проблемы
+  - 00:22:05 C++ объединение данных и методов
+  - 00:33:56 Обобщение типов и функций
+  - 00:50:18 LRU на C++
+  - 00:57:10 Идея конструктора и немного фана
+  - 01:04:22 Немного о домашних заданиях
+  - 01:12:04 Литература и ответы на вопросы
 
 - ISO/IEC 14882 - "Information technology – Programming languages – C++" - 2011
   - https://www.open-std.org/jtc1/sc22/wg21/docs/standards [TODO]
@@ -9,7 +19,7 @@
 - Stanley Lippman - "C++ Primer (5th Edition)" - 2012
   - https://www.amazon.com/Primer-5th-Stanley-B-Lippman/dp/0321714113 [TODO]
 
-- Konstantin Vladimirov #2
+- Konstantin Vladimirov #2 [TODO_Fill]
 
 - Grady Booch - "Object-Oriented Analysis and Design with Applications" - 2007
   - https://www.amazon.com/Object-Oriented-Analysis-Design-Applications-3rd/dp/020189551X [TODO]
@@ -20,8 +30,8 @@
 - Ben Saks - Back to Basics: Pointers and Memory, CppCon - 2020
   - https://www.youtube.com/watch?v=rqVWj0aVSxg [TODO]
 
-- Konstantin Vladimirov #3
-- Konstantin Vladimirov #4
+- Konstantin Vladimirov #3 [TODO_Fill]
+- Konstantin Vladimirov #4 [TODO_Fill]
 
 - Thomas H. Cormen - "Introduction to Algorithms" - 2009
   - https://www.amazon.com/Introduction-Algorithms-Thomas-H-Cormen/dp/0262033844 [TODO]
@@ -32,7 +42,7 @@
 - Charles Bay - Instruction Re-ordering Everywhere: The C++ 'As-If' Rule and the Role of Sequence - 2016
   - https://www.youtube.com/watch?v=8yUSMJWlEsk [TODO]
 
-- Konstantin Vladimirov #5
+- Konstantin Vladimirov #5 [TODO_Fill]
 
 - Edsger W. Dijkstra – Go To Statement Considered Harmful - 1968
   - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf [TODO]

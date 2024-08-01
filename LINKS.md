@@ -343,6 +343,15 @@
 - Замеры времени выполнения
   - https://quick-bench.com/ [TODO]
 
+- Scott Meyers - "Effective STL: 50 Specific Ways to Improve Your Use of the Standard Template Library" - 2001
+  - https://www.amazon.com/Effective-STL-Specific-Standard-Library/dp/0201749629 [TODO]
+
+- Casey Carter - Iterator Haiku, CppCon - 2019
+  - https://www.youtube.com/watch?v=rZs9ndzGB_8 [TODO]
+
+- Patrick Neidzelski - Building and Extending the Iterator Hierarchy in a Modern, Multicore World, CppCon - 2016
+  - https://www.youtube.com/watch?v=N80hpts1SSk [TODO]
+
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 1 - 2022
   - https://www.youtube.com/watch?v=yEdoXnEaMrw [TODO_SkipNow]
   - 00:00:00 Введение: компиляторы и лицензии

@@ -118,6 +118,8 @@
   - [Почему есть std::string, если есть std::vector? Аллокаторы и Traits](#почему-есть-stdstring-если-есть-stdvector-аллокаторы-и-traits)
   - [Associative Containers](#associative-containers)
   - [strict weak ordering](#strict-weak-ordering)
+- [Алгоритмы](#алгоритмы)
+  - [Функторы](#функторы)
 
 ## Not Sorted Notes
 
@@ -3382,3 +3384,42 @@ auto ite = s.upper_bound(100); // Return iterator to the first element GREATER t
   - `a < b` и `b < c` => `a < c` (**Транзитивность**)
   - `a < a` - false (**Иррефлексивность**)
   - `a < b` и `b < a` => `a == b` (**Транзитивность эквивалентности**)
+
+## Алгоритмы
+
+### Функторы
+
+- `for_each` - лучше чем циклы, потому что он позволяет использовать **функторы**. Кроме того, он может быть **распараллелен** за счет `std::execution::par`.
+- [sequesce vs parallel quickbench](https://quick-bench.com/q/hDnXLCVOhT6zkrw-bUEEugErEvA)
+
+```cpp
+
+for (auto it = begin; it != end; ++it)  f(*it);     // 1
+std::for_each(begin, end, f);                       // 2
+
+std::for_each(std::execution::par, begin, end, f);  // 2.1
+
+```
+
+**Как устроена лямбда-функция**
+
+- [code/algorithms_functors_basics.cpp](code/algorithms_functors_basics.cpp)
+- [code/algorithms_lambda_examples.cpp](code/algorithms_lambda_examples.cpp)
+- Квадратные скобки в лябдах используются для захвата переменных и создании состояния для класса лямбда-функции.
+- `closure (замыкание)` - это объект, который хранит состояние лямбда-функции.
+- `mutable` у лямбды позволяет изменять захваченные переменные. Т.е. делает функцию `operator()` неконстантной.
+- **Глобальные и статические переменные** захватывать в лямбду не надо, они доступны и так.
+- `Замыкания` копируемы.
+- Захват с переименованием может быть очень полезен: `[foo = bar] () {}`.
+- Захват с переименованием позволяет захватить правую ссылку: `[foo = std::move(bar)] () {}`.
+
+```cpp
+[argv]  // Список захвата
+()      // Список аргументов
+-> int  // Выводимый тип
+{       // Тело лямбда-выражения
+    std::cout << "Hello from " << argv[0] << std::endl;
+    return 0;
+}
+();     // Вызов лямбда-выражения
+```

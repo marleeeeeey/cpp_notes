@@ -1,1 +1,1 @@
-C:/dev/cpp_notes/code/conteiners_map_erase_by_value_problem.cpp
+C:/dev/cpp_notes/code/algorithms_lambda_examples.cpp

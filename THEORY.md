@@ -120,6 +120,8 @@
   - [strict weak ordering](#strict-weak-ordering)
 - [Алгоритмы](#алгоритмы)
   - [Функторы](#функторы)
+  - [`std::function`](#stdfunction)
+  - [Algorithms](#algorithms)
 
 ## Not Sorted Notes
 
@@ -3408,10 +3410,13 @@ std::for_each(std::execution::par, begin, end, f);  // 2.1
 - Квадратные скобки в лябдах используются для захвата переменных и создании состояния для класса лямбда-функции.
 - `closure (замыкание)` - это объект, который хранит состояние лямбда-функции.
 - `mutable` у лямбды позволяет изменять захваченные переменные. Т.е. делает функцию `operator()` неконстантной.
-- **Глобальные и статические переменные** захватывать в лямбду не надо, они доступны и так.
+- Глобальные и статические переменные захватывать в лямбду не надо, они всегда как будто захвачены по ссылке.
 - `Замыкания` копируемы.
 - Захват с переименованием может быть очень полезен: `[foo = bar] () {}`.
 - Захват с переименованием позволяет захватить правую ссылку: `[foo = std::move(bar)] () {}`.
+- Лямбда функция без захвата естественным образом приводится к указателю на функцию.
+- Список захвата выполняется в момент создания лямбды, а не в момент вызова.
+- До С++17 `std::cout << foo1() << foo2();` мог запускать `foo1` и `foo2` в произвольном порядке. С С++17 порядок гарантирован.
 
 ```cpp
 [argv]  // Список захвата
@@ -3423,3 +3428,77 @@ std::for_each(std::execution::par, begin, end, f);  // 2.1
 }
 ();     // Вызов лямбда-выражения
 ```
+
+### `std::function`
+
+- [code/algorithms_std_functions_type_erasure.cpp](code/algorithms_std_functions_type_erasure.cpp)
+- [code/algorithms_std_function_target_type_name.cpp](code/algorithms_std_function_target_type_name.cpp)
+- `std::function<int()> f = [&x, &y] { return x + y; };` - происходит **стирание захвата**. Т.е. это единый тип, к которому приводятся все замыкания с данной сигнатурой.
+- `std::function` - делает лишний уровень косвенности. Он **выделяет динамическую память под захват**. Это похоже на механизм виртуальных функций (только вместо таблицы виртуальных функций - **таблица захвата**).
+- `std::function` - хранит внутри себя настоящий тип, который он стирает.
+  - `target_type()` - возвращает манглированную `type_info` настоящего типа.
+  - `c++filt -t <magnling name>` - декодирует манглированное имя.
+- Плюсы в том, что у нас единая сигнатура, минусы в том, что мы ходим через лишний уровень косвенности в динамической памяти.
+
+![std_function_type_erasure_with_lambda](screenshots/std_function_type_erasure_with_lambda.png)
+
+```cpp
+
+int f(int a) { return a; }
+
+int main()
+{
+  int x = 5;
+
+  // `std::function` - хранит внутри себя настоящий тип, который он стирает.
+
+  std::function<int(int)> fn1 = f,                          // int (__cdecl*)(int)
+                          fn2 = [](int a) { return -a; },   // class `main'::`1'::<lambda_0>
+                          fn3 = [x](int a) {return x - a;}; // class `main'::`1'::<lambda_1>
+
+  std::cout << fn1.target_type().name() << std::endl
+            << fn2.target_type().name() << std::endl
+            << fn3.target_type().name() << std::endl;
+}
+```
+
+- Пример реализации Finally класса с использованием `std::function` и без [code/finally_labmda_to_replace_RAII.cpp](code/finally_labmda_to_replace_RAII.cpp):
+  - Первый вариант с `std::function` - **наивный**. Он выделяет динамическую память под захват.
+  - Второй вариант - **улучшенный**. Он не выделяет динамическую память под захват.
+
+```cpp
+#if NAIVE_ORIGINAL_FINALLY_CLASS
+// Lightning Talk: FINALLY - The Presentation You've All Been Waiting For - Louis Thomas - CppCon 2021
+// https://www.youtube.com/watch?v=eG5suWcHI8M
+// Here is an overhead - we have to use heap to save lambda `[]` values.
+struct Finally
+{
+    std::function<void()> action_;
+    explicit Finally(std::function<void()> action) : action_(std::move(action)) {}
+    ~Finally() { action_(); }
+};
+#else
+// Improved version of Finally class. Head is not used here. No type erasure because use lambda object as is without
+// std::function.
+template <typename T>
+struct Finally
+{
+    T action_;
+    explicit Finally(T action) : action_(std::move(action)) {}
+    ~Finally() { action_(); }
+};
+#endif
+
+```
+
+### Algorithms
+
+- `Алгоритмы STL` - это фукнции, выполняющие действия над интервалами, заданными итераторами.
+  - Момент в лекции про алгоритмы: https://youtu.be/ZQ6-EoBP02Q?t=2141
+- Нужно стремится к выбору самого специализированного алгоритма.
+- `std::copy_if` example: [code/algorithms_std_copy_if_examples.cpp](code/algorithms_std_copy_if_examples.cpp)
+- Используйте `std::any_of`, `std::all_of`, `std::none_of` вместо `std::find_if != end`. И предпочитайте все это обычным циклам.
+- Используйте `std::equal` вместо `std::mismatch == end` в простых случаях: [code/algorithms_std_mismatch_example.cpp](code/algorithms_std_mismatch_example.cpp)
+- Используйте `std::copy_backward` вместо `std::copy` с обратными итераторами: [code/algorithms_std_copy_backward_example.cpp](code/algorithms_std_copy_backward_example.cpp)
+
+![algorithms_std_copy_backward_example](screenshots/algorithms_std_copy_backward_example.png)

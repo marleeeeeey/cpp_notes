@@ -112,6 +112,12 @@
   - [Категории итераторов и `iterator_traits<iter>::iterator_category`](#категории-итераторов-и-iterator_traitsiteriterator_category)
   - [Разные категории итераторов с примерами](#разные-категории-итераторов-с-примерами)
   - [Пишем свой итератор](#пишем-свой-итератор)
+- [Containers](#containers)
+  - [Sequence Containers](#sequence-containers)
+  - [Adaptors](#adaptors)
+  - [Почему есть std::string, если есть std::vector? Аллокаторы и Traits](#почему-есть-stdstring-если-есть-stdvector-аллокаторы-и-traits)
+  - [Associative Containers](#associative-containers)
+  - [strict weak ordering](#strict-weak-ordering)
 
 ## Not Sorted Notes
 
@@ -3198,3 +3204,181 @@ random_access_iterator_tag : public bidirectional_iterator_tag     |  X |  X |  
   - Информация:
     - 14-iterators.pdf page 29.
     - https://youtu.be/avnte_HqBKQ?t=2781
+
+## Containers
+
+### Sequence Containers
+
+**vector**
+
+- `push_back() for O(1)+` / `pop_back()` / `operator[]() for O(1)` / `reallocate if needed`
+
+```mermaid
+block-beta
+    data["OOOOOOOOOOOOOO_____________"]
+    realloc["______________when realloc___________"]
+```
+
+**array**
+
+- `operator[]() for O(1)` / `compile-time size`
+
+```mermaid
+block-beta
+    data["OOOOOOOOOOOOOOOOOOOOOOOOOO"]
+```
+
+**deque**
+
+- O(1): `push_front()` / `pop_front()` / `push_back()` / `pop_back()` / `operator[]()`
+- Random access slowest than vector about 1/3 times.
+
+```mermaid
+flowchart LR
+    new_first[____] --- frist[__OO] --- id1[OOOO] --- id2[OOOO] --- id3[OOOO] --- tail[OO__] --- new_last[____]
+```
+
+**list**
+
+- `insert`
+- An iterator is invalidated only when the corresponding element is deleted
+
+```mermaid
+graph LR
+    head["O"] <--> id1["O"] <--> id2["O"] <--> id3["O"] <--> id4["O"] <--> tail["O"]
+```
+
+**forward_list**
+
+- Compact version of list.
+- `insert_after`
+
+```mermaid
+graph LR
+    head["O"] --> id1["O"] --> id2["O"] --> id3["O"] --> id4["O"] --> tail["O"]
+```
+
+### Adaptors
+
+**`std::stack` (based on `std::deque` by default)**
+
+- `top()` / `push()` / `pop()`
+
+```mermaid
+flowchart LR
+    id1[OOOO] --- id2[OOOO] --- id3[OOOO]--- tail[OO__] --- poptop["top()\npush()\npop()"]
+```
+
+**`std::queue` (based on `std::deque` by default)**
+
+- `front()` / `back()` / `push()` / `pop()`
+
+```mermaid
+flowchart LR
+    pop["pop()\nfront()"] --- frist[__OO] --- id1[OOOO] --- id2[OOOO] --- id3[OOOO] --- tail[OO__] --- push["push()\nback()"]
+```
+
+**`std::priority_queue` or BINARY HEAP (based on `std::vector` by default)**
+
+- `top()` / `push()` / `pop()`
+
+```mermaid
+block-beta
+    data["OOOOOOOOOOOOOO_____________"]
+    realloc["______________when realloc___________"]
+```
+
+### Почему есть std::string, если есть std::vector<char>? Аллокаторы и Traits
+
+- Нам нужен `удобный интерфейс` для работы со строками, этого интерфейса нет у вектора.
+- `Traits` - для строки описывает специфичные операции для работы с символами. Сравнение, определение завершения строки и т.д.
+  - По сути все та же идея открытого интерфейса traits, для которого можно написать свою реализацию. Та же техника используется для написания адаптеров контейнеров.
+- `Аллокатор` ничего не аллоцирует. Он знает как сбегать к тому, кто аллоцирует.
+  - Он не вынесен в traits, потому что это не характеристика отдельного символа, а характеристика всей строки.
+  - Содержит методы `allocate`, `deallocate`. По умолчанию ходят к `new` и `delete`.
+
+```cpp
+template <typename CharT,
+          typename Traits = std::char_traits<CharT>,
+          typename Allocator = std::allocator<CharT>>
+class basic_string {}
+using string = basic_string<char>;
+
+template <typename T,
+          typename Alloc = std::allocator<T>>
+class vector { }
+```
+
+### Associative Containers
+
+**std::unordered_map**
+
+- [hash-map benchmarks](https://martin.ankerl.com/2019/04/01/hashmap-benchmarks-01-overview/)
+- [code/containers_iota_sort_always_less.cpp](code/containers_iota_sort_always_less.cpp)
+- [code/containers_unordered_map_reserve.cpp](code/containers_unordered_map_reserve.cpp)
+- [code/conteiners_unordered_map_bucket_iteration.cpp](code/conteiners_unordered_map_bucket_iteration.cpp)
+- `std::hash<Key>` / `std::equal_to<Key>` - by default. Для пользовательских типов нужно переопределить.
+- По сути если `std::vector<U>` - это отображение `целых чисел` в `U`, то `std::unordered_map<T, U>` - это отображение произвольного `T` в `U`.
+- https://youtu.be/uWoj4SV_V-Q?t=130
+- `umap = { {"alice", "cat"}, {"alice", "bird"} }` сохранит первое значение для такого же ключа, так как повторный `insert` будет неудачным.
+- Изменять ключи во время итерации нельзя, так как это нарушит инвариант хеш-таблицы.
+- `boost::hash_combine` - для создания хеша из нескольких значений.
+- `max_load_factor()` - коэффициент загрузки, при котором происходит рехеширование.
+- Можно итерироваться внутри `bucket`.
+- Хеш таблица внутри реализована, как массив и один связанный список. Один связанный список (**прямая адрессация** по Кормену) нужен для быстрого рехеширования. Элемент в списке хранит хеш (для оптимизаций, может быть удален и всегда пересчитываться для быстрых хеш функций) и сам элемент, а также указатель на следующий элемент.
+- Сравнение с прошлыми контейнерами
+  - С памятью у него все плохо, как и у `std::vector`.
+  - Но зато **итераторы не инвалидируются**, как у `std::vector`.
+
+![unordered_map_in_memory](screenshots/unordered_map_in_memory.png)
+
+- Альтернативная реализация `std::unordered_map` (`absl::node_hash_map` - **открытая адресация**) от google:https://abseil.io/docs/cpp/guides/container. Она хуже тем, что инвалидирует итераторы.
+
+![node_hash_map](screenshots/node_hash_map.png)
+
+- `absl::flat_hash_map` - хранит все, как один вектор. Локальность в памяти. Работает очень быстро. Удобно для константных структур данных, поэтому его и используют в Google, т.к. один раз индекс строится и миллион раз по нему ищут.
+
+![flat_hash_map](screenshots/flat_hash_map.png)
+
+**std::unordered_set**
+
+- Как `std::unordered_map`, который хранит только ключи.
+- Вы можете рассматривать `std::unordered_set` как массив с дешевым поиском из уникальных элементов.
+
+Давайте разберем каждый пункт на слайде о контейнерах C++ и их особенностях:
+
+- Чем `unordered_set` хуже, чем отсортированный массив?
+  - **Он не позволяет range-based queries**: `unordered_set` не поддерживает операции на основе диапазона, такие как бинарный поиск или извлечение всех элементов в заданном диапазоне, потому что элементы в этом контейнере не хранятся в упорядоченном виде.
+  - Он **не хранит повторные элементы**.
+
+**unordered_multiset / unordered_multimap**
+
+- Если вам нужно хранить повторяющиеся элементы и при этом использовать неупорядоченный контейнер, `unordered_multiset` решает эту проблему, поскольку он допускает хранение дубликатов. Это позволяет сохранять несколько одинаковых элементов.
+- `equal_range()` - возвращает диапазон элементов с заданным ключом.
+- `std::unordered_multimap<int, int>` может быть медленнее для доступа к элементам, чем `std::unordered_map<int, std::vector<int>>`:
+  - так как в последнем случае элементы хранятся в векторе, что обеспечивает быстрый доступ к элементам.
+  - [quick bench: multymap vs map of vectors](https://quick-bench.com/q/2QpWTQLfj-HUpdn-xa64k26iIGA)
+  - Это связано с реализацией `std::unordered_multimap` в STL. Потому что в STL она сделана для удобства пользования в среднем.
+
+**std::set**
+
+- Главное отличие от `std::unordered_set` - это то, что `std::set` хранит элементы упорядоченно. И поиск работает чуть дольше.
+
+### strict weak ordering
+
+- [code/conteiners_set_lower_upper_bound.cpp](code/conteiners_set_lower_upper_bound.cpp)
+
+- Если вам достаточно `==` на элементах, то используйте `unordered` контейнеры.
+- Если вам нужен `operator<` на элементах, то используйте `ordered` контейнеры (ренджи). `lower_bound`, `upper_bound`, `equal_range` методы.
+- `[lower_bound, upper_bound)` - это полуинтервал.
+
+```cpp
+auto itb = s.lower_bound(30); // Return iterator to the first element NOT LESS than the given value. `[`
+auto ite = s.upper_bound(100); // Return iterator to the first element GREATER than the given value. `)`
+```
+
+- Концепция `strict weak ordering` - это то, что компаратор должен быть строгим, слабым и удовлетворять условиям:
+  - `a < b` => `!(b < a)` (**Антисимметричность**)
+  - `a < b` и `b < c` => `a < c` (**Транзитивность**)
+  - `a < a` - false (**Иррефлексивность**)
+  - `a < b` и `b < a` => `a == b` (**Транзитивность эквивалентности**)

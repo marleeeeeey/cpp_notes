@@ -19,7 +19,14 @@
 - Stanley Lippman - "C++ Primer (5th Edition)" - 2012
   - https://www.amazon.com/Primer-5th-Stanley-B-Lippman/dp/0321714113 [TODO]
 
-- Konstantin Vladimirov #2 [TODO_Fill]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 2. Указатели и ссылки - 2021
+  - https://youtu.be/e5__34DFz5Y?si=AAoWn34T2BcRqIpc [DONE]
+    - 00:00:00 Genesis
+    - 00:15:38 Ссылки
+    - 00:36:11 Треугольники
+    - 00:50:54 Инкапсуляция
+    - 00:58:48 Нарушения инкапсуляции
+    - 01:08:28 Задание, обзор литературы, вопросы
 
 - Grady Booch - "Object-Oriented Analysis and Design with Applications" - 2007
   - https://www.amazon.com/Object-Oriented-Analysis-Design-Applications-3rd/dp/020189551X [TODO]
@@ -30,8 +37,34 @@
 - Ben Saks - Back to Basics: Pointers and Memory, CppCon - 2020
   - https://www.youtube.com/watch?v=rqVWj0aVSxg [TODO]
 
-- Konstantin Vladimirov #3 [TODO_Fill]
-- Konstantin Vladimirov #4 [TODO_Fill]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 3. Имена и сущности - 2021
+  - https://youtu.be/TQ5VPnKWqoY?si=1hz87ZAC7pKtoud_ [DONE]
+    - 00:00:00 Контексты
+    - 00:04:00 New и delete
+    - 00:11:29 Провисание ссылок
+    - 00:24:25 Decaying и lvalues
+    - 00:30:55 Cdecl и алиасы using
+    - 00:38:47 Манглирование
+    - 00:50:35 Правила перегрузки
+    - 01:04:35 Пространства имён
+    - 01:14:05 Завершение: опять hello world
+
+- Konstantin Vladimirov Базовый курс C++ (MIPT, ILab). Lecture 4. Инициализация и копирование - 2021
+  - https://youtu.be/duDyVgMFyug?si=jNCeTvemS1wqw6nr [DONE]
+    - 00:00:00 Поисковые деревья
+    - 00:07:48 Сбалансированность
+    - 00:12:46 Агрегатная инициализация
+    - 00:19:50 Старая и новая прямая инициализация
+    - 00:25:37 Списки инициализации и делегация
+    - 00:34:42 Деструкторы
+    - 00:42:50 Value-init
+    - 00:46:10 Копирование и присваивание
+    - 00:58:49 Тонкости реализации копирования
+    - 01:03:00 Спецсемантика копирования, RVO
+    - 01:09:00 CV-квалификация
+    - 01:14:40 Спецсемантика инициализации, explicit
+    - 01:24:01 Дополнения к перегрузке
+    - 01:27:40 Домашняя работа HWT
 
 - Thomas H. Cormen - "Introduction to Algorithms" - 2009
   - https://www.amazon.com/Introduction-Algorithms-Thomas-H-Cormen/dp/0262033844 [TODO]
@@ -42,7 +75,15 @@
 - Charles Bay - Instruction Re-ordering Everywhere: The C++ 'As-If' Rule and the Role of Sequence - 2016
   - https://www.youtube.com/watch?v=8yUSMJWlEsk [TODO]
 
-- Konstantin Vladimirov #5 [TODO_Fill]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 5. RAII и перемещение - 2021
+  - https://youtu.be/_mLDaU4wSOo?si=25br8JQd3UNicTJK [DONE]
+    - 00:00:00 Владение ресурсом
+    - 00:10:34 RAII
+    - 00:15:58 Указателе-подобность
+    - 00:23:52 Семантика перемещения и правые ссылки
+    - 00:45:47 Перемещающие конструкторы и операторы
+    - 01:02:55 Правило пяти и правило нуля
+    - 01:09:00 Двумерные массивы и домашнее задание
 
 - Edsger W. Dijkstra – Go To Statement Considered Harmful - 1968
   - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf [TODO]
@@ -231,7 +272,7 @@
   - https://www.youtube.com/watch?v=Ntraj80qN2k [DONE]
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 14 (доп). OpenGL и Vulkan - 2022
-  - https://www.youtube.com/watch?v=yJE34EuZNzs [TODO]
+  - https://www.youtube.com/watch?v=yJE34EuZNzs [TODO_SKIP]
     - 00:00:00 Первый квадрат
     - 00:09:56 Фиксированный конвейер
     - 00:14:04 Понятие "расширения"
@@ -251,7 +292,7 @@
     - 01:55:13 Обзор литературы и cliffhanger
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 15. Вычисления на GPU. - 2022
-  - https://www.youtube.com/watch?v=Ccclo1GCX0A [TODO]
+  - https://www.youtube.com/watch?v=Ccclo1GCX0A [TODO_SKIP]
     - 00:00:00 Гетерогенные вычисления и OpenCL
     - 00:09:31 Владение ресурсами и контексты
     - 00:14:40 Пересылка данных и C++API
@@ -280,7 +321,7 @@
     - 01:21:40 Cliffhanger
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 17. Вывод типов и свёртка ссылок - 2022
-  - https://www.youtube.com/watch?v=MsuddUd7E2A
+  - https://www.youtube.com/watch?v=MsuddUd7E2A [DONE]
     - 00:00:00 Вывод типов шаблонами
     - 00:07:20 Вывод конструкторами классов и хинты
     - 00:17:27 Auto и decltype
@@ -363,7 +404,7 @@
   - https://www.youtube.com/watch?v=N80hpts1SSk [TODO]
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 1 - 2022
-  - https://www.youtube.com/watch?v=yEdoXnEaMrw [TODO_SkipNow]
+  - https://www.youtube.com/watch?v=yEdoXnEaMrw [TODO_SKIP]
     - 00:00:00 Введение: компиляторы и лицензии
     - 00:09:30 LLVM IR
     - 00:19:11 Типы и память
@@ -375,7 +416,7 @@
     - 01:21:00 Домашнее задание и литература
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 2 - 2022
-  - https://www.youtube.com/watch?v=rLshTsxgDcw [TODO_SkipNow]
+  - https://www.youtube.com/watch?v=rLshTsxgDcw [TODO_SKIP]
     - 00:00:00 Свободное ПО
     - 00:03:00 Невалидные итераторы
     - 00:15:40 Правила инвалидации
@@ -401,3 +442,35 @@
     - 01:12:00 Отображения
     - 01:19:00 Собственный ключ
     - 01:26:14 Классы эквивалентности
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 24. Ассоциативные контейнеры - 2022 [DONE]
+  - https://www.youtube.com/watch?v=uWoj4SV_V-Q
+    - 00:00:00 Ассоциативные контейнеры
+    - 00:04:50 Ментальная модель хеша
+    - 00:17:35 Оптимизации хеш-таблиц
+    - 00:25:00 Открытая адресация
+    - 00:35:10 Квадартные скобки
+    - 00:41:20 Множества и группы
+    - 00:48:15 Мультимножества
+    - 00:54:20 Упорядоченные множества
+    - 01:10:26 Литература по ассоциативным контейнерам
+    - 01:14:10 Функторы
+    - 01:22:00 Захват контекста
+
+- Robin Hood Hashing should be your default Hash Table implementation [TODO]
+  - https://www.sebastiansylvan.com/post/robin-hood-hashing-should-be-your-default-hash-table-implementation/
+
+- Scott Meyers - "Effective STL: 50 Specific Ways to Improve Your Use of the Standard Template Library" - 2001 [TODO]
+  - https://www.amazon.com/Effective-STL-Specific-Standard-Library/dp/0201749629
+
+- Matt Kulukundis - "Designing a Fast, Efficient, Cache-friendly Hash Table, Step by Step" CppCon - 2017 [TODO]
+  - https://www.youtube.com/watch?v=ncHmEUmJZf4
+    - Инженер Google про разработку хеш-таблицы с нуля. Автор `apsl::flat_hash_map`.
+
+- Bindal A., Narang P., Indu S. - Map vs. Unordered Map: An Analysis on Large Datasets - 2015 [TODO]
+  - https://www.ijcaonline.org/research/volume127/number2/bindal-2015-ijca-906322.pdf
+  - Статья про изменения деревьев против хеш-таблиц.
+
+- `boost::flat_map` and its performance compared to `map` and `unordered_map` [TODO]
+  - https://stackoverflow.com/questions/21166675/boostflat-map-and-its-performance-compared-to-map-and-unordered-map
+  - Менее глубая статья по измерению перфоранса `boost::flat_map`. В нем есть проблемы.

@@ -3434,7 +3434,7 @@ std::for_each(std::execution::par, begin, end, f);  // 2.1
 - `std::function` - делает лишний уровень косвенности. Он **выделяет динамическую память под захват**. Это похоже на механизм виртуальных функций (только вместо таблицы виртуальных функций - **таблица захвата**).
 - `std::function` - хранит внутри себя настоящий тип, который он стирает.
   - `target_type()` - возвращает манглированную `type_info` настоящего типа.
-  - `c++filt -t <magnling name>` - декодирует манглированное имя.
+  - `c++filt -t <magnling name>` or `llvm-cxxfilt` - декодирует манглированное имя.
 - Плюсы в том, что у нас единая сигнатура, минусы в том, что мы ходим через лишний уровень косвенности в динамической памяти.
 
 ![std_function_type_erasure_with_lambda](screenshots/std_function_type_erasure_with_lambda.png)
@@ -3497,5 +3497,6 @@ struct Finally
 - Используйте `std::any_of`, `std::all_of`, `std::none_of` вместо `std::find_if != end`. И предпочитайте все это обычным циклам.
 - Используйте `std::equal` вместо `std::mismatch == end` в простых случаях: [code/algorithms_std_mismatch_example.cpp](code/algorithms_std_mismatch_example.cpp)
 - Используйте `std::copy_backward` вместо `std::copy` с обратными итераторами: [code/algorithms_std_copy_backward_example.cpp](code/algorithms_std_copy_backward_example.cpp)
+  - Потому что ни в один copy-подобный алгоритм нельзя указывать выходной итератор посередине входного диапазона. `std::copy_backward` выкручивается так, что он копирует с конца в начало.
 
 ![algorithms_std_copy_backward_example](screenshots/algorithms_std_copy_backward_example.png)

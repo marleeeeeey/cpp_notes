@@ -39,7 +39,7 @@
   - [Два полиморфизма](#два-полиморфизма)
   - [Перегрузка виртуальных функций](#перегрузка-виртуальных-функций)
   - [static\_cast and Virtual Inheritance](#static_cast-and-virtual-inheritance)
-- [Very expensive stuff in C++ (RTTI, Exceptions)](#very-expensive-stuff-in-c-rtti-exceptions)
+- [RTTI, Exceptions - most expensive stuff in C++](#rtti-exceptions---most-expensive-stuff-in-c)
   - [Runtime Type Information](#runtime-type-information)
   - [typeid and typeinfo](#typeid-and-typeinfo)
   - [RTTI and dynamic\_cast](#rtti-and-dynamic_cast)
@@ -135,9 +135,8 @@
   - [`std::partial_sum`, `std::inclusive_scan` и `std::exclusive_scan`](#stdpartial_sum-stdinclusive_scan-и-stdexclusive_scan)
   - [Идиома `erase-remove` или `erase-remove_if`](#идиома-erase-remove-или-erase-remove_if)
   - [Идиома `erase-uniquie`](#идиома-erase-uniquie)
-  - [Реализация перемещения группы элементов (`std::rotate`)](#реализация-перемещения-группы-элементов-stdrotate)
+  - [`std::rotate` - перемещение группы элементов](#stdrotate---перемещение-группы-элементов)
   - [Алгоритм `gather` через 2 вызова `std::stable_partition`](#алгоритм-gather-через-2-вызова-stdstable_partition)
-  - [Общий слайд со всеми алгоритмами](#общий-слайд-со-всеми-алгоритмами)
   - [Не сортируйте лишнее: `std::nth_element`, `std::partial_sort`, `std::sort`](#не-сортируйте-лишнее-stdnth_element-stdpartial_sort-stdsort)
   - [Поисковые алгоритмы: `std::binary_search`, `std::lower_bound`, `std::upper_bound`, `std::equal_range`](#поисковые-алгоритмы-stdbinary_search-stdlower_bound-stdupper_bound-stdequal_range)
 
@@ -1263,7 +1262,7 @@ d.pow(1.5); // какой метод будет вызван?
   - Разный адрес по разным веткам иерархии ведет к одному и тому же объекту - поэтому `static_cast` не работает.
   - Тут поможет `dynamic_cast` and RTTI, хотя это уже overkill.
 
-## Very expensive stuff in C++ (RTTI, Exceptions)
+## RTTI, Exceptions - most expensive stuff in C++
 
 ### Runtime Type Information
 
@@ -3530,6 +3529,8 @@ struct Finally
   - Момент в лекции про алгоритмы: https://youtu.be/ZQ6-EoBP02Q?t=2141
 - Нужно стремится к выбору самого специализированного алгоритма.
 
+![algorithms_summary](screenshots/algorithms_summary.png)
+
 ### `std::copy_if`
 
 - `std::copy_if` example: [code/algorithms_std_copy_if_examples.cpp](code/algorithms_std_copy_if_examples.cpp)
@@ -3618,7 +3619,7 @@ v.erase(std::remove(v.begin(), v.end(), 42), v.end());
 v.erase(std::unique(v.begin(), v.end()), v.end());
 ```
 
-### Реализация перемещения группы элементов (`std::rotate`)
+### `std::rotate` - перемещение группы элементов
 
 ![algorithms_move_group](screenshots/algorithms_move_group.png)
 
@@ -3633,10 +3634,6 @@ v.erase(std::unique(v.begin(), v.end()), v.end());
 - `gather` - собирает все похожие элементы на выбранный по предикату вокруг него.
 
 ![algorithms_gather_via_stable_partition](screenshots/algorithms_gather_via_stable_partition.png)
-
-### Общий слайд со всеми алгоритмами
-
-![algorithms_summary](screenshots/algorithms_summary.png)
 
 ### Не сортируйте лишнее: `std::nth_element`, `std::partial_sort`, `std::sort`
 

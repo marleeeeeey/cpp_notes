@@ -474,3 +474,31 @@
 - `boost::flat_map` and its performance compared to `map` and `unordered_map` [TODO]
   - https://stackoverflow.com/questions/21166675/boostflat-map-and-its-performance-compared-to-map-and-unordered-map
   - Менее глубая статья по измерению перфоранса `boost::flat_map`. В нем есть проблемы.
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 25. Алгоритмы и функторы - 2022 [DONE]
+  - https://www.youtube.com/watch?v=ZQ6-EoBP02Q
+    - 00:00:00 Повтор про лямбды
+    - 00:06:30 Захват в теле класса и задача на контекст
+    - 00:16:22 std::function и стирание типов
+    - 00:24:00 Невероятное finally
+    - 00:32:55 Алгоритмы и суффиксы
+    - 00:39:05 The square hole
+    - 00:46:00 Копирование и transform
+    - 00:57:30 Параллельные версии
+    - 01:03:12 Erase/remove
+    - 01:08:30 Групповое перемещение
+    - 01:16:00 Gather и общий обзор
+    - 01:23:30 No raw loops
+    - 01:31:07 Сортированные диапазоны
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 26. Метапрограммирование - 2022 [TODO]
+  - https://www.youtube.com/watch?v=zGT2CAoW3YI
+    - 00:00:00 Перестановки
+    - 00:10:25 Алгоритмы над перестановками
+    - 00:23:10 Мотивация метапрограммирования
+    - 00:32:20 Простые метапрограммы
+    - 00:45:48 Квадранты вычислений
+    - 00:55:24 Константность и литералы
+    - 01:03:40 Указатели и массивы на этапе компиляции
+    - 01:10:30 Constexpr control flow
+    - 01:16:35 Начало обсуждения constexpr функций

@@ -29,4 +29,17 @@ int main()
     std::cout << std::endl;
     std::copy(second.begin(), second.end(), icout);
     std::cout << std::endl;
+
+    std::cout << "\n-------------------------------------\n" << std::endl;
+
+    std::forward_list<int> a = {100, 200, 300, 400};
+    std::forward_list<int> b = {1000, 2000, 3000, 4000};
+
+    // a.splice_after(a.before_begin(), b); // move b to a
+    // a.splice_after(a.before_begin(), b, b.begin()); // move second element of b to a before begin
+    a.splice_after(a.begin(), b, b.begin()); // move second element of b to a second
+    std::copy(a.begin(), a.end(), icout);
+    std::cout << std::endl;
+    std::copy(b.begin(), b.end(), icout);
+    std::cout << std::endl;
 }

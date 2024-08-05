@@ -114,7 +114,7 @@
   - [Пишем свой итератор](#пишем-свой-итератор)
 - [Containers](#containers)
   - [Sequence Containers](#sequence-containers)
-  - [`fwdlist_iter.before_begin()` and `std::forward_list::splice_after`](#fwdlist_iterbefore_begin-and-stdforward_listsplice_after)
+  - [`forward_iterator::before_begin()` and `forward_list::splice_after`](#forward_iteratorbefore_begin-and-forward_listsplice_after)
   - [Adaptors](#adaptors)
   - [Почему есть std::string, если есть std::vector? Аллокаторы и Traits](#почему-есть-stdstring-если-есть-stdvector-аллокаторы-и-traits)
   - [Associative Containers](#associative-containers)
@@ -123,6 +123,20 @@
   - [Функторы](#функторы)
   - [`std::function`](#stdfunction)
   - [Algorithms](#algorithms)
+  - [`std::copy_if`](#stdcopy_if)
+  - [`std::any_of`, `std::all_of`, `std::none_of`](#stdany_of-stdall_of-stdnone_of)
+  - [`std::equal`](#stdequal)
+  - [`std::copy_backward`](#stdcopy_backward)
+  - [`std::transform`, `std::transform_reduce` и `std::inner_product`](#stdtransform-stdtransform_reduce-и-stdinner_product)
+  - [`std::accumulate` и `std::reduce`](#stdaccumulate-и-stdreduce)
+  - [`std::partial_sum`, `std::inclusive_scan` и `std::exclusive_scan`](#stdpartial_sum-stdinclusive_scan-и-stdexclusive_scan)
+  - [Идиома `erase-remove` или `erase-remove_if`](#идиома-erase-remove-или-erase-remove_if)
+  - [Идиома `erase-uniquie`](#идиома-erase-uniquie)
+  - [Реализация перемещения группы элементов (`std::rotate`)](#реализация-перемещения-группы-элементов-stdrotate)
+  - [Алгоритм `gather` через 2 вызова `std::stable_partition`](#алгоритм-gather-через-2-вызова-stdstable_partition)
+  - [Общий слайд со всеми алгоритмами](#общий-слайд-со-всеми-алгоритмами)
+  - [Не сортируйте лишнее: `std::nth_element`, `std::partial_sort`, `std::sort`](#не-сортируйте-лишнее-stdnth_element-stdpartial_sort-stdsort)
+  - [Поисковые алгоритмы](#поисковые-алгоритмы)
 
 ## Not Sorted Notes
 
@@ -3247,27 +3261,37 @@ random_access_iterator_tag : public bidirectional_iterator_tag     |  X |  X |  
 
 ![forward_list_in_memory](screenshots/forward_list_in_memory.png)
 
-### `fwdlist_iter.before_begin()` and `std::forward_list::splice_after`
+### `forward_iterator::before_begin()` and `forward_list::splice_after`
 
 - [code/conteiners_forward_list_splice.cpp](code/conteiners_forward_list_splice.cpp)
 - `splice` относится к методу, который используется для перемещения элементов из одного контейнера в другой без копирования или перемещения данных, но путем изменения указателей, которые связывают элементы. Это эффективная операция, так как она выполняется в O(1) времени.
+- `void splice_after( const_iterator pos, forward_list&& other, const_iterator first, const_iterator last )` - Moves elements from another `forward_list` to `*this`. The elements are inserted after the element pointed to by `pos`.
 
 ```cpp
     std::forward_list<int> first = {1, 2, 3};
     std::forward_list<int> second = {10, 20, 30};
-
-    first.splice_after(first.before_begin(), second);
-
-    second.splice_after(second.before_begin(), first, first.begin(), it);
-
-    first.splice_after(first.before_begin(), second, second.begin());
+    auto it = first.begin();
 ```
 
 ![fwdlist_splice_001](screenshots/fwdlist_splice_001.png)
 
+```cpp
+    first.splice_after(first.before_begin(), second);
+```
+
 ![fwdlist_splice_002](screenshots/fwdlist_splice_002.png)
 
+```cpp
+    second.splice_after(second.before_begin(), first, first.begin(), it);
+```
+
 ![fwdlist_splice_003](screenshots/fwdlist_splice_003.png)
+
+```cpp
+    first.splice_after(first.before_begin(), second, second.begin());
+```
+
+![fwdlist_splice_004](screenshots/fwdlist_splice_004.png)
 
 ### Adaptors
 
@@ -3493,10 +3517,133 @@ struct Finally
 - `Алгоритмы STL` - это фукнции, выполняющие действия над интервалами, заданными итераторами.
   - Момент в лекции про алгоритмы: https://youtu.be/ZQ6-EoBP02Q?t=2141
 - Нужно стремится к выбору самого специализированного алгоритма.
+
+### `std::copy_if`
+
 - `std::copy_if` example: [code/algorithms_std_copy_if_examples.cpp](code/algorithms_std_copy_if_examples.cpp)
+
+### `std::any_of`, `std::all_of`, `std::none_of`
+
 - Используйте `std::any_of`, `std::all_of`, `std::none_of` вместо `std::find_if != end`. И предпочитайте все это обычным циклам.
-- Используйте `std::equal` вместо `std::mismatch == end` в простых случаях: [code/algorithms_std_mismatch_example.cpp](code/algorithms_std_mismatch_example.cpp)
-- Используйте `std::copy_backward` вместо `std::copy` с обратными итераторами: [code/algorithms_std_copy_backward_example.cpp](code/algorithms_std_copy_backward_example.cpp)
-  - Потому что ни в один copy-подобный алгоритм нельзя указывать выходной итератор посередине входного диапазона. `std::copy_backward` выкручивается так, что он копирует с конца в начало.
+- Для пустых диапазонов возвращают не очевидные значения: [code/algorithms_std_all_of_any_of_none_of.cpp](code/algorithms_std_all_of_any_of_none_of.cpp)
+
+### `std::equal`
+
+- Используйте `std::equal` вместо `std::mismatch == end` в простых случаях:
+- [code/algorithms_std_mismatch_example.cpp](code/algorithms_std_mismatch_example.cpp)
+
+### `std::copy_backward`
+
+- [code/algorithms_std_copy_backward_example.cpp](code/algorithms_std_copy_backward_example.cpp).
+- Используйте `std::copy_backward` вместо `std::copy` с обратными итераторами
+- Copy-подобный алгоритм нельзя указывать выходной итератор посередине входного диапазона.
+- `std::copy_backward` выкручивается так, что он принимает итератор в конец выходного диапазона и копирует в обратном порядке.
 
 ![algorithms_std_copy_backward_example](screenshots/algorithms_std_copy_backward_example.png)
+
+### `std::transform`, `std::transform_reduce` и `std::inner_product`
+
+- `std::for_each` - нужен для того, чтобы сделать побочный эффект, не затрагивающий сам элемент. В других случаях используйте `std::transform`.
+- `std::transform` - то, что в нормальных языках называется `map`: [code/algorithms_std_transform.cpp](code/algorithms_std_transform.cpp)
+
+![algorithms_std_transform_example](screenshots/algorithms_std_transform_example.png)
+
+- `std::transform` - который делает `zip` двух контейнеров: [code/algorithms_std_transform_zip.cpp](code/algorithms_std_transform_zip.cpp)
+- Частный случай функции может быть `std::make_pair`.
+
+![alt text](screenshots/algorithms_std_transform_zip_example.png)
+
+- `std::transform_reduce` - применяет функцию к каждому элементу диапазона и складывает каждую пару получившихся значений в **произвольно порядке**: [code/algorithms_std_transform_zip.cpp](code/algorithms_std_transform_zip.cpp)
+  - Если операция **не ассоциативная**, то результат будет неопределенным (**UB**).
+
+- `std::inner_product` - скалярное произведение двух диапазонов: [code/algorithms_std_transform_zip.cpp](code/algorithms_std_transform_zip.cpp).
+  - работает также как `std::transform_reduce`, но может работать параллельно.
+  - применяет функцию к каждому элементу диапазона и складывает каждую пару получившихся значений **последовательно**.
+  - Если операция **не ассоциативная**, то результат будет все равно **определенным**.
+
+### `std::accumulate` и `std::reduce`
+
+- [code/algorithms_std_reduce_and_std_accumulate.cpp](code/algorithms_std_resuce_and_std_accumulate.cpp)
+- Слово `reduce` переводится как **"свертка" или "уменьшение"**. Это функциональная операция, которая используется для агрегирования или сжатия набора данных в одно значение путем применения функции к элементам набора.
+- Операция `reduce` позволяет проходить по последовательности элементов и комбинировать их в одно значение, используя заданную бинарную функцию.
+- `std::accumulate` делает вычисления **последовательно**, а `std::reduce` в **произвольном порядке**.
+
+### `std::partial_sum`, `std::inclusive_scan` и `std::exclusive_scan`
+
+- [code/algorithms_std_inclusive_scan_partial_sum.cpp](code/algorithms_std_inclusive_scan_partial_sum.cpp)
+
+- `std::partial_sum` - вычисляет частичные суммы элементов в диапазоне. Гарантированно **работает последовательно**.
+- `std::inclusive_scan` - вычисляет частичные суммы элементов в диапазоне. **Работает в любом порядке**.
+- `std::exclusive_scan` - как `std::inclusive_scan`, но начальное значение задается вручную. И первым элементом будет это начальное значение. Т.е. получится смещение на один элемент относительно `std::inclusive_scan`.
+
+### Идиома `erase-remove` или `erase-remove_if`
+
+- Как бы вы написали remove функцию `remove(Iter first, Iter last, const T& val)`?
+- [code/algorithms_erase_remove_idiom.cpp](code/algorithms_erase_remove_idiom.cpp)
+
+```cpp
+template <typename Iter, typename T>
+Iter my_remove(Iter first, Iter last, const T& val)
+{
+    // Невозможно удалять элемент по итератору!
+    // Поэтому remove собирает все не "удаленные" элементы в начале диапазона и
+    // Возвращает итератор на конец этого уменьшенного диапазона.
+    // Поэтому существует идиома erase(remove).
+}
+```
+
+```cpp
+v.erase(std::remove(v.begin(), v.end(), 42), v.end());
+```
+
+![algorithms_erase_remove_idiom](screenshots/algorithms_erase_remove_idiom.png)
+
+### Идиома `erase-uniquie`
+
+- Похожа на `erase-remove`, но удаляет дубликаты.
+
+```cpp
+v.erase(std::unique(v.begin(), v.end()), v.end());
+```
+
+### Реализация перемещения группы элементов (`std::rotate`)
+
+![algorithms_move_group](screenshots/algorithms_move_group.png)
+
+- [code/algorithms_std_rotate.cpp](code/algorithms_std_rotate.cpp)
+- `void rotate(ForwardIt first, ForwardIt n_first, ForwardIt last)` - перемещает элементы в диапазоне `[first, last)` так, что элемент, на который указывает `n_first`, становится первым элементом диапазона.
+- `std::rotate` - работает за `O(N)`.
+
+![algorithms_std_rotate](screenshots/algorithms_std_rotate.png)
+
+### Алгоритм `gather` через 2 вызова `std::stable_partition`
+
+- `gather` - собирает все похожие элементы на выбранный по предикату вокруг него.
+
+![algorithms_gather_via_stable_partition](screenshots/algorithms_gather_via_stable_partition.png)
+
+### Общий слайд со всеми алгоритмами
+
+![algorithms_summary](screenshots/algorithms_summary.png)
+
+### Не сортируйте лишнее: `std::nth_element`, `std::partial_sort`, `std::sort`
+
+Ниже приведены три алгоритма сортировки контейнера от самого долгого к самому быстрому:
+
+01. `sort(cont.begin(), cont.end());`
+02. `partial_sort(cont.begin(), cont.begin() + N, cont.end());`
+03. `nth_element(cont.begin(), cont.begin() + N, cont.end());`
+
+### Поисковые алгоритмы
+
+- [code/algorithms_std_lower_bound_upper_bound.cpp](code/algorithms_std_lower_bound_upper_bound.cpp)
+
+- **binary_search** – есть элемент или его нет
+- **lower_bound** – где мог бы быть элемент, если бы он был (слева)
+- **upper_bound** – где мог бы быть элемент, если бы он был (справа)
+- **equal_range** – есть ли элемент и если да, то где
+- *Сложность каждого из них логарифмическая.*
+
+![algorithms_lower_bound_upper_bound](screenshots/algorithms_lower_bound_upper_bound.png)
+
+- В сортированном массиве `std::find_if` можно заменить на `std::lower_bound`.

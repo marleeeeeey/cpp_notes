@@ -114,6 +114,7 @@
   - [Пишем свой итератор](#пишем-свой-итератор)
 - [Containers](#containers)
   - [Sequence Containers](#sequence-containers)
+  - [`fwdlist_iter.before_begin()` and `std::forward_list::splice_after`](#fwdlist_iterbefore_begin-and-stdforward_listsplice_after)
   - [Adaptors](#adaptors)
   - [Почему есть std::string, если есть std::vector? Аллокаторы и Traits](#почему-есть-stdstring-если-есть-stdvector-аллокаторы-и-traits)
   - [Associative Containers](#associative-containers)
@@ -3217,50 +3218,56 @@ random_access_iterator_tag : public bidirectional_iterator_tag     |  X |  X |  
 
 - `push_back() for O(1)+` / `pop_back()` / `operator[]() for O(1)` / `reallocate if needed`
 
-```mermaid
-block-beta
-    data["OOOOOOOOOOOOOO_____________"]
-    realloc["______________when realloc___________"]
-```
+![vector_in_memory](screenshots/vector_in_memory.png)
 
 **array**
 
 - `operator[]() for O(1)` / `compile-time size`
 
-```mermaid
-block-beta
-    data["OOOOOOOOOOOOOOOOOOOOOOOOOO"]
-```
+![array_in_memory](screenshots/array_in_memory.png)
 
 **deque**
 
 - O(1): `push_front()` / `pop_front()` / `push_back()` / `pop_back()` / `operator[]()`
 - Random access slowest than vector about 1/3 times.
 
-```mermaid
-flowchart LR
-    new_first[____] --- frist[__OO] --- id1[OOOO] --- id2[OOOO] --- id3[OOOO] --- tail[OO__] --- new_last[____]
-```
+![deque_in_memory](screenshots/deque_in_memory.png)
 
 **list**
 
 - `insert`
 - An iterator is invalidated only when the corresponding element is deleted
 
-```mermaid
-graph LR
-    head["O"] <--> id1["O"] <--> id2["O"] <--> id3["O"] <--> id4["O"] <--> tail["O"]
-```
+![list_in_memory](screenshots/list_in_memory.png)
 
 **forward_list**
 
 - Compact version of list.
 - `insert_after`
 
-```mermaid
-graph LR
-    head["O"] --> id1["O"] --> id2["O"] --> id3["O"] --> id4["O"] --> tail["O"]
+![forward_list_in_memory](screenshots/forward_list_in_memory.png)
+
+### `fwdlist_iter.before_begin()` and `std::forward_list::splice_after`
+
+- [code/conteiners_forward_list_splice.cpp](code/conteiners_forward_list_splice.cpp)
+- `splice` относится к методу, который используется для перемещения элементов из одного контейнера в другой без копирования или перемещения данных, но путем изменения указателей, которые связывают элементы. Это эффективная операция, так как она выполняется в O(1) времени.
+
+```cpp
+    std::forward_list<int> first = {1, 2, 3};
+    std::forward_list<int> second = {10, 20, 30};
+
+    first.splice_after(first.before_begin(), second);
+
+    second.splice_after(second.before_begin(), first, first.begin(), it);
+
+    first.splice_after(first.before_begin(), second, second.begin());
 ```
+
+![fwdlist_splice_001](screenshots/fwdlist_splice_001.png)
+
+![fwdlist_splice_002](screenshots/fwdlist_splice_002.png)
+
+![fwdlist_splice_003](screenshots/fwdlist_splice_003.png)
 
 ### Adaptors
 
@@ -3268,29 +3275,19 @@ graph LR
 
 - `top()` / `push()` / `pop()`
 
-```mermaid
-flowchart LR
-    id1[OOOO] --- id2[OOOO] --- id3[OOOO]--- tail[OO__] --- poptop["top()\npush()\npop()"]
-```
+![stack_in_memory](screenshots/stack_in_memory.png)
 
 **`std::queue` (based on `std::deque` by default)**
 
 - `front()` / `back()` / `push()` / `pop()`
 
-```mermaid
-flowchart LR
-    pop["pop()\nfront()"] --- frist[__OO] --- id1[OOOO] --- id2[OOOO] --- id3[OOOO] --- tail[OO__] --- push["push()\nback()"]
-```
+![queue_in_memory](screenshots/queue_in_memory.png)
 
 **`std::priority_queue` or BINARY HEAP (based on `std::vector` by default)**
 
 - `top()` / `push()` / `pop()`
 
-```mermaid
-block-beta
-    data["OOOOOOOOOOOOOO_____________"]
-    realloc["______________when realloc___________"]
-```
+![priority_queue_like_vector](screenshots/vector_in_memory.png)
 
 ### Почему есть std::string, если есть std::vector<char>? Аллокаторы и Traits
 

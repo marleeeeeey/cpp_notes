@@ -7,6 +7,7 @@
   - [volatile](#volatile)
   - [`operator->`](#operator-)
   - [R-Value и L-Value ссылки и выражения. `std::move`](#r-value-и-l-value-ссылки-и-выражения-stdmove)
+  - [Dangling references](#dangling-references)
   - [Move Semantics and `std::exchange`](#move-semantics-and-stdexchange)
   - [Move Assignment Operator Implementation](#move-assignment-operator-implementation)
   - [Why Self-assignment Check is Not Required for Move Assignment Operator](#why-self-assignment-check-is-not-required-for-move-assignment-operator)
@@ -336,6 +337,35 @@ int main()
 
 - Правые ссылки (R-value references) дают нам возможность отличать объекты, которые мы не готовы перемещать или модифицировать (L-value references), от объектов, которые мы можем безопасно перемещать или временно использовать (R-value references). При этом **правая ссылка сама по себе задает имя и адрес и является L-value**.
 - После применения `std::move` объект переходит в **неконсистентное, но предсказуемое состояние**. В этом состоянии объект может корректно завершить свою жизнь. Либо этот объект можно переиспользовать.
+- `xvalue` точно занимает **место на стеке**. С `prvalue` мутно. Не уверен, что их можно считать объектами до материализации или до какого-то другого использования.
+  - Например: `new T(T{})`. Тут `T{}` - `prvalue`, но на стеке он не появляется.
+- `auto&& s = S{}` - это материализация. Любая материализация **продлевает жизнь** объекта.
+  - Продление жизни временного объекта **может передаваться по цепочке** через вызовы некоторых встроенных операторов.
+  - **Ссылки-параметры не продлевают жизнь**, потому что эти ссылки сами всегда умирают быстрее чем переданный в них временный объект.
+- Временные объекты живут до конца full expression (наименее вложенного выражения), если им не продлили жизнь.
+  - https://en.cppreference.com/w/cpp/language/reference_initialization#Lifetime_of_a_temporary
+
+### Dangling references
+
+- https://youtu.be/_mLDaU4wSOo?t=2732
+- [code/raii_std_move_dangling_references_example.cpp](code/raii_std_move_dangling_references_example.cpp)
+
+```cpp
+
+// https://youtu.be/_mLDaU4wSOo?t=2732
+std::string&& bar(std::string&& v) // Here is rvalue object created.
+{
+    std::cout << "[bar] " << &v << "=" << v << std::endl;
+    return std::move(v);
+}
+
+int main()
+{
+    auto&& x = std::move(bar("hello")); // UB: Dangling reference. Object `std::string&& v` destroyed here.
+    std::cout << "[main] " << &x << "=" << x << std::endl;
+}
+
+```
 
 ### Move Semantics and `std::exchange`
 

@@ -1,5 +1,5 @@
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 1. Scent of C++ - 2021
-  - https://youtu.be/Bym7UMqpVEY?si=xNOZhxDSlzMIByr1 [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 1. Scent of C++ - 2021 [DONE]
+  - https://youtu.be/Bym7UMqpVEY?si=xNOZhxDSlzMIByr1
     - 00:00:00 Начало
     - 00:01:55 Кеши
     - 00:09:50 LRU на языке C и её проблемы
@@ -10,17 +10,17 @@
     - 01:04:22 Немного о домашних заданиях
     - 01:12:04 Литература и ответы на вопросы
 
-- ISO/IEC 14882 - "Information technology – Programming languages – C++" - 2011
-  - https://www.open-std.org/jtc1/sc22/wg21/docs/standards [TODO]
+- ISO/IEC 14882 - "Information technology – Programming languages – C++" - 2011 [TODO]
+  - https://www.open-std.org/jtc1/sc22/wg21/docs/standards
 
-- Bjarne Stroustrup - "The C++ Programming Language (4th Edition)" - 2013
-  - https://www.amazon.com/C-Programming-Language-4th/dp/0321563840 [TODO]
+- Bjarne Stroustrup - "The C++ Programming Language (4th Edition)" - 2013 [TODO]
+  - https://www.amazon.com/C-Programming-Language-4th/dp/0321563840
 
-- Stanley Lippman - "C++ Primer (5th Edition)" - 2012
-  - https://www.amazon.com/Primer-5th-Stanley-B-Lippman/dp/0321714113 [TODO]
+- Stanley Lippman - "C++ Primer (5th Edition)" - 2012 [TODO]
+  - https://www.amazon.com/Primer-5th-Stanley-B-Lippman/dp/0321714113
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 2. Указатели и ссылки - 2021
-  - https://youtu.be/e5__34DFz5Y?si=AAoWn34T2BcRqIpc [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 2. Указатели и ссылки - 2021 [DONE]
+  - https://youtu.be/e5__34DFz5Y?si=AAoWn34T2BcRqIpc
     - 00:00:00 Genesis
     - 00:15:38 Ссылки
     - 00:36:11 Треугольники
@@ -28,17 +28,17 @@
     - 00:58:48 Нарушения инкапсуляции
     - 01:08:28 Задание, обзор литературы, вопросы
 
-- Grady Booch - "Object-Oriented Analysis and Design with Applications" - 2007
-  - https://www.amazon.com/Object-Oriented-Analysis-Design-Applications-3rd/dp/020189551X [TODO]
+- Grady Booch - "Object-Oriented Analysis and Design with Applications" - 2007 [TODO]
+  - https://www.amazon.com/Object-Oriented-Analysis-Design-Applications-3rd/dp/020189551X
 
-- Gilbert Strang - "Introduction to Linear Algebra" 5th - 2016
-  - https://www.amazon.com/Introduction-Linear-Algebra-Gilbert-Strang/dp/0980232775 [TODO]
+- Gilbert Strang - "Introduction to Linear Algebra" 5th - 2016 [TODO]
+  - https://www.amazon.com/Introduction-Linear-Algebra-Gilbert-Strang/dp/0980232775
 
-- Ben Saks - Back to Basics: Pointers and Memory, CppCon - 2020
-  - https://www.youtube.com/watch?v=rqVWj0aVSxg [TODO]
+- Ben Saks - Back to Basics: Pointers and Memory, CppCon - 2020 [TODO]
+  - https://www.youtube.com/watch?v=rqVWj0aVSxg
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 3. Имена и сущности - 2021
-  - https://youtu.be/TQ5VPnKWqoY?si=1hz87ZAC7pKtoud_ [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 3. Имена и сущности - 2021 [DONE]
+  - https://youtu.be/TQ5VPnKWqoY?si=1hz87ZAC7pKtoud_
     - 00:00:00 Контексты
     - 00:04:00 New и delete
     - 00:11:29 Провисание ссылок
@@ -49,8 +49,8 @@
     - 01:04:35 Пространства имён
     - 01:14:05 Завершение: опять hello world
 
-- Konstantin Vladimirov Базовый курс C++ (MIPT, ILab). Lecture 4. Инициализация и копирование - 2021
-  - https://youtu.be/duDyVgMFyug?si=jNCeTvemS1wqw6nr [DONE]
+- Konstantin Vladimirov Базовый курс C++ (MIPT, ILab). Lecture 4. Инициализация и копирование - 2021 [DONE]
+  - https://youtu.be/duDyVgMFyug?si=jNCeTvemS1wqw6nr
     - 00:00:00 Поисковые деревья
     - 00:07:48 Сбалансированность
     - 00:12:46 Агрегатная инициализация
@@ -66,17 +66,17 @@
     - 01:24:01 Дополнения к перегрузке
     - 01:27:40 Домашняя работа HWT
 
-- Thomas H. Cormen - "Introduction to Algorithms" - 2009
-  - https://www.amazon.com/Introduction-Algorithms-Thomas-H-Cormen/dp/0262033844 [TODO]
+- Thomas H. Cormen - "Introduction to Algorithms" - 2009 [TODO]
+  - https://www.amazon.com/Introduction-Algorithms-Thomas-H-Cormen/dp/0262033844
 
-- Donald E. Knuth - "The Art of Computer Programming" - 2011
-  - https://www.amazon.com/Art-Computer-Programming-Volumes-Boxed/dp/0321751043 [TODO]
+- Donald E. Knuth - "The Art of Computer Programming" - 2011 [TODO]
+  - https://www.amazon.com/Art-Computer-Programming-Volumes-Boxed/dp/0321751043
 
-- Charles Bay - Instruction Re-ordering Everywhere: The C++ 'As-If' Rule and the Role of Sequence - 2016
-  - https://www.youtube.com/watch?v=8yUSMJWlEsk [TODO]
+- Charles Bay - Instruction Re-ordering Everywhere: The C++ 'As-If' Rule and the Role of Sequence - 2016 [TODO]
+  - https://www.youtube.com/watch?v=8yUSMJWlEsk
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 5. RAII и перемещение - 2021
-  - https://youtu.be/_mLDaU4wSOo?si=25br8JQd3UNicTJK [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 5. RAII и перемещение - 2021 [DONE]
+  - https://youtu.be/_mLDaU4wSOo?si=25br8JQd3UNicTJK
     - 00:00:00 Владение ресурсом
     - 00:10:34 RAII
     - 00:15:58 Указателе-подобность
@@ -85,17 +85,17 @@
     - 01:02:55 Правило пяти и правило нуля
     - 01:09:00 Двумерные массивы и домашнее задание
 
-- Edsger W. Dijkstra – Go To Statement Considered Harmful - 1968
-  - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf [TODO]
+- Edsger W. Dijkstra – Go To Statement Considered Harmful - 1968 [TODO]
+  - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf
 
-- Edsger W. Dijkstra – The Humble Programmer - 1972
-  - https://www.cs.utexas.edu/users/EWD/transcriptions/EWD03xx/EWD340.html [TODO]
+- Edsger W. Dijkstra – The Humble Programmer - 1972 [TODO]
+  - https://www.cs.utexas.edu/users/EWD/transcriptions/EWD03xx/EWD340.html
 
-- Kris van Rens - Understanding value categories in C++ - 2020
-  - https://www.youtube.com/watch?v=U7HdZkqRuZk [DONE]
+- Kris van Rens - Understanding value categories in C++ - 2020 [DONE]
+  - https://www.youtube.com/watch?v=U7HdZkqRuZk
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 6. Приведение типов - 2021
-  - https://www.youtube.com/watch?v=LDoCQzSd3xo [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 6. Приведение типов - 2021 [DONE]
+  - https://www.youtube.com/watch?v=LDoCQzSd3xo
     - 00:00:00 Статические функции и друзья
     - 00:10:51 Проектирование матрицы
     - 00:18:40 Индексаторы и прокси-классы
@@ -104,21 +104,21 @@
     - 00:53:40 Целочисленные продвижения
     - 01:04:55 Унарный плюс и унарный минус
 
-- Klaus Iglberger - Back to Basics: Move Semantics - CppCon 2019
-  - Part 1: https://www.youtube.com/watch?v=St0MNEU5b0o [DONE]
-  - Part 2: https://www.youtube.com/watch?v=pIzaZbKUw2s [DONE]
+- Klaus Iglberger - Back to Basics: Move Semantics - CppCon 2019 [DONE]
+  - Part 1: https://www.youtube.com/watch?v=St0MNEU5b0o
+  - Part 2: https://www.youtube.com/watch?v=pIzaZbKUw2s
 
-- Arthur O'Dwyer - Back to Basics: RAII and the Rule of Zero - CppCon 2019
-  - https://www.youtube.com/watch?v=7Qgd9B1KuMQ [DONE]
+- Arthur O'Dwyer - Back to Basics: RAII and the Rule of Zero - CppCon 2019 [DONE]
+  - https://www.youtube.com/watch?v=7Qgd9B1KuMQ
 
-- Joshua Gerrard - CppCon 2015 "The dangers of C-style casts"
-  - https://www.youtube.com/watch?v=DAvZ3OG9cNo [DONE]
+- Joshua Gerrard - CppCon 2015 "The dangers of C-style casts" [DONE]
+  - https://www.youtube.com/watch?v=DAvZ3OG9cNo
 
-- Ben Deane - CppCon 2018: “Operator Overloading: History, Principles and Practice”
-  - https://www.youtube.com/watch?v=zh4EgO13Etg [DONE]
+- Ben Deane - CppCon 2018: “Operator Overloading: History, Principles and Practice” [DONE]
+  - https://www.youtube.com/watch?v=zh4EgO13Etg
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 7. Перегрузка операторов - 2021
-  - https://www.youtube.com/watch?v=lHxf3_uHbKg [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 7. Перегрузка операторов - 2021 [DONE]
+  - https://www.youtube.com/watch?v=lHxf3_uHbKg
     - 00:00:00 Функторы и производительность
     - 00:14:13 PImpl и делетеры
     - 00:25:01 Базовая арифметика
@@ -128,12 +128,12 @@
     - 01:09:40 Экзотические операторы
     - 01:21:35 Общий итог и литература
 
-- Titus Winters - CppCon 2018: “Modern C++ Design”
-  - Part 1: https://www.youtube.com/watch?v=xTdeZ4MxbKo [TODO]
-  - Part 2: https://www.youtube.com/watch?v=tn7oVNrPM8I [TODO]
+- Titus Winters - CppCon 2018: “Modern C++ Design” [TODO]
+  - Part 1: https://www.youtube.com/watch?v=xTdeZ4MxbKo
+  - Part 2: https://www.youtube.com/watch?v=tn7oVNrPM8I
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 8. Наследование и полиморфизм - 2021
-  - https://www.youtube.com/watch?v=Qr6UIGF0DKg&t [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 8. Наследование и полиморфизм - 2021 [DONE]
+  - https://www.youtube.com/watch?v=Qr6UIGF0DKg&t
     - 00:00:00 ParaCL
     - 00:06:00 Unions
     - 00:13:23 Изобретаем наследование
@@ -147,8 +147,8 @@
     - 01:36:20 Перегрузка виртуальных функций
     - 01:43:45 Закрытое наследование
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 9. Множественное наследование - 2021
-  - https://www.youtube.com/watch?v=9WIPP5Bgii0&t [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 9. Множественное наследование - 2021 [DONE]
+  - https://www.youtube.com/watch?v=9WIPP5Bgii0&t
     - 00:00:00 Изобретаем множественное наследование
     - 00:13:10 Ромбовидные схемы и виртуальное наследование
     - 00:33:30 Проблема каста вниз
@@ -158,8 +158,8 @@
     - 01:13:50 Генерация лексеров
     - 01:23:10 Лемма о накачке
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 10. Языки и грамматики - 2021
-  - https://www.youtube.com/watch?v=93eipfA32G8&t [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 10. Языки и грамматики - 2021 [DONE]
+  - https://www.youtube.com/watch?v=93eipfA32G8&t
     - 00:00:00 Вспоминаем лексеры
     - 00:11:06 Грамматики
     - 00:24:24 Вывод и неоднозначность
@@ -171,11 +171,11 @@
     - 01:20:25 Реалистичный парсер для ParaCL
     - 01:30:55 Немного о проектировании и литература
 
-- Alex Aiken - Compilers (Free Video Course)
-  - https://online.stanford.edu/courses/soe-ycscs1-compilers [TODO]
+- Alex Aiken - Compilers (Free Video Course) [TODO]
+  - https://online.stanford.edu/courses/soe-ycscs1-compilers
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 11. Исключения - 2021
-  - https://www.youtube.com/watch?v=P1LcWg6K3WE [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 11. Исключения - 2021 [DONE]
+  - https://www.youtube.com/watch?v=P1LcWg6K3WE
     - 00:00:00 Обработка ошибок в стиле C и её проблемы в C++
     - 00:13:30 Нелокальные методы обработки и виды исключений
     - 00:25:30 Знакомство с исключениями
@@ -187,31 +187,31 @@
     - 01:22:45 Линия Калба
     - 01:30:00 Обзор литературы
 
-- Tom Cargill - Exception Handling: A False Sense of Security - 1994
-  - https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/aw/meyerscddemo/DEMO/MAGAZINE/CA_FRAME.HTM  [TODO]
+- Tom Cargill - Exception Handling: A False Sense of Security - 1994 [TODO]
+  - https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/aw/meyerscddemo/DEMO/MAGAZINE/CA_FRAME.HTM
 
-- David Abrahams - Exception-Safety in Generic Components - 1998
-  - https://www.boost.org/community/exception_safety.html  [TODO]
+- David Abrahams - Exception-Safety in Generic Components - 1998 [TODO]
+  - https://www.boost.org/community/exception_safety.html
 
-- Herb Sutter - Exceptional C++: 47 Engineering Puzzles, Programming Problems, and Solutions - 1999
-  - https://www.oreilly.com/library/view/exceptional-c-47/0201615622/  [TODO]
+- Herb Sutter - Exceptional C++: 47 Engineering Puzzles, Programming Problems, and Solutions - 1999 [TODO]
+  - https://www.oreilly.com/library/view/exceptional-c-47/0201615622/
 
-- Herb Sutter - More Exceptional C++ - 2001
-  - https://www.oreilly.com/library/view/more-exceptional-c/020170434X/  [TODO]
+- Herb Sutter - More Exceptional C++ - 2001 [TODO]
+  - https://www.oreilly.com/library/view/more-exceptional-c/020170434X/
 
-- CppCon 2014: Jon Kalb "Exception-Safe Code"
-  - Part 1: https://www.youtube.com/watch?v=W7fIy_54y-w&t  [TODO]
+- CppCon 2014: Jon Kalb "Exception-Safe Code" [TODO]
+  - Part 1: https://www.youtube.com/watch?v=W7fIy_54y-w&t
     - The problem
     - Solution that don't use exceptions
     - Problems with the exceptions as a solution
     - How not to write Exception-Safe Code
     - Exception-Safe Coding Guidelines
     - Implementation Techniques
-  - Part 2: https://www.youtube.com/watch?v=b9xMIKb1jMk  [TODO]
-  - Part 3: https://www.youtube.com/watch?v=MiKxfdkMJW8  [TODO]
+  - Part 2: https://www.youtube.com/watch?v=b9xMIKb1jMk
+  - Part 3: https://www.youtube.com/watch?v=MiKxfdkMJW8
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 12. Безопасность исключений - 2021
-  - https://www.youtube.com/watch?v=d0iqsUx_Aow [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 12. Безопасность исключений - 2021 [DONE]
+  - https://www.youtube.com/watch?v=d0iqsUx_Aow
     - 00:00:00 В предыдущей серии
     - 00:06:20 Условный noexcept
     - 00:24:25 Коварное извлечение
@@ -222,21 +222,21 @@
     - 01:14:05 Static asserts
     - 01:18:30 Обзор литературы
 
-- Nico Brailovsky - C++ exceptions under the hood - 2013
-  - https://nicolasbrailo.github.io/blog/history.html [TODO]
+- Nico Brailovsky - C++ exceptions under the hood - 2013 [TODO]
+  - https://nicolasbrailo.github.io/blog/history.html
     - Search "C++ exceptions under the hood" there.
     - Очень подробно написано про то, как исключения работают под капотом.
 
-- Naill Douglas - Mongrel Monads - 2017
-  - https://accu.org/conf-docs/PDFs_2017/Niall_Douglas_Slides.pdf [TODO]
-  - https://www.youtube.com/watch?v=XVofgKH-uu4 [TODO]
+- Naill Douglas - Mongrel Monads - 2017 [TODO]
+  - https://accu.org/conf-docs/PDFs_2017/Niall_Douglas_Slides.pdf
+  - https://www.youtube.com/watch?v=XVofgKH-uu4
   - Доклад про исключения на этапе компиляции.
   - У Герба Саттера тоже были идеи по созданию такого механизма.
 
-- Arne Mertz - Modern C++ Features - keyword `noexcept` - 2016
-  - https://arne-mertz.de/2016/01/modern-c-features-keyword-noexcept/ [TODO]
+- Arne Mertz - Modern C++ Features - keyword `noexcept` - 2016 [TODO]
+  - https://arne-mertz.de/2016/01/modern-c-features-keyword-noexcept/
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 13. Проектирование - 2021
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 13. Проектирование - 2021 [DONE]
   - https://www.youtube.com/watch?v=D6nn1PLJrzg
     - 00:00:00 Снова контексты и интерфейсы
     - 00:08:30 Проектирование
@@ -248,31 +248,31 @@
     - 00:44:45 Инцидентные структуры данных
     - 00:52:10 Parent inversion
     - 01:06:30 Подстановка Лисков
-    - 01:09:20 Ковариантность к генерализации [TODO - Пересмотреть]
+    - 01:09:20 Ковариантность к генерализации [REVIEW]
     - 01:15:20 Разделение интерфейса
     - 01:17:45 Инверсия зависимостей
     - 01:24:10 Немного о хорошем коде
     - 01:30:05 POLI и POLA
     - 01:36:10 Литература и заключение
 
-- GOF - Design Patterns: Elements of Reusable Object-Oriented Software - 1994
-  - https://www.oreilly.com/library/view/design-patterns-elements/0201633612/ [TODO]
+- GOF - Design Patterns: Elements of Reusable Object-Oriented Software - 1994 [TODO]
+  - https://www.oreilly.com/library/view/design-patterns-elements/0201633612/
 
 - Robert C. Martin - Design Principles and Design Patterns - 2000 [TODO]
 
 - Kent Beck - Test-Driven Development by Example - 2000 [TODO]
 
-- Martin Reddy - API Design for C++ - 2011
-  - https://www.amazon.com/API-Design-C-Martin-Reddy/dp/0123850037 [TODO]
+- Martin Reddy - API Design for C++ - 2011 [TODO]
+  - https://www.amazon.com/API-Design-C-Martin-Reddy/dp/0123850037
 
-- Steve McConnell - Code Complete: A Practical Handbook of Software Construction - 1993
-  - https://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670 [TODO]
+- Steve McConnell - Code Complete: A Practical Handbook of Software Construction - 1993 [TODO]
+  - https://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670
 
-- Klaus Iglberger - Breaking Dependencies: The SOLID Principles - CppCon 2019
-  - https://www.youtube.com/watch?v=Ntraj80qN2k [DONE]
+- Klaus Iglberger - Breaking Dependencies: The SOLID Principles - CppCon 2019 [DONE]
+  - https://www.youtube.com/watch?v=Ntraj80qN2k
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 14 (доп). OpenGL и Vulkan - 2022
-  - https://www.youtube.com/watch?v=yJE34EuZNzs [TODO_SKIP]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 14 (доп). OpenGL и Vulkan - 2022 [TODO_SKIPPED]
+  - https://www.youtube.com/watch?v=yJE34EuZNzs
     - 00:00:00 Первый квадрат
     - 00:09:56 Фиксированный конвейер
     - 00:14:04 Понятие "расширения"
@@ -291,8 +291,8 @@
     - 01:46:44 VulkanHPP и C++API
     - 01:55:13 Обзор литературы и cliffhanger
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 15. Вычисления на GPU. - 2022
-  - https://www.youtube.com/watch?v=Ccclo1GCX0A [TODO_SKIP]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 15. Вычисления на GPU. - 2022 [TODO] [SKIPPED]
+  - https://www.youtube.com/watch?v=Ccclo1GCX0A
     - 00:00:00 Гетерогенные вычисления и OpenCL
     - 00:09:31 Владение ресурсами и контексты
     - 00:14:40 Пересылка данных и C++API
@@ -305,8 +305,8 @@
     - 01:33:15 Битоническая сортировка
     - 01:38:10 Литература и расширения OpenCL
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 16. Специализация и инстанцирование - 2022
-  - https://www.youtube.com/watch?v=UrL5gdW2JOM [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 16. Специализация и инстанцирование - 2022 [DONE]
+  - https://www.youtube.com/watch?v=UrL5gdW2JOM
     - 00:00:00 Снова про OpenCL C++ API
     - 00:03:30 Идея шаблонной специализации
     - 00:12:30 Соглашение о namespace detail
@@ -320,8 +320,8 @@
     - 01:15:31 Устранение неоднозначности
     - 01:21:40 Cliffhanger
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 17. Вывод типов и свёртка ссылок - 2022
-  - https://www.youtube.com/watch?v=MsuddUd7E2A [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 17. Вывод типов и свёртка ссылок - 2022 [DONE]
+  - https://www.youtube.com/watch?v=MsuddUd7E2A
     - 00:00:00 Вывод типов шаблонами
     - 00:07:20 Вывод конструкторами классов и хинты
     - 00:17:27 Auto и decltype
@@ -334,21 +334,21 @@
     - 01:02:00 Совершенный проброс и std::forward
     - 01:15:46 Обзор литературы и cliffhanger
 
-- Scott Meyers - "Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14"
-  - https://www.amazon.com/Effective-Modern-Specific-Ways-Improve/dp/1491903996 [TODO]
+- Scott Meyers - "Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14" [TODO]
+  - https://www.amazon.com/Effective-Modern-Specific-Ways-Improve/dp/1491903996
 
-- Scott Meyers - "Type Deduction and Why You Care", CppCon - 2014
-  - https://www.youtube.com/watch?v=wQxj20X-tIU [TODO]
+- Scott Meyers - "Type Deduction and Why You Care", CppCon - 2014 [TODO]
+  - https://www.youtube.com/watch?v=wQxj20X-tIU
 
-- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017
-  - https://www.amazon.com/C-Templates-Complete-Guide-2nd/dp/0321714121 [TODO]
+- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017 [TODO]
+  - https://www.amazon.com/C-Templates-Complete-Guide-2nd/dp/0321714121
 
-- Bob Steagall - "Back to Basics: Templates" CppCon - 2021
-  - Part 1: https://www.youtube.com/watch?v=XN319NYEOcE [TODO]
-  - Part 2: https://www.youtube.com/watch?v=2Y9XbltAfXs [TODO]
+- Bob Steagall - "Back to Basics: Templates" CppCon - 2021 [TODO]
+  - Part 1: https://www.youtube.com/watch?v=XN319NYEOcE
+  - Part 2: https://www.youtube.com/watch?v=2Y9XbltAfXs
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 18. Определители типов и SFINAE - 2022
-  - https://www.youtube.com/watch?v=KZ24E8pWNwg&t [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 18. Определители типов и SFINAE - 2022 [DONE]
+  - https://www.youtube.com/watch?v=KZ24E8pWNwg&t
     - 00:00:00 Разбор домашнего задания
     - 00:12:24 Требования к контейнерам
     - 00:22:20 Работа с памятью и амортизация
@@ -359,8 +359,8 @@
     - 01:06:30 Проблемы и решения std::copy
     - 01:25:55 Домашнее задание HWG и литература
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 19. Вариабельные шаблоны - 2022
-  - https://www.youtube.com/watch?v=JC8yVbvDxyg [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 19. Вариабельные шаблоны - 2022 [DONE]
+  - https://www.youtube.com/watch?v=JC8yVbvDxyg
     - 00:00:00 Пачки параметров
     - 00:06:30 Паттерны раскрытия
     - 00:14:55 Снова прозрачная оболочка
@@ -372,14 +372,14 @@
     - 01:07:04 Введение в итераторы
     - 01:21:21 Свойства итераторов и асимптотика
 
-- Jonathan Boccara's blog - Fluent C++
-  - https://www.fluentcpp.com/ [TODO]
+- Jonathan Boccara's blog - Fluent C++ [TODO]
+  - https://www.fluentcpp.com/
 
-- Как препроцессор разворачивает код
-  - https://cppinsights.io/ [TODO]
+- Как препроцессор разворачивает код [TODO] [TOOL]
+  - https://cppinsights.io/
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 20. Итераторы - 2022
-  - https://www.youtube.com/watch?v=avnte_HqBKQ&t [DONE]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 20. Итераторы - 2022 [DONE]
+  - https://www.youtube.com/watch?v=avnte_HqBKQ&t
     - 00:00:00 Немного о begin, end и ADL
     - 00:08:58 Превосходство итераторов
     - 00:19:12 Категории итераторов
@@ -391,20 +391,20 @@
     - 01:20:08 Обратный обход и вставка
     - 01:29:00 Завершение и анонс инвалидации
 
-- Замеры времени выполнения
-  - https://quick-bench.com/ [TODO]
+- Замеры времени выполнения [TODO] [TOOL]
+  - https://quick-bench.com/
 
-- Scott Meyers - "Effective STL: 50 Specific Ways to Improve Your Use of the Standard Template Library" - 2001
-  - https://www.amazon.com/Effective-STL-Specific-Standard-Library/dp/0201749629 [TODO]
+- Scott Meyers - "Effective STL: 50 Specific Ways to Improve Your Use of the Standard Template Library" - 2001 [TODO]
+  - https://www.amazon.com/Effective-STL-Specific-Standard-Library/dp/0201749629
 
-- Casey Carter - Iterator Haiku, CppCon - 2019
-  - https://www.youtube.com/watch?v=rZs9ndzGB_8 [TODO]
+- Casey Carter - Iterator Haiku, CppCon - 2019 [TODO]
+  - https://www.youtube.com/watch?v=rZs9ndzGB_8
 
-- Patrick Neidzelski - Building and Extending the Iterator Hierarchy in a Modern, Multicore World, CppCon - 2016
-  - https://www.youtube.com/watch?v=N80hpts1SSk [TODO]
+- Patrick Neidzelski - Building and Extending the Iterator Hierarchy in a Modern, Multicore World, CppCon - 2016 [TODO]
+  - https://www.youtube.com/watch?v=N80hpts1SSk
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 1 - 2022
-  - https://www.youtube.com/watch?v=yEdoXnEaMrw [TODO_SKIP]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 1 - 2022 [TODO] [SKIPPED]
+  - https://www.youtube.com/watch?v=yEdoXnEaMrw
     - 00:00:00 Введение: компиляторы и лицензии
     - 00:09:30 LLVM IR
     - 00:19:11 Типы и память
@@ -415,8 +415,8 @@
     - 01:11:50 Тонкости создания if и while
     - 01:21:00 Домашнее задание и литература
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 2 - 2022
-  - https://www.youtube.com/watch?v=rLshTsxgDcw [TODO_SKIP]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 2 - 2022 [TODO] [SKIPPED]
+  - https://www.youtube.com/watch?v=rLshTsxgDcw
     - 00:00:00 Свободное ПО
     - 00:03:00 Невалидные итераторы
     - 00:15:40 Правила инвалидации
@@ -428,8 +428,8 @@
     - 01:08:30 ParaCL против C++
     - 01:14:45 Изменяемые переменные и завершение
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 23. Последовательные контейнеры - 2022
-  - https://www.youtube.com/watch?v=zEP7KRc2t3k [TODO]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 23. Последовательные контейнеры - 2022 [TODO]
+  - https://www.youtube.com/watch?v=zEP7KRc2t3k
     - 00:00:00 Начало
     - 00:01:43 Деки
     - 00:10:50 Списки
@@ -491,7 +491,7 @@
     - 01:23:30 No raw loops
     - 01:31:07 Сортированные диапазоны
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 26. Метапрограммирование - 2022 [TODO]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 26. Метапрограммирование - 2022 [DONE]
   - https://www.youtube.com/watch?v=zGT2CAoW3YI
     - 00:00:00 Перестановки
     - 00:10:25 Алгоритмы над перестановками
@@ -502,3 +502,59 @@
     - 01:03:40 Указатели и массивы на этапе компиляции
     - 01:10:30 Constexpr control flow
     - 01:16:35 Начало обсуждения constexpr функций
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 27. Constexpr функции - 2022 [DONE]
+  - https://www.youtube.com/watch?v=CNUC7lvoWak
+    - 00:00:00 Ещё раз о константности и control flow
+    - 00:10:45 Ограничения на constexpr функции
+    - 00:15:35 Идиома throw
+    - 00:20:30 Consteval и constinit
+    - 00:27:20 Мета-ООП и пользовательские суффиксы
+    - 00:36:00 Constexpr all the things!
+    - 00:44:37 Index sequences на примере
+    - 00:56:08 Неявные интерфейсы и их проверка
+    - 01:10:18 Простые ограничения
+    - 01:18:50 Литература
+
+- Scott Shurr – "Constexpr Introduction" and "Constexpr Applications", CppCon - 2015 [TODO]
+  - https://www.youtube.com/watch?v=qO-9yiAOQqc
+
+- Dietmar Kuhl – "Constant fun", CppCon - 2016 [TODO]
+  - https://www.youtube.com/watch?v=xWmdcvTedbc
+
+- Ben Deane, Jason Terner – "Constexpr all the things", CppCon - 2017 [TODO]
+  - https://www.youtube.com/watch?v=PJwd4JLYJJY
+
+- Arne Mertz – "Constexpr Additions in C++17" - 2017 [TODO]
+  - https://arne-mertz.de/2017/03/constexpr-additions-c17/
+
+- Andrew Sutton – Concepts in 60: everything you need to know about concepts, CppCon - 2018 [TODO]
+  - https://youtu.be/ZeU6OPaGxwM?si=MyOMcNLCaZh42TyS
+
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 28. Концепты и напутственные слова - 2022 [DONE]
+  - https://www.youtube.com/watch?v=M66d41oXwus
+    - 00:00:00 Повторяем простые констрейнты
+    - 00:09:18 Решение их проблем: requires expression
+    - 00:16:45 Концепты
+    - 00:26:08 Отношение subsumes
+    - 00:34:54 Диапазон и концепт диапазона
+    - 00:45:05 Концепт отображения
+    - 00:56:55 Некоторые проблемы диапазонов
+    - 01:02:10 Литература и прощание
+
+- Eric Niebler — "Ranges for the Standard Library", CppCon - 2015 [TODO]
+  - https://www.youtube.com/watch?v=mFUXNMfaciE
+
+- Tristan Brindle — "An Overview of Standard Ranges", CppCon - 2019 [TODO]
+  - https://www.youtube.com/watch?v=SYLgG7Q5Zws
+
+- Chris Di Bella — "What a View! Building Your Own (Lazy) Range Adaptors", CppCon - 2019 [TODO]
+  - https://www.youtube.com/watch?v=YWayW5ePpkY
+
+- Tristan Brindle — "C++ 20 Ranges in Practice", CppCon - 2020 [TODO]
+  - https://www.youtube.com/watch?v=d_E-VLyUnzc
+
+- Tristan Brindle — "Conquering C++ 20 Ranges", CppCon - 2021 [TODO]
+  - https://www.youtube.com/watch?v=3MBtLeyJKg0
+
+- Library range-v3 on GitHub: https://github.com/ericniebler/range-v3/ [TODO] [LIBRARY]

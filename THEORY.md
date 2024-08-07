@@ -1326,7 +1326,7 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 
 **LINKS**
 
-- [code/diamond_problem_and_virtual_inheritance_and_typeid.cpp](code/diamond_problem_and_virtual_inheritance_and_typeid.cpp)
+- [code/raii_diamond_problem_typeid.cpp](code/raii_diamond_problem_typeid.cpp)
 - [code/typeid_nullptr.cpp](code/typeid_nullptr.cpp)
 
 ### RTTI and dynamic_cast
@@ -1349,7 +1349,7 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 04. Аннотация `noexcept` позволяет указать, что функция не бросает исключений. Это помогает компилятору оптимизировать код и помогает документировать код.
 05. Если мы даем обещание `noexcept` к виртуальной функции, то все переопределения этой функции также должны его выполнять (быть `noexcept`).
 06. Деструкторы всегда `noexcept`, просто они не аннотированы.
-07. В `try` блок можно поместить также функцию целиком и даже список инициализации конструктора [example](code/try_block_for_ctor_init_list.cpp).
+07. В `try` блок можно поместить также функцию целиком и даже список инициализации конструктора [example](code/raii_try_block_for_ctor_init_list.cpp).
 08. Catch block как бы расширяет область видимости try блока, поэтому переменные из try блока видны в catch блоке.
 09. Выброшенный объект живет до конца блока catch, который его перехватил. #TODO: read more about it.
 10. Если в функции `noexcept` произошло исключение, то программа завершается вызовом `std::terminate` (abort).
@@ -1366,9 +1366,9 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 **LINKS**
 
 - https://en.cppreference.com/w/cpp/error/exception
-- [code/exceptions_by_value.cpp](code/exceptions_by_value.cpp)
+- [code/raii_exceptions_by_value.cpp](code/raii_exceptions_by_value.cpp)
 - [code/exception_with_multiple_inheritance.cpp](code/exception_with_multiple_inheritance.cpp)
-- [code/try_block_for_ctor_init_list.cpp](code/try_block_for_ctor_init_list.cpp)
+- [code/raii_try_block_for_ctor_init_list.cpp](code/raii_try_block_for_ctor_init_list.cpp)
 
 ### Гарантии безопасности исключений
 
@@ -2684,7 +2684,7 @@ using is_same_t = typename is_same<T, U>::type; // type alias
 
 ### Пишем свои `is_same`, `is_reference`, `remove_reference`, `integral_constant`, `true_type`, `false_type`
 
-- [code/sfinae_is_same.cpp](code/sfinae_is_same.cpp)
+- [code/template_sfinae_is_same.cpp](code/template_sfinae_is_same.cpp)
 - Набор type_traits предопределенных в библиотеке: https://en.cppreference.com/w/cpp/header/type_traits
 
 ```cpp
@@ -2921,7 +2921,7 @@ MyVector v2(v1.begin(), v1.end());  // Вызывает второй конст�
 
 - Эта техника позволяет писать компактный и эффективный код для обработки произвольного числа аргументов.
 - https://en.cppreference.com/w/cpp/language/fold
-- [code/fold_examples.cpp](code/fold_examples.cpp)
+- [code/template_fold_examples.cpp](code/template_fold_examples.cpp)
 - Note that the opening and closing parentheses are a required part of the fold expression.
 
 - `( pack op ... )` - Unary right fold. Expands to `pack1 op (pack2 op (... op packN))`.
@@ -2941,7 +2941,7 @@ void print_all (T ... args) { (cout << ... << args) << endl; }
 
 ### Шаблон для перемещения по дереву, указывая левый или правый указатель, как вариабельные аргументы
 
-- [code/fold_examples.cpp](code/fold_examples.cpp)
+- [code/template_fold_examples.cpp](code/template_fold_examples.cpp)
 - `->*` - оператор указателя на член класса.
 
 ```cpp
@@ -2977,7 +2977,7 @@ int main()
 ### Как препроцессор разворачивает range-based for loop
 
 - https://cppinsights.io/ - Сайт для просмотра того, как препроцессор разворачивает код.
-- Пример написания итератора для чисел фибоначчи: [code/my_iterator_fibonachi.cpp](code/my_iterator_fibonachi.cpp)
+- Пример написания итератора для чисел фибоначчи: [code/iterators_fibonachi_example.cpp](code/iterators_fibonachi_example.cpp)
 
 ```cpp
 // RANGE BASE LOOP FOR STD::VECTOR use (https://cppinsights.io):
@@ -3534,7 +3534,7 @@ int main()
 }
 ```
 
-- Пример реализации Finally класса с использованием `std::function` и без [code/finally_labmda_to_replace_RAII.cpp](code/finally_labmda_to_replace_RAII.cpp):
+- Пример реализации Finally класса с использованием `std::function` и без [code/raii_finally_labmda_to_replace_RAII.cpp](code/raii_finally_labmda_to_replace_RAII.cpp):
   - Первый вариант с `std::function` - **наивный**. Он выделяет динамическую память под захват.
   - Второй вариант - **улучшенный**. Он не выделяет динамическую память под захват.
 

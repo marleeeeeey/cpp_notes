@@ -140,6 +140,21 @@
   - [Алгоритм `gather` через 2 вызова `std::stable_partition`](#алгоритм-gather-через-2-вызова-stdstable_partition)
   - [Не сортируйте лишнее: `std::nth_element`, `std::partial_sort`, `std::sort`](#не-сортируйте-лишнее-stdnth_element-stdpartial_sort-stdsort)
   - [Поисковые алгоритмы: `std::binary_search`, `std::lower_bound`, `std::upper_bound`, `std::equal_range`](#поисковые-алгоритмы-stdbinary_search-stdlower_bound-stdupper_bound-stdequal_range)
+- [Metaprogramming](#metaprogramming)
+  - [Примеры `SFINAE` вычислений: `factorial`, `fibonacci`, `sqrt`, `is_prime`](#примеры-sfinae-вычислений-factorial-fibonacci-sqrt-is_prime)
+  - [Квадранты вычислений](#квадранты-вычислений)
+  - [`constexpr`](#constexpr)
+  - [`consteval` и `constinit` (C++20)](#consteval-и-constinit-c20)
+  - [Литералы пользовательского типа через `constexpr ctor` и пользовательский суффикс](#литералы-пользовательского-типа-через-constexpr-ctor-и-пользовательский-суффикс)
+  - [Техника перевода `std::initializer_list` в `std::array` через `std::make_index_sequence`.](#техника-перевода-stdinitializer_list-в-stdarray-через-stdmake_index_sequence)
+  - [SFINAE-constraints (`requires`)](#sfinae-constraints-requires)
+  - [Проблема: SFINAE-определители не упорядочены в отношении ограниченности](#проблема-sfinae-определители-не-упорядочены-в-отношении-ограниченности)
+  - [`requires requires`](#requires-requires)
+  - [`requires requires` оценивает выражение, не делая вычислений](#requires-requires-оценивает-выражение-не-делая-вычислений)
+  - [`requires requires` - что могут проверять](#requires-requires---что-могут-проверять)
+  - [`concept` - новый синтаксис для `requires` (С++20)](#concept---новый-синтаксис-для-requires-с20)
+  - [`concept` - поддерживают отношения общее и частное (subsumption)](#concept---поддерживают-отношения-общее-и-частное-subsumption)
+  - [`concept` - работает перегрузка по концептам](#concept---работает-перегрузка-по-концептам)
 
 ## Basics
 
@@ -2653,12 +2668,13 @@ int g = max(1, 1.0); // подстановка в 1 провалена
 
 - Не любая ошибочная конструкция это SFINAE. Важен контекст подстановки.
 - Здесь в контексте сигнатуры и шаблонных параметров нет никакой невалидности.
+- Для того, чтобы `SFINAE` подстановка была провалена она `должна быть провалена внутри declaration` (важен контекст подстановки).
 
 ```cpp
 int negate (int i) { return -i; }
 
-template <typename T> T negate(const T& t) {
-    typename T::value_type n = -t();
+template <typename T> T negate(const T& t) {    // В декларации нет зависимости от T, поэтому SFINAE не сработает.
+    typename T::value_type n = -t();            // Вместо этого будет ошибка компиляции в это строке во второй фазе.
     // тут используем n
 }
 
@@ -2689,12 +2705,13 @@ using is_same_t = typename is_same<T, U>::type; // type alias
 
 ```cpp
 
+// Отображение целых чисел на типы
 template <typename T, T v> struct integral_constant
 {
     static const T value = v;
     using value_type = T;
     using type = integral_constant;
-    operator value_type() const noexcept { return value; }
+    operator value_type() const noexcept { return value; } // Делаем приведение к типу, чтобы оно вело себя как значение.
 };
 
 using true_type = integral_constant<bool, true>;
@@ -3696,3 +3713,293 @@ v.erase(std::unique(v.begin(), v.end()), v.end());
 ![algorithms_lower_bound_upper_bound](screenshots/algorithms_lower_bound_upper_bound.png)
 
 - В сортированном массиве `std::find_if` можно заменить на `std::lower_bound`.
+
+## Metaprogramming
+
+### Примеры `SFINAE` вычислений: `factorial`, `fibonacci`, `sqrt`, `is_prime`
+
+- [code/meta_factorial_sfinae.cpp](code/meta_factorial_sfinae.cpp)
+- [code/meta_fibonacci_sfinae.cpp](code/meta_fibonacci_sfinae.cpp)
+- [code/meta_sqrt_int_sfinae.cpp](code/meta_sqrt_int_sfinae.cpp)
+- [code/meta_is_prime_sfinae.cpp](code/meta_is_prime_sfinae.cpp) [TODO]
+
+### Квадранты вычислений
+
+```
+        |     Run Time       |    Compile Time    |
+--------|--------------------|--------------------|
+Value   |   1. Вычисления    |   2. Вычисления    |
+        | времени выполнения | времени компиляции |
+-----------------------------|---------------------
+Type    |   4. Смешанные     | 3. Преобразования  |
+        |     вычисления     |     над типами     |
+--------------------------------------------------|
+```
+
+### `constexpr`
+
+- [code/meta_print_all_constexpr.cpp](code/meta_print_all_constexpr.cpp)
+- [code/meta_logint_constexpr.cpp](code/meta_logint_constexpr.cpp)
+
+```cpp
+template <size_t n> square: integral_constant<size_t, n*n>;
+int arr[square<5>{}]; // arr[25] // (1)
+
+constexpr int square(int x) { return x * x; }
+int arr[square(5)]; // ok, arr[25] // (2)
+```
+
+- В первом случае не очевидно, что это вызов функции, потому что нет `()`.
+- Во втором случае это явно вызов функции. Один из плюсов `constexpr`.
+
+---
+
+```cpp
+constexpr int arr[] = {2, 3, 5, 7, 11};
+constexpr int * x = &arr[6];
+```
+
+- Выход за пределы массива в `constexpr` - это не `UB`, а ошибка компиляции.
+
+### `consteval` и `constinit` (C++20)
+
+- **`consteval`**: Функции, помеченные как `consteval`, должны быть выполнены **строго на этапе компиляции**.
+
+```cpp
+  consteval int ctsqr(int n) { return n * n; }
+
+  constexpr int r = ctsqr(100); // OK
+  int x = 100;
+  int r2 = ctsqr(x); // Ошибка: x не является константой
+```
+
+- **`constinit`**: Обеспечивает **инициализацию** статической или глобальной переменной **на этапе компиляции**, но не запрещает изменять её значение в дальнейшем.
+
+```cpp
+  constinit int x = 1000; // Используется только для статических или глобальных переменных
+  ++x; // OK
+```
+
+### Литералы пользовательского типа через `constexpr ctor` и пользовательский суффикс
+
+- [code/meta_user_defined_literals.cpp](code/meta_user_defined_literals.cpp)
+- Любой объект класса, у которого есть `constexpr конструктор`, становится `литералом`.
+- У него могут быть `constexpr` методы.
+
+```cpp
+struct Complex {
+    constexpr Complex(double r, double i) : re(r), im(i) {}
+    // и так далее
+};
+
+constexpr Complex operator""_i (long double arg) {
+    return Complex(0.0, arg);
+}
+```
+
+### Техника перевода `std::initializer_list` в `std::array` через `std::make_index_sequence`.
+
+- [code/meta_vector_to_array.cpp](code/meta_vector_to_array.cpp)
+- Очень частая техника перевода `std::initializer_list` в `std::array` через `std::make_index_sequence`.
+- Эта техника очень распространена в `третьем` и `четвертом` квадрантах.
+- Но для простых случаев из второго квадранта вычислений в современных стандартах можно использовать `constexpr вектора` и другие структуры данных.
+
+```cpp
+template <typename T, size_t N, size_t... Ns>
+constexpr std::array<T, N>
+make_array_impl(std::initializer_list<T> t,
+                std::index_sequence<Ns...>) {
+    return std::array<T, N>{*(t.begin() + Ns)...};
+}
+
+template <typename T, size_t N>
+constexpr std::array<T, N>
+make_array(std::initializer_list<T> t) {
+    return make_array_impl<T, N>(t,
+                                 std::make_index_sequence<N>());
+}
+```
+
+### SFINAE-constraints (`requires`)
+
+- [code/meta_sfinae_problem.cpp](code/meta_sfinae_problem.cpp)
+- `Constraints` - были введены чтобы сделать статические интерфейсы явными.
+- Больше **нет мусорного параметра шаблона**. Языковые средства используются для того, для чего должны.
+- Сообщение об ошибке куда как лучше.
+- Внутри requires может быть что угодно, вычислимое на этапе компиляции.
+
+```cpp
+// BEFORE
+template <typename T, typename U,
+typename = enable_if_t<is_equality_comparable<T, U>::value>> // Мусорный параметр шаблона
+bool check_eq(T &&lhs, U &&rhs) { return (lhs == rhs); }
+// error: no matching function for call to 'check_eq' // Плохое сообщение об ошибке
+
+// AFTER - Constraints
+template <typename T, typename U> bool
+requires is_equality_comparable<T, U>::value
+check_eq *(T &&lhs, U &&rhs) { return (lhs == rhs); }
+// error: 'is_equality_comparable<T, U, void>::value' evaluated to false // Лучшее сообщение, но не идеальное.
+```
+
+### Проблема: SFINAE-определители не упорядочены в отношении ограниченности
+
+- `Проблема Constraints` в том, что нет упорядоченности в отношении общее и частное.
+- Например, на слайде `input_iterator` и `random_access_iterator` могут быть характеристикой одного типа,
+- и тогда две функции будут подходить под него и возникнет неоднозначность выбора.
+
+```cpp
+template <typename It>
+struct is_input_iterator : std::is_base_of<
+    std::input_iterator_tag,
+    typename std::iterator_traits<It>::iterator_category>{};
+
+template <typename It>
+struct is_random_iterator : std::is_base_of<
+    std::random_access_iterator_tag,
+    typename std::iterator_traits<It>::iterator_category>{};
+```
+
+### `requires requires`
+
+- [code/meta_requires_requires.cpp](code/meta_requires_requires.cpp)
+- Первый `requires` — это **statement**,
+  - Первый `requires` читает `true` или `false` и выкидывает шаблоны из инстанцирования или не выкидывает.
+- Второй `requires` — это **выражение**.
+  - **Оценивает**, возможно ли сделать какую-то операцию, если бы были объекты каких-то типов.
+  - Оно не делает вычисления, просто оценивает и **возвращает `true` или `false`**.
+- Улучшенное сообщение об ошибке и диагностике типов.
+
+```cpp
+template <typename T, typename U> bool
+requires requires(T t, U u) { t == u; }
+check_eq (T &&lhs, U &&rhs) { return (lhs == rhs); }
+
+// Выражение
+check_eq(std::string{"1"}, 1);
+
+// Даёт
+note: the required expression '(t == u)' would be ill-formed
+```
+
+### `requires requires` оценивает выражение, не делая вычислений
+
+- [code/meta_requires_requires_no_eval.cpp](code/meta_requires_requires_no_eval.cpp)
+
+```cpp
+template <typename T> constexpr int somepred() { return 14; }
+
+template <typename T> requires (somepred<T>() == 42) // Делает вычисления в compile-time: (14 == 42) = false
+bool foo (T&& lhs, T&& rhs) { return lhs < rhs; }
+
+template <typename T>
+requires requires (T t) { somepred<T>() == 42; } // НЕ делает вычисления, а только оценивает применимость ==.
+bool bar (T&& lhs, T&& rhs) { return lhs < rhs; }
+```
+
+### `requires requires` - что могут проверять
+
+- Сложные ограничения могут проверять валидность выражений
+
+```cpp
+  requires requires (T a, T b) { a + b; }
+```
+
+- Могут проверять существование типов
+
+```cpp
+  requires requires () { typename T::inner; }
+```
+
+- Есть специальный синтаксис для `noexcept`
+
+```cpp
+  requires requires (T t) {
+      { ++t } noexcept;
+  }
+```
+
+- Они могут комбинироваться друг с другом и с простыми ограничениями
+
+### `concept` - новый синтаксис для `requires` (С++20)
+
+- [code/meta_concept.cpp](code/meta_concept.cpp)
+- Концепт — это предикат, выполняющийся на этапе компиляции.
+- Позволяют задавать ограничения на шаблонные параметры. Это видно явно в сигнатуре функции.
+- Обеспечивают более точные сообщения об ошибках компиляции, когда код не соответствует ожидаемым требованиям.
+- Простейший концепт из хедера `concepts` - `std::convertible_to`:
+
+```cpp
+template <typename From, typename To>
+concept convertible_to =
+    std::is_convertible_v<From, To> &&
+    requires(From (&f)()) {
+        static_cast<To>(f());
+    };
+```
+
+- На основе простых концептов **можно строить свои более сложные `concept`s**.
+
+```cpp
+template <typename T, typename U>
+concept WeaklyEqualityComparableWith =
+    requires(const std::remove_reference_t<T>& t,
+             const std::remove_reference_t<U>& u) {
+        { t == u } -> convertible_to<bool>;
+        { t != u } -> convertible_to<bool>;
+        { u == t } -> convertible_to<bool>;
+        { u != t } -> convertible_to<bool>;
+    };
+```
+
+### `concept` - поддерживают отношения общее и частное (subsumption)
+
+- Сложные концепты можно написать так, чтобы они участвовали в отношениях большей или меньшей ограниченности.
+- **P subsumes Q if it can be proven that P implies Q**
+- Если в концепте P присутствуют все атомарные ограничения из Q, в таких же логических связях, то между ними есть это отношение.
+- Самое простое это прямое включение
+
+```cpp
+  template <typename T>
+  concept P = Q<T> && R<T>; // P subsumes Q and R
+```
+
+```cpp
+  template <typename T>
+  concept P = Q<T> || sizeof(T) == 4; // P not subsumes Q
+```
+
+### `concept` - работает перегрузка по концептам
+
+- [code/meta_concept_overload.cpp](code/meta_concept_overload.cpp)
+- Поскольку концепт уже берет тип `T`, то **можно заменять `typename T` на название концепта**.
+
+```cpp
+template <std::input_iterator Iter>
+typename Iter::difference_type
+my_distance(Iter first, Iter last) { ... }
+
+template <typename T>
+requires std::input_iterator<T>
+typename T::difference_type
+my_distance(T first, T last) { ... }
+```
+
+- **Перегрузка по концептам работает с учетом отношения общее и частное**.
+
+```cpp
+
+template <std::input_iterator Iter>             // overload by concept(type)
+typename Iter::difference_type                  // return type
+my_distance(Iter first, Iter last) {
+  typename Iter::difference_type n = 0;
+  while (first != last) { ++first; ++n; }
+  return n;
+}
+
+template <std::random_access_iterator Iter>     // overload by concept(type)
+typename Iter::difference_type                  // return type
+my_distance(Iter first, Iter last) {
+  return last - first;
+}
+```

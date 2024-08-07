@@ -1,7 +1,7 @@
 # C++ theory and code examples
 
 - [Overview](#overview)
-- [Style guide](#style-guide)
+- [Courses and materials](#courses-and-materials)
 - [How to build the examples](#how-to-build-the-examples)
   - [Prerequisites](#prerequisites)
   - [Build examples with VSCode (preferred)](#build-examples-with-vscode-preferred)
@@ -10,15 +10,25 @@
 
 ## Overview
 
-This repository includes [my notes about C++](/THEORY.md), taken after watching presentations from CppCon and other conferences, as well as reading books. The complete list of references is available in this file [LINKS.md](/LINKS.md). Very short notes are in the [THOUGHTS.md](/THOUGHTS.md) file.
+This repository includes my notes about C++, taken after watching presentations from CppCon and other conferences, as well as reading books. The complete list of references is available in this file [LINKS.md](/LINKS.md).
 
 In the [code folder](/code), there are examples of my programs illustrating the intricacies of the C++ language.
 
 *The notes are made in a single file, mixed in both English and Russian.
 
-## Style guide
+## Courses and materials
 
-I aim to align my coding style with the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html), where class and method names are written in PascalCase.
+- Konstantin Vladimirov (Tilir) - "C++ базовый курс, MIPT" - 2021-2022
+  - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgciJ1_K_E914nohpiOiHnpsK)
+  - [Original Code Samples Repository](https://github.com/tilir/cpp-graduate)
+  - [Slides](https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/)
+  - [My Code Samples](/code/tilir_basics/)
+  - [**My Full Notes**](TILIR_BASICS_FULL.md)
+  - [**MY Mini Notes**](TILIR_BASICS_MINI.md)
+- [HolyBlackCat](https://github.com/HolyBlackCat)
+  - [My Notes](HOLYBLACKCAT.md)
+- [Fedr](https://github.com/Fedr)
+  - [My Code Samples](/code/fedr/)
 
 ## How to build the examples
 

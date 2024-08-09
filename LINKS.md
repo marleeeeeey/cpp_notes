@@ -577,13 +577,31 @@
   - https://www.amazon.com/Standard-Library-Tutorial-Reference-2nd/dp/0321623215
   - Читать ее сейчас не имеет смысла, потому что это по сути справочник, аналогичный cppreference.com.
 
-- Nicholas Ormrod - The strange details of std::string at Facebook, CppCon - 2016 [TODO]
+- Nicholas Ormrod - The strange details of std::string at Facebook, CppCon - 2016 [DONE]
   - https://www.youtube.com/watch?v=kPR8h4-qZdk
   - Рассказ про оптимизации `std::string` в Facebook. Строки были написаны Александреску.
 
 - Mark Zeren - Rethinking strings, C++Now - 2017 [TODO]
   - https://www.youtube.com/watch?v=OMbwbXZWtDM
 
-- Антон Полухин - Как делать не надо. Велосипедостроение для профессионалов, C++ User Group - 2016 [TODO]
+- Антон Полухин - Как делать не надо. Велосипедостроение для профессионалов, C++ User Group - 2016 [DONE]
   - https://www.youtube.com/watch?v=rJWSSWYL83U
   - Рассказ про проблему thread safety (Multithread COW disease).
+
+- Chandler Carrut - Understanding Compiler Optimization, CppCon - 2015 [TODO]
+  - https://www.youtube.com/watch?v=FnGCDLhaxKU
+
+- Chandler Carrut - Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!, CppCon - 2015 [TODO]
+  - https://www.youtube.com/watch?v=nXaxk27zwlk
+  - Primary reason why modern processors are slow is due to cache misses.
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 2. Шаблоны функций - 2022 [TODO]
+  - https://www.youtube.com/watch?v=FshTrPe_Woc
+    - 00:00:00 Обобщённое программирование
+    - 00:16:20 Инстанцирование
+    - 00:26:00 Специализация
+    - 00:40:43 Non-type параметры
+    - 00:47:20 Вывод типов в шаблонах
+    - 00:59:30 Перегрузка
+    - 01:12:57 Цепочки преобразований
+    - 01:19:12 Обзор литературы

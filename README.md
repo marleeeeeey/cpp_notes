@@ -25,6 +25,8 @@ In the [code folder](/code), there are examples of my programs illustrating the 
   - [My Notes](HolyBlackCat.md)
 - [Fedr](https://github.com/Fedr)
   - [My Code Samples](/code/fedr/)
+- [Antony Polukhin](https://github.com/apolukhin)
+  - [My Notes](POLUKHIN.md)
 
 ### How to build the examples
 

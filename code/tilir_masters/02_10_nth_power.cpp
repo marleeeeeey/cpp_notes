@@ -1,13 +1,16 @@
 #include "gtest/gtest.h"
 
+// Алгоритм быстрого возведения в степень (exponentiation by squaring).
+// Быстрое возведение в степень имеет временную сложность O(log n).
+// x^n = возвести (x^2) несколько раз пока (n=n/2) не станет равно 0.
 unsigned nth_power(unsigned x, unsigned n)
 {
-    unsigned acc = 1;
+    unsigned acc = 1; // Нейтральный элемент для умножения
     if ((x < 2) || (n == 1))
         return x;
     while (n > 0)
     {
-        if ((n & 0x1) == 0x1)
+        if ((n & 0x1) == 0x1) // Если нечетный
         {
             acc *= x;
             n -= 1;
@@ -32,6 +35,7 @@ TEST(nthpower_test_case, testWillPass)
 {
     EXPECT_EQ(nth_power(0, 10), 0);
     EXPECT_EQ(nth_power(1, 11), 1);
+    EXPECT_EQ(nth_power(2, 8), (1 << 8));
     EXPECT_EQ(nth_power(2, 11), (1 << 11));
     EXPECT_EQ(nth_power(3, 0), 1);
     EXPECT_EQ(nth_power(3, 3), 27);

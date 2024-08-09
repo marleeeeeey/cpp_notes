@@ -558,3 +558,32 @@
   - https://www.youtube.com/watch?v=3MBtLeyJKg0
 
 - Library range-v3 on GitHub: https://github.com/ericniebler/range-v3/ [TODO] [LIBRARY]
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 1. Строки - 2022 [DONE]
+  - https://www.youtube.com/watch?v=9N_wJ7oIHDk
+    - 00:00:00 Литералы
+    - 00:07:35 Lvalue to rvalue
+    - 00:16:20 C строки
+    - 00:24:15 Проблемы C строк
+    - 00:28:05 Класс строки
+    - 00:36:30 Поиск и замены
+    - 00:40:49 Проблемы C++ строк
+    - 00:48:28 String View
+    - 00:53:46 Оптимизации COW и SSO
+    - 01:06:22 Шаблон класса строки
+    - 01:15:55 Список литературы
+
+- Nicolai M. Josuttis - The C++ Standard Library - A Tutorial and Reference (2nd Edition), Addison-Wesley - 2012 [SKIP]
+  - https://www.amazon.com/Standard-Library-Tutorial-Reference-2nd/dp/0321623215
+  - Читать ее сейчас не имеет смысла, потому что это по сути справочник, аналогичный cppreference.com.
+
+- Nicholas Ormrod - The strange details of std::string at Facebook, CppCon - 2016 [TODO]
+  - https://www.youtube.com/watch?v=kPR8h4-qZdk
+  - Рассказ про оптимизации `std::string` в Facebook. Строки были написаны Александреску.
+
+- Mark Zeren - Rethinking strings, C++Now - 2017 [TODO]
+  - https://www.youtube.com/watch?v=OMbwbXZWtDM
+
+- Антон Полухин - Как делать не надо. Велосипедостроение для профессионалов, C++ User Group - 2016 [TODO]
+  - https://www.youtube.com/watch?v=rJWSSWYL83U
+  - Рассказ про проблему thread safety (Multithread COW disease).

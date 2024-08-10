@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include <concepts>
 
 // Алгоритм быстрого возведения в степень (exponentiation by squaring).
 // Быстрое возведение в степень имеет временную сложность O(log n).

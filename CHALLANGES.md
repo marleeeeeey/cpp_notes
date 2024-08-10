@@ -26,7 +26,7 @@ class string {
 - Как должны сравниваться строки с одинаковым `CharT`, но разными `Traits`?
 - А если у них одинаковые `CharT` и `Traits`, но разные аллокаторы?
 
-#### Решение
+#### Решение 1
 
 1. **Реализация оператора сравнения**:
 
@@ -69,6 +69,26 @@ bool operator==(const basic_string<CharT, Traits, Allocator>& lhs,
         return false;
     }
     return Traits::compare(lhs.data(), rhs.data(), lhs.size()) == 0;
+}
+```
+
+#### Решение 2
+
+```cpp
+template <typename CharT, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
+bool operator==(const basic_string<CharT, Traits, Allocator>& lhs,
+                const basic_string<CharT, Traits, Allocator>& rhs) {
+    return lhs.compare(rhs) == 0;
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator==(const CharT* lhs, const basic_string<CharT, Traits, Allocator>& rhs) {
+    return rhs.compare(lhs) == 0;
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator==(const basic_string<CharT, Traits, Allocator>& lhs, const CharT* rhs) {
+    return lhs.compare(rhs) == 0;
 }
 ```
 

@@ -340,8 +340,11 @@
 - Scott Meyers - "Type Deduction and Why You Care", CppCon - 2014 [TODO]
   - https://www.youtube.com/watch?v=wQxj20X-tIU
 
-- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017 [TODO]
+- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017 [IN_PROGRESS]
   - https://www.amazon.com/C-Templates-Complete-Guide-2nd/dp/0321714121
+  - Книга состоит из двух частей:
+    - Первая небольшая часть с основами, которая знакомит со всеми шаблонами.
+    - Вторая часть это более глубокое погружение в шаблоны.
 
 - Bob Steagall - "Back to Basics: Templates" CppCon - 2021 [TODO]
   - Part 1: https://www.youtube.com/watch?v=XN319NYEOcE
@@ -595,7 +598,7 @@
   - https://www.youtube.com/watch?v=nXaxk27zwlk
   - Primary reason why modern processors are slow is due to cache misses.
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 2. Шаблоны функций - 2022 [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 2. Шаблоны функций - 2022 [DONE]
   - https://www.youtube.com/watch?v=FshTrPe_Woc
     - 00:00:00 Обобщённое программирование
     - 00:16:20 Инстанцирование
@@ -605,3 +608,19 @@
     - 00:59:30 Перегрузка
     - 01:12:57 Цепочки преобразований
     - 01:19:12 Обзор литературы
+
+- Alexander A. Stepanov, Paul McJones – Elements of Programming, Addison-Wesley - 2009 [TODO]
+  - https://www.amazon.com/Elements-Programming-Alexander-Stepanov/dp/032163537X
+  - Уже тогда Александр Степанов писал про концепты.
+
+- Alexander A. Stepanov, Daniel E. Rose – From Mathematics to Generic Programming, Addison-Wesley - 2014 [TODO]
+  - https://www.amazon.com/Mathematics-Generic-Programming-Alexander-Stepanov/dp/0321942043
+  - Науч поп про биографии ученых, философию и математику.
+
+- Stephan T. Lavavej – Core C++, Lectures 1, 2 and 3 - 2013 [TODO]
+  - https://www.youtube.com/watch?v=3Yg3QnGXxHM
+  - https://www.youtube.com/watch?v=-pqlN95h-4k
+  - https://www.youtube.com/watch?v=03KAWd6Yp8I
+
+- Andrei Alexandrescu – Generic: Min and Max Redivivus, Dr. Dobb's - 2001 [TODO]
+  - https://drdobbs.com/generic-min-and-max-redivivus/184403774

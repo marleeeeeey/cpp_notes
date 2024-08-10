@@ -56,8 +56,9 @@ CMake build preferred before manual build because it generates `compile_commands
 To build the examples with CMake, you may use the following commands:
 
 ```
-mkdir build
-cmake -E echo code/hello_world.cpp > file_to_build.txt
+mkdir build && cd build
+mkdir Debug && cd Debug
+cmake -E echo ../../code/hello_world.cpp > file_to_build.txt
 cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++
 cmake --build build/Debug -- -k 0
 ./build/Debug/cpp_file_example.exe

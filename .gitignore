@@ -2,6 +2,7 @@ __*
 .cache/
 .vs/
 build/
+build_linux/
 **/*.exe
 **/*.ilk
 **/*.pdb

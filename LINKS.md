@@ -562,7 +562,7 @@
 
 - Library range-v3 on GitHub: https://github.com/ericniebler/range-v3/ [TODO] [LIBRARY]
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 1. Строки - 2022 [DONE]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 01. Строки - 2022 [DONE]
   - https://www.youtube.com/watch?v=9N_wJ7oIHDk
     - 00:00:00 Литералы
     - 00:07:35 Lvalue to rvalue
@@ -598,7 +598,7 @@
   - https://www.youtube.com/watch?v=nXaxk27zwlk
   - Primary reason why modern processors are slow is due to cache misses.
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 2. Шаблоны функций - 2022 [DONE]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 02. Шаблоны функций - 2022 [DONE]
   - https://www.youtube.com/watch?v=FshTrPe_Woc
     - 00:00:00 Обобщённое программирование
     - 00:16:20 Инстанцирование
@@ -625,7 +625,7 @@
 - Andrei Alexandrescu – Generic: Min and Max Redivivus, Dr. Dobb's - 2001 [TODO]
   - https://drdobbs.com/generic-min-and-max-redivivus/184403774
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 3. Шаблоны классов и частичная специализация - 2022 [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 03. Шаблоны классов и частичная специализация - 2022 [IN_PROGRESS]
   - https://www.youtube.com/watch?v=e4NpXk9l51w
     - 00:00:00 Цепочки преобразований
     - 00:08:15 Частичный порядок
@@ -636,3 +636,29 @@
     - 00:50:42 Шаблоны членов
     - 00:56:02 Параметризация методов и переходники
     - 01:08:30 Вывод типов конструкторами
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 04. Разрешение имён в шаблонах и One Definition Rule - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 05. Модули в C++ - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 06. SFINAE - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 07. Классическое метапрограммирование - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 08. Константные выражения - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 09. Волшебство времени компиляции - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 11. Вывод типов - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 12. Вариабельные шаблоны - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 13. Лямбды - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 2  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 15. Аллокаторы - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 16. Полиморфные аллокаторы - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 17. Умные указатели - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 18. Динамический полиморфизм - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 1 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 2 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 20. Очереди - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 1 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 2 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 3 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 22. Параллелизм - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 2 - 2023  [TODO]

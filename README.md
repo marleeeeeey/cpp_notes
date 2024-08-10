@@ -27,6 +27,12 @@ In the [code folder](/code), there are examples of my programs illustrating the 
   - [My Code Samples](/code/fedr/)
 - [Antony Polukhin](https://github.com/apolukhin)
   - [My Notes](POLUKHIN.md)
+- Konstantin Vladimirov (Tilir) - "Магистерский курс C++, MIPT" - 2022-2023
+  - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgcgf7R88ZQRQqWOdLy4pRW2h)
+  - [Original Code Samples Repository](https://github.com/tilir/cpp-masters)
+  - [My Code Samples](/code/tilir_masters/)
+  - [**My Full Notes**](TILIR_MASTERS_FULL.md)
+  - [**MY Mini Notes**](TILIR_MASTERS_MINI.md)
 
 ### How to build the examples
 

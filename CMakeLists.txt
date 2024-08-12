@@ -33,6 +33,7 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-function>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-missing-braces>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-literal-conversion>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-uninitialized>
 )
 
 # #################### Adding Google Test #######################

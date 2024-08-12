@@ -196,7 +196,7 @@
 - Herb Sutter - Exceptional C++: 47 Engineering Puzzles, Programming Problems, and Solutions - 1999 [TODO]
   - https://www.oreilly.com/library/view/exceptional-c-47/0201615622/
 
-- Herb Sutter - More Exceptional C++ - 2001 [TODO]
+- Herb Sutter - More Exceptional C++: 40 new engineering puzzles, programming problems, and solutions - 2001 [TODO]
   - https://www.oreilly.com/library/view/more-exceptional-c/020170434X/
 
 - CppCon 2014: Jon Kalb "Exception-Safe Code" [TODO]
@@ -625,7 +625,7 @@
 - Andrei Alexandrescu – Generic: Min and Max Redivivus, Dr. Dobb's - 2001 [TODO]
   - https://drdobbs.com/generic-min-and-max-redivivus/184403774
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 03. Шаблоны классов и частичная специализация - 2022 [IN_PROGRESS]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 03. Шаблоны классов и частичная специализация - 2022 [DONE]
   - https://www.youtube.com/watch?v=e4NpXk9l51w
     - 00:00:00 Цепочки преобразований
     - 00:08:15 Частичный порядок
@@ -637,7 +637,43 @@
     - 00:56:02 Параметризация методов и переходники
     - 01:08:30 Вывод типов конструкторами
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 04. Разрешение имён в шаблонах и One Definition Rule - 2022  [TODO]
+- Sergey Slotin - Как устроены память и кеши - 2024 [DONE]
+  - https://www.youtube.com/watch?v=Lrjjqc1bRHo
+    - 00:00:00 Начало и правила игры
+    - 00:06:00 Первый вопрос
+    - 00:11:30 Memory sharing
+    - 00:19:20 Пропускная способность
+    - 00:29:52 Ассоциативность
+    - 00:37:50 Виртуальная память
+    - 00:47:40 Завершение
+
+- Sergey Slotin - Algorithms for Modern Hardware [TODO] [TOP]
+  - https://en.algorithmica.org/hpc/
+  - https://ru.algorithmica.org/cs/
+  - https://github.com/sslotin/amh-code/tree/main/cpu-cache
+
+- Ulrich Drepper - "What Every Programmer Should Know About Memory" by Ulrich Drepper - 2007 [TODO]
+  - https://people.freebsd.org/~lstewart/articles/cpumemory.pdf
+  - Как память используется и управляется в современных системах.
+  - Это обязательное чтение для любого программиста, работающего с низкоуровневым кодом.
+
+- Timur Doumler - "Want fast C++? Know your hardware!" - 2016 [TODO]
+  - https://www.youtube.com/watch?v=BP6NxVxDQIs
+  - Как знания о работе оборудования могут помочь в написании более быстрого и эффективного кода на C++.
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 04. Разрешение имён в шаблонах и One Definition Rule - 2022  [IN_PROGRESS]
+  - https://www.youtube.com/watch?v=8mCSDR1NpoU
+    - 00:00:00 Имена и область видимости
+    - 00:06:45 Двухфазный процесс
+    - 00:12:30 Несколько примеров
+    - 00:20:35 Порядок частичных специализаций
+    - 00:24:40 Объявления и единицы трансляции
+    - 00:33:50 Связывание
+    - 00:44:40 One Definition Rule
+    - 00:50:00 Inline
+    - 00:59:10 ODR-usage
+    - 01:07:40 Выдача курсового проекта (язык ParaSL)
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 05. Модули в C++ - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 06. SFINAE - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 07. Классическое метапрограммирование - 2022  [TODO]

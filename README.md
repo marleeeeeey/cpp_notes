@@ -14,25 +14,28 @@ In the [code folder](/code), there are examples of my programs illustrating the 
 
 ### Courses and materials
 
-- Konstantin Vladimirov (Tilir) - "C++ базовый курс, MIPT" - 2021-2022
-  - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgciJ1_K_E914nohpiOiHnpsK)
-  - [Original Code Samples Repository](https://github.com/tilir/cpp-graduate)
-  - [Slides](https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/)
-  - [My Code Samples](/code/tilir_basics/)
-  - [**My Full Notes**](TILIR_BASICS_FULL.md)
-  - [**MY Mini Notes**](TILIR_BASICS_MINI.md)
+- [Konstantin Vladimirov (Tilir)](https://github.com/tilir)
+  - "C++ базовый курс, MIPT" - 2021-2022
+    - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgciJ1_K_E914nohpiOiHnpsK)
+    - [Original Code Samples Repository](https://github.com/tilir/cpp-graduate)
+    - [Slides](https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/)
+    - [My Code Samples](/code/tilir_basics/)
+    - [**My Full Notes**](TILIR_BASICS_FULL.md)
+    - [**MY Mini Notes**](TILIR_BASICS_MINI.md)
+  - "Магистерский курс C++, MIPT" - 2022-2023
+    - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgcgf7R88ZQRQqWOdLy4pRW2h)
+    - [Original Code Samples Repository](https://github.com/tilir/cpp-masters)
+    - [My Code Samples](/code/tilir_masters/)
+    - [**My Full Notes**](TILIR_MASTERS_FULL.md)
+    - [**MY Mini Notes**](TILIR_MASTERS_MINI.md)
 - [HolyBlackCat](https://github.com/HolyBlackCat)
   - [My Notes](HolyBlackCat.md)
 - [Fedr](https://github.com/Fedr)
   - [My Code Samples](/code/fedr/)
 - [Antony Polukhin](https://github.com/apolukhin)
   - [My Notes](POLUKHIN.md)
-- Konstantin Vladimirov (Tilir) - "Магистерский курс C++, MIPT" - 2022-2023
-  - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgcgf7R88ZQRQqWOdLy4pRW2h)
-  - [Original Code Samples Repository](https://github.com/tilir/cpp-masters)
-  - [My Code Samples](/code/tilir_masters/)
-  - [**My Full Notes**](TILIR_MASTERS_FULL.md)
-  - [**MY Mini Notes**](TILIR_MASTERS_MINI.md)
+- [Sergey Slotin](https://github.com/sslotin)
+  - [My Notes](SERGEY_SLOTIN_FULL.md)
 
 ### How to build the examples
 

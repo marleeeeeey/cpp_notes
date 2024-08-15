@@ -50,6 +50,13 @@
   - [Импортируем модуль в модуль](#импортируем-модуль-в-модуль)
   - [Что нельзя экспортировать из модуля](#что-нельзя-экспортировать-из-модуля)
   - [Глобальный фрагмент модуля, в который можно сделать `include`](#глобальный-фрагмент-модуля-в-который-можно-сделать-include)
+- [--------------------- 05. SFINAE ---------------------](#----------------------05-sfinae----------------------)
+- [SFINAE (Substitution Failure Is Not An Error)](#sfinae-substitution-failure-is-not-an-error)
+  - [Можно создавать шаблонные переменные](#можно-создавать-шаблонные-переменные)
+  - [SFNIAE unwrapping](#sfniae-unwrapping)
+  - [Использование `void_t`, чтобы спросить, если у типа определенный метод (интерфейс)](#использование-void_t-чтобы-спросить-если-у-типа-определенный-метод-интерфейс)
+  - [`void_t` — это не шаблон, это алиас. Алиасы имеют некоторые особенности](#void_t--это-не-шаблон-это-алиас-алиасы-имеют-некоторые-особенности)
+  - [ENABLE\_IF - условная конструкция для типов](#enable_if---условная-конструкция-для-типов)
 
 ## --------------------- 01. Строки ---------------------
 
@@ -909,4 +916,95 @@ import <string>;        // Импорт должен быть до всех decl
 
 // Содержимое модуля (exports и прочее, также говорят "perview")
 
+```
+
+## --------------------- 05. SFINAE ---------------------
+
+## SFINAE (Substitution Failure Is Not An Error)
+
+### Можно создавать шаблонные переменные
+
+```cpp
+template<typename T, typename U> struct is_same : false_type {};
+template<typename T> struct is_same<T, T> : true_type {};
+template<typename T, typename U>
+using is_same_t = typename is_same<T, U>::type;
+
+// Так лучше не делать, потому что эта
+// переменная будет находится в глобальной памяти.
+template<typename T, typename U>
+bool is_same_v = is_same<T, U>::value; // не is_same_t<....>::value!    // <=== шаблонная переменная в шлобальной памяти
+
+assert (is_same<int, int>::value && is_same<char, int>::value);
+assert (is_same_v<int, int> && !is_same_v<char, int>);
+
+// Лучше использовать constexpr переменные в шаблонах
+template<typename T, typename U>
+constexpr bool is_same_v2 = is_same<T, U>::value;                       // <=== шаблонная переменная constexpr
+
+```
+
+### SFNIAE unwrapping
+
+```cpp
+using is_same_t = typename is_same<T, U>::type;
+
+template <typename T> struct not_ : false_type {};
+template <> struct not_<false_type> : true_type {};
+template <typename T> using not_t = typename not_<T>::type;         // <=== unwrapping alias
+
+assert(and_v<is_same  <int, int>, not_ <is_same  <char, int>>>);    // Error: потому что нет unwarapping
+assert(and_v<is_same_t<int, int>, not_t<is_same_t<char, int>>>);    // OK
+```
+
+### Использование `void_t`, чтобы спросить, если у типа определенный метод (интерфейс)
+
+```cpp
+template <typename, typename = void>
+struct has_typedef_foobar : false_type { };
+
+template <typename T>
+struct has_typedef_foobar<T, void_t<typename T::foobar>> : true_type { };
+```
+
+### `void_t` — это не шаблон, это алиас. Алиасы имеют некоторые особенности
+
+- Полная и частичная специализация шаблонов алиасов невозможна.
+
+```cpp
+template <typename T> using MyType = std::vector<T>;
+template <> using MyType<int> = int; // ошибка
+```
+
+- Алиасы шаблонов не выводятся выводом типов:
+
+```cpp
+template <class T> using Vec = std::vector<T>;
+
+Vec<int> v; // std::vector<int, std::allocator<int>> v;
+
+template <template <typename> typename TT> void f(TT<int>);
+
+f(v); // ошибка вывода
+```
+
+### ENABLE_IF - условная конструкция для типов
+
+- Получившаяся триада `enable_if` является одной из самых полезных идиом в практическом SFINAE.
+- Она используется, чтобы выкидывать (sfinae-out) инстанциации шаблонов.
+- Для тренировки дома можно попробовать
+  - найти n-ное простое число на этапе компиляции, используя шаблоны в C++ [TODO].
+  - Факториал на этапе компиляции [TODO].
+  - Числа Фибоначчи на этапе компиляции [TODO].
+  - Целочисленный квадратный корень на этапе компиляции [TODO].
+
+```cpp
+template <bool B, typename T = void>
+struct enable_if { using type = T; };
+
+template <typename T = void>
+struct enable_if<false, T> {};
+
+template <bool B, typename T = void>
+using enable_if_t = typename enable_if<B, T>::type;
 ```

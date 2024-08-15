@@ -1,1 +1,1 @@
-../../code/tilir_masters/03_14_method_full_spec.cpp
+../../code/tilir_masters/04_10_inline.cpp

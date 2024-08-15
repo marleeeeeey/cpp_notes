@@ -661,7 +661,7 @@
   - https://www.youtube.com/watch?v=BP6NxVxDQIs
   - Как знания о работе оборудования могут помочь в написании более быстрого и эффективного кода на C++.
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 04. Разрешение имён в шаблонах и One Definition Rule - 2022  [IN_PROGRESS]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 04. Разрешение имён в шаблонах и One Definition Rule - 2022  [DONE]
   - https://www.youtube.com/watch?v=8mCSDR1NpoU
     - 00:00:00 Имена и область видимости
     - 00:06:45 Двухфазный процесс
@@ -674,7 +674,38 @@
     - 00:59:10 ODR-usage
     - 01:07:40 Выдача курсового проекта (язык ParaSL)
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 05. Модули в C++ - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 05. Модули в C++ - 2022  [DONE]
+  - https://www.youtube.com/watch?v=Dsfccho1QX0
+    - 00:00:00 Общие вопросы и проблемы хедеров
+    - 00:12:20 Прекомпилированные хедера
+    - 00:22:34 Модули: первое знакомство
+    - 00:33:14 Импорт и экспорт
+    - 00:49:10 Глобальные и приватные фрагменты
+    - 00:59:05 Case study: модуляризация ParaCL
+    - 01:16:30 Управление конфигурациями (make, cmake, meson)
+    - 01:28:04 Литература
+
+- Understanding C++ Modules - 2019 [TODO]
+  - https://vector-of-bool.github.io/2019/03/10/modules-1.html
+  - Много примеров кода и объяснений по модулям.
+
+- Gabriel Dos Reis - C++ Modules: The State of The Union, CppCon - 2016 [TODO]
+  - https://www.youtube.com/watch?v=IA14LXnBcJg
+  - Фундаментальный исторический доклад по модулям.
+
+- B. A. Lelbach - Modules are coming, Meeting C++ - 2019 [TODO]
+  - https://www.youtube.com/watch?v=yee9i2rUF3s
+  - Не особо хороший доклад.
+
+- Daniela Engert - A (Short) Tour of C++ Modules - 2021 [TODO]
+  - https://www.youtube.com/watch?v=nP8QcvPpGeM
+  - Reachability, visibility in modules.
+  - Примеры на компиляторе MSVC.
+
+- Bill Hoffman - CMake 2022 C++ Modules and More, CppNow - 2022 [TODO]
+  - https://www.youtube.com/watch?v=hkefPcWySzI
+  - Много современной инфы по CMake и модулям.
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 06. SFINAE - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 07. Классическое метапрограммирование - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 08. Константные выражения - 2022  [TODO]

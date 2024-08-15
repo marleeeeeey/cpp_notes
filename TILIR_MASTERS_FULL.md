@@ -41,6 +41,15 @@
 - [One Definition Rule (ODR)](#one-definition-rule-odr)
   - [Единица трансляции](#единица-трансляции)
   - [Классы связывания](#классы-связывания)
+  - [ODR(One Definition Rule)](#odrone-definition-rule)
+  - [(1) `non-inline` for ODR](#1-non-inline-for-odr)
+  - [(2) `odr-used` for ODR](#2-odr-used-for-odr)
+  - [(3) `discarded statement` for ODR](#3-discarded-statement-for-odr)
+  - [Предкомпилированные header файлы (первая попытка ускорить компиляцию)](#предкомпилированные-header-файлы-первая-попытка-ускорить-компиляцию)
+  - [Модули (C++20) - идеальные предкомпилированные header файлы](#модули-c20---идеальные-предкомпилированные-header-файлы)
+  - [Импортируем модуль в модуль](#импортируем-модуль-в-модуль)
+  - [Что нельзя экспортировать из модуля](#что-нельзя-экспортировать-из-модуля)
+  - [Глобальный фрагмент модуля, в который можно сделать `include`](#глобальный-фрагмент-модуля-в-который-можно-сделать-include)
 
 ## --------------------- 01. Строки ---------------------
 
@@ -673,4 +682,231 @@ namespace { int buz(); } // внутреннее
 struct T; // внешнее
 template <typename T> struct U; // внешнее
 struct S { static int x; }; // внешнее
+```
+
+### ODR(One Definition Rule)
+
+- ODR - имя должно иметь одно определение в программе.
+- ODR
+  - No translation unit shall contain more than one definition of any variable, function, class type, enumeration type, template [...].
+  - Every program shall contain exactly one definition of every **(1) non-inline** function or variable that is **(2) odr-used** in that program outside of a **(3) discarded statement**.
+- После препроцессинга типы должны полексемно совпадать с их определениями.
+
+```cpp
+// header.h
+#pragma once
+
+// ok, т.к это исключение из ODR.
+// Ключевое слово inline не влияет на связывание. Функция одна все все единицы трансляции.
+// Как будто бы у нее есть небольшой свой модуль, который подлинкован ко всем и как будто там она есть.
+// На самом деле это weak функция, и линковщик берет первую попавшуюся.
+inline int foo(int n) { return n; }
+
+static int bar(int n) { return n; } // ok, но multiple defs.
+```
+
+### (1) `non-inline` for ODR
+
+- https://github.com/tilir/cpp-masters/blob/master/modules/fullspec.hpp
+- `inline` - УСТАРЕВШЕЕ ЗНАЧЕНИЕ: это способ сказать компилятору, что функция должна быть вставлена в каждое место вызова.
+- `inline` - НОВОЕ ЗНАЧЕНИЕ: означает исключение из ODR. Т.е. чтобы она была в header файле, но одна на все единицы трансляции.
+  - Это свойство удобно использовать в **специализациях шаблонов**, которые специализированы **в header файле**.
+
+### (2) `odr-used` for ODR
+
+```cpp
+struct S {
+  static const int n = 5; // declaration
+};
+
+int x = S::n + 1; // n not ODR-used                         <=== определение не требуется
+
+int foo(const int *x) { return *x; }
+
+#if 0
+const int S::n; // definition
+#endif
+
+int y = foo(&S::n) + 1; // n ODR-used [class.static.data]   <=== требуется определение
+```
+
+### (3) `discarded statement` for ODR
+
+- "Не вычеркнуто с помощью `if constexpr`"
+- Обратите внимание: `if constexpr` влияет на инстанцирование и на ODR
+
+```cpp
+extern int x;
+
+int foo() {
+    if constexpr(false) { return x; }   // <=== if constexpr(false) - discarded statement - не требует определения
+    else return 0;
+}
+
+template <int N> int bar() {
+    if constexpr(false) { return x; }   // <===
+    else return 0;
+}
+```
+
+### Предкомпилированные header файлы (первая попытка ускорить компиляцию)
+
+- Откомпилированный заголовочный файл содержит AST (Abstract Syntax Tree) вместо текста.
+- Компиляция header файла создает предкомпилированный файл с расширением `.gch`.
+
+```cpp
+// hello-afx.h
+#pragma once
+#include <iostream>
+#include <string>
+#include <vector>
+// и так далее
+
+// hello-afx.cpp
+#include "hello-afx.h"
+
+// > g++ -O2 stdafx.h                               # создаст stdafx.h.pch
+// > g++ -O2 hello-afx.cc # найдёт stdafx.h.pch     # использует stdafx.h.pch вместо hello-afx.h
+```
+
+### Модули (C++20) - идеальные предкомпилированные header файлы
+
+- https://github.com/tilir/cpp-masters/tree/master/modules/simplest
+- https://youtu.be/Dsfccho1QX0?t=1416
+
+- Минусы предкомпилированных header файлов:
+  - Мы хотим управлять видимостью и хотим управлять linkage.
+  - В предкомпилированных header все символы видны всем, а не только тем, кто их импортировал.
+
+- Модули - это идеальные предкомпилированные header файлы с
+  - `module linkage` связыванием.
+  - Регулировкой видимости.
+
+- `Модульное связывание` - доступно из всех единиц трансляций входящих в модуль.
+  - В других единицах трансляции это будет другое имя.
+
+**Пишем модуль**
+
+```cpp
+export module first_module;         // Модуль может содержать несколько единиц трансляции. Только одна из них может быть экспортная.
+
+namespace hello {
+
+int foo(int x) { return x; }        // Модульное связывание. Деталь реализации.
+
+export int e = 42;                  // Внешнее связывание. Экспортируется из модуля. Нет ODR violation.
+
+export int bar() { return foo(e); } // Внешнее связывание, но объявление ровно одно на все места, где влючен этот модуль. Похоже на inline. Нет ODR violation.
+
+} // namespace hello
+```
+
+**Используем модуль**
+
+```cpp
+// main.cpp
+
+#include <iostream>
+
+import first_module;
+
+int main() {
+  std::cout << "foo: " << hello::foo() << std::endl;    // Error because foo is not visible
+  std::cout << "bar: " << hello::bar() << std::endl;    // OK: 42
+  std::cout << "e: " << hello::e << std::endl;          // OK: 42
+}
+```
+
+`
+**Сборка**
+
+```bash
+# компиляция модуля
+clang++ --std=c++20 -fmodules --stdlib=libc++ --precompile first_module.cppm -o first_module.pcm
+
+# компиляция main c использованием модуля
+clang++ --std=c++20 -fmodules --stdlib=libc++ -fmodule-file=first_module.pcm first_module.pcm main.cc
+```
+
+### Импортируем модуль в модуль
+
+**Экспорт без транзитивности**
+
+```cpp
+export module first_extended;               // Экспортируем новый модуль
+import first_module;                        // Импортируем первый модуль, но не видим его содержимое вне нового модуля(не транзитивно).
+export int bar() { return hello::bar(); }   // Используем функцию из первого модуля.
+```
+
+**Экспорт с транзитивностью**
+
+```cpp
+export module first_extended;         // Экспортируем новый модуль
+export import first_module;           // Импортируем первый модуль и видим его содержимое вне нового модуля(транзитивно).
+export int buz() { return bar(); }    // Используем функцию из первого модуля.
+```
+
+**importable header**
+
+- `import <iostream>;` - в данном случае это дирректива препроцессора. Не путать ее с `import module;`.
+  - Эта команда берет header.
+  - Предкомпилирует его.
+  - Делает из него модуль.
+  - Импортирует его.
+  - Также импортируются макросы! Обычный импорт не импортирует макросы.
+- Не любой header может быть importable. Это зависит от реализации стандартной библиотеки.
+
+```cpp
+export module helloworld;
+import <iostream>;                                                  // Importable header
+export void hello() { std::cout << "Hello, World!" << std::endl; }
+```
+
+**Циклические зависимости диагностируются на этапе компиляции**
+
+```cpp
+export module M1; // file: M1.cppm
+import M2;
+
+export module M2; // file: M2.cppm
+import M3;
+
+export module M3; // file: M3.cppm
+import M1;                          // <=== Error: cyclic dependency
+```
+
+```cpp
+export module M1; // file: M1.cppm
+export int foo() { return 42; }
+
+export module M2; // file: M2.cppm
+export int foo() { return 42; }     // <=== Error: multiple definitions
+```
+
+### Что нельзя экспортировать из модуля
+
+```cpp
+// Имена с внутренним связыванием.
+export static int x; // ошибка
+namespace { export int x; } // ошибка
+
+// Имена со связыванием на уровне модуля.
+struct S; // тут S неполный тип, module linkage
+export struct S; // ошибка (ok, если убрать строчку выше)
+
+// Нечто, вообще не являющееся объявлением, вводящим имя.
+export using namespace N; // ошибка
+```
+
+### Глобальный фрагмент модуля, в который можно сделать `include`
+
+```cpp
+module;                 // Глобальный фрагмент модуля
+#include <iostream>;    // Тут можно делать только диррективы препроцессора: include, define...
+
+export module hello;    // Экспорт модуля
+import <string>;        // Импорт должен быть до всех decls
+
+// Содержимое модуля (exports и прочее, также говорят "perview")
+
 ```

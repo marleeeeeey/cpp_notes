@@ -146,6 +146,26 @@ foo(kName);
   - Проблемы thread safety (Multithread COW disease)
   - Однако есть соображение, которое рушит баланс. Это **инвалидация указателей**
 
+- Написать Lazy строку за 15 минут [TODO] [PRACTICE]
+  - Проблемы, например, с многопоточностью, потому что RefCount не защищен.
+  - Безопасность относительно исключений.
+  - Семантика перемещения.
+
+```cpp
+lass stringbuf {
+    char *data;
+    size_t size;
+    size_t capacity;
+    int refcount;
+    // etc...
+};
+
+class string {
+    stringbuf *buf;
+    // etc...
+};
+```
+
 ### SSO (Small String Optimization) for `std::string`
 
 ```
@@ -181,6 +201,18 @@ template <typename CharT> class basic_string {
 public:
     // тут все его 89 методов
 };
+```
+
+- Напишите для `basic_string` сравнение (`operator==`) [TODO] [PRACTICE]
+  - Сделаете ли вы этот оператор методом класса или свободной функцией?
+  - Как должны сравниваться строки с одинаковым `CharT`, но разными `Traits`?
+  - А если у них одинаковые `CharT` и `Traits`, но разные аллокаторы?
+
+```cpp
+template <typename CharT,
+          typename Traits = std::char_traits<CharT>,
+          typename Allocator = std::allocator<CharT>>
+class basic_string { ... };
 ```
 
 ## --------------------- 02. Шаблоны функций ---------------------

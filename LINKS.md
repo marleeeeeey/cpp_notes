@@ -756,7 +756,22 @@
     - 01:00:40 Квадранты вычислений и boost::hana
     - 01:15:30 Литература
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [TODO]
+- Bjarne Stroustrup, Software Development for Infrastructure - 2012 [TODO]
+  - https://www.stroustrup.com/Software-for-infrastructure.pdf
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [IN_PROGRESS]
+  - https://www.youtube.com/watch?v=HxdrGM6ZbNs
+    - 00:00:00 Неявные интерфейсы
+    - 00:08:29 SFINAE вместо контракта
+    - 00:19:55 if constexpr как неплохая идея
+    - 00:25:01 Загадочный distance
+    - 00:31:35 Простые ограничения и разрешение имён
+    - 00:49:30 Сложные ограничения
+    - 00:55:47 Концепты и их использование
+    - 01:07:35 Частичный порядок ограничений
+    - 01:20:00 if constexpr возвращается
+    - 01:23:20 Немного о мечтах и литература
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 11. Вывод типов - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 12. Вариабельные шаблоны - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 13. Лямбды - 2022  [TODO]

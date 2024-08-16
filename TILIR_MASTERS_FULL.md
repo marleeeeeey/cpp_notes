@@ -57,6 +57,13 @@
   - [Использование `void_t`, чтобы спросить, если у типа определенный метод (интерфейс)](#использование-void_t-чтобы-спросить-если-у-типа-определенный-метод-интерфейс)
   - [`void_t` — это не шаблон, это алиас. Алиасы имеют некоторые особенности](#void_t--это-не-шаблон-это-алиас-алиасы-имеют-некоторые-особенности)
   - [ENABLE\_IF - условная конструкция для типов](#enable_if---условная-конструкция-для-типов)
+- [--------------------- 06. Constexpr ---------------------](#----------------------06-constexpr----------------------)
+  - [`if constexpr` - выкидывает ветки ШАБЛОННЫХ инстанцирований](#if-constexpr---выкидывает-ветки-шаблонных-инстанцирований)
+  - [`constexpr` функции времени компиляции](#constexpr-функции-времени-компиляции)
+  - [`consteval` (C++20)](#consteval-c20)
+  - [`constinit` (С++20)](#constinit-с20)
+  - [`if consteval` (C++23)](#if-consteval-c23)
+  - [Core constant expressions](#core-constant-expressions)
 
 ## --------------------- 01. Строки ---------------------
 
@@ -1007,4 +1014,148 @@ struct enable_if<false, T> {};
 
 template <bool B, typename T = void>
 using enable_if_t = typename enable_if<B, T>::type;
+```
+
+## --------------------- 06. Constexpr ---------------------
+
+### `if constexpr` - выкидывает ветки ШАБЛОННЫХ инстанцирований
+
+- https://godbolt.org/z/xKz77dEeY
+- `if constexpr` - выкидывает ветки шаблонных инстанцирований
+  - весь код во всех ветках проходит через первую фазу инстанцирования шаблонов
+  - Но на второй фазе компилятор выкидывает `if constexpr (false)` ветки.
+
+```cpp
+// (1) template case: constexpr works
+
+template <typename T>
+void bar(T value) {
+  if constexpr (std::is_pointer_v<T>)
+    std::cout << "Ptr to " << *value << std::endl; // Error
+  else
+    std::cout << "Ref to " << value << std::endl;
+}
+
+template void bar<int>(int); // instantiate here!
+template void bar<int*>(int *); // instantiate here!
+
+// (2) non-template case: constexpr fails
+
+void foo() {
+  auto value = 100; // deduce int
+  if constexpr (std::is_pointer_v<decltype(value)>)
+    std::cout << "Ptr to " << *value << std::endl; // Error
+  else
+    std::cout << "Ref to " << value << std::endl;
+}
+```
+
+### `constexpr` функции времени компиляции
+
+- Написать целочисленный логарифм времени компиляции (https://youtu.be/jyYys1UcHkM?t=2868).
+
+### `consteval` (C++20)
+
+- [code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp](code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp)
+- [code/tilir_masters/06_12_challange_math_array_size.cpp](code/tilir_masters/06_12_challange_math_array_size.cpp)
+- [code/tilir_masters/06_14_challange_bitmask_logic_or.cpp](code/tilir_masters/06_14_challange_bitmask_logic_or.cpp)
+- `consteval` - это `constexpr`, который гарантирует, что функция будет вызвана во время компиляции.
+
+```cpp
+
+// https://youtu.be/jyYys1UcHkM?t=4444
+// Тритами называются цифры сбалансированной системы счисления
+// по основанию 3. Т.е. {-1, 0, 1}. Обозначим -1 как j.
+// Написать функцию вычисления в compile-time.
+// [TODO] написать также для вещественных чисел: 11j0.jj = 32 + 5/9
+template <typename T = int>
+consteval T ct_trit(const char* str)
+{
+    T result = 0;
+
+    for (size_t i = 0; str[i] != '\0'; ++i)
+    {
+        char ch = str[i];
+
+        switch (ch)
+        {
+        case '0': result *= 3; break;
+        case '1': result = result * 3 + 1; break;
+        case 'j': result = result * 3 - 1; break;
+        default: throw "Only ['0','1','j'] symbols may be used";
+        }
+    }
+
+    return result;
+}
+
+// https://youtu.be/jyYys1UcHkM?t=4630
+// Написать вычисление длины массива времени компиляции
+template <typename T, size_t SZ>
+consteval size_t arraySize(const T(&)[SZ])
+{
+    return SZ;
+}
+
+// Написать класс для конкатенации битовых масок.
+// Сделать это в compile-time, чтобы такое можно было использовать в switch.
+enum class bitmask
+{
+    b0 = 0x1,
+    b1 = 0x2,
+    b2 = 0x4
+};
+
+consteval bitmask operator|(bitmask v0, bitmask v1)
+{
+    return static_cast<bitmask>(int(v0) | int(v1));
+}
+
+```
+
+### `constinit` (С++20)
+
+- [code/tilir_masters/06_01_constinit.cpp](code/tilir_masters/06_01_constinit.cpp)
+- `constinit` - не просто форсит `constexpr`, но гарантирует статическую констунтную инициализацию, что не возможно для объектов на стеке.
+- Невозможно создать локальную `constinit` переменную.
+
+### `if consteval` (C++23)
+
+- `if consteval` - помогает узнать внутри функции, находимся мы на этапе компиляции или на этапе выполнения.
+
+```cpp
+constexpr size_t int_log (size_t N)
+{
+    if consteval                    // <=== if consteval
+    {
+        return int_log_ce(N);       // Выполняется на этапе компиляции
+    }
+    else
+    {
+        return __builtin_ctz(N);    // Выполняется на этапе выполнения
+    }
+}
+```
+
+### Core constant expressions
+
+- [code/tilir_masters/06_16_core_constant_expr.cpp](code/tilir_masters/06_16_core_constant_expr.cpp)
+- Такое ощущение, что `constexpr` метод класса может быть `static`.
+- Все что использует этот метод, тоже должно быть `constexpr`.
+
+```cpp
+struct S
+{
+    int n_;
+    S(int n) : n_(n) {}     // <===  non-constexpr ctor!
+    constexpr int get() { return 42; }
+};
+
+TEST(cexpr, cce)
+{
+    S s{2};
+    constexpr int k =
+        s.get();            // <=== Core Constant Expression
+    EXPECT_EQ(k, 42);
+}
 ```

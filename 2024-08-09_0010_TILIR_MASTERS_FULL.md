@@ -69,6 +69,15 @@
   - [Литералы `физических величин` и автоматический контроль размерности](#литералы-физических-величин-и-автоматический-контроль-размерности)
   - [`boost::hana` - Представление типов значениями](#boosthana---представление-типов-значениями)
   - [Перенос процесса `инстанцирования` на процесс `Constexpr Evaluation` (быстрее и мы хотим этого)](#перенос-процесса-инстанцирования-на-процесс-constexpr-evaluation-быстрее-и-мы-хотим-этого)
+- [7. Concepts](#7-concepts)
+  - [Неявный интерфейс](#неявный-интерфейс)
+  - [Используем SFINAE, чтобы сделать более явным интерфейс (костыль)](#используем-sfinae-чтобы-сделать-более-явным-интерфейс-костыль)
+  - [Используем `if constexpr` и `static_assert` для явного интерфейса](#используем-if-constexpr-и-static_assert-для-явного-интерфейса)
+  - [Используем `Constraints(ограничения)` для явного интерфейса (`requires`)](#используем-constraintsограничения-для-явного-интерфейса-requires)
+  - [`Concepts` - ограничения с отношениями частное-общее](#concepts---ограничения-с-отношениями-частное-общее)
+  - [Что такое `Concept`?](#что-такое-concept)
+  - [Карирование аргументов](#карирование-аргументов)
+  - [Концепты определяют над собой частичный порядок (частное-общее)](#концепты-определяют-над-собой-частичный-порядок-частное-общее)
 
 ## 1. Strings
 
@@ -1379,4 +1388,208 @@ template <int N> struct ct_ints {
         return N + 1;
     }
 };
+```
+
+## 7. Concepts
+
+### Неявный интерфейс
+
+```cpp
+// (1). В этом примере мы не видим явный интерфейс, который требуется от `range`.
+template<typename R, typename T>
+bool contains (R const& range, T const& value) {
+    for (auto const& x : range)
+      if (x == value)
+        return true;
+    return false;
+}
+```
+
+### Используем SFINAE, чтобы сделать более явным интерфейс (костыль)
+
+- Используем SFINAE, чтобы сделать более явным интерфейс (костыль). Способы:
+  - (1) Ввести шаблонный параметр.
+  - (2) Испортить возвращаемый тип (усложняется перегрузка, потому что по возвращаемому значению перегружать нельзя).
+  - (3) Испортить один из параметров функции (получаем испорченный вывод типов).
+- ПРОБЛЕМА: мы объюзим механиз SFINAE и можем его сломать явно указав все параметры шаблона.
+
+```cpp
+template <typename T, typename U, typename = void>
+struct is_equality_comparable : std::false_type {};
+template <typename T, typename U>
+struct is_equality_comparable <T, U,
+  std::void_t<decltype(std::declval<T>() == std::declval<U>())>
+>: std::true_type {};
+
+template <typename T, typename U,
+          typename = std::enable_if_t <is_equality_comparable<T, U>::value>> // <=== SFINAE - вводим дополнительный шаблонный параметр
+bool check_eq (T &&lhs, U &&rhs) {
+  return (lhs == rhs);
+}
+
+check_eq<int, int,
+    void                // <=== (2) ПРОБЛЕМА: мы объюзим механиз SFINAE и можем его сломать таким образом.
+    >(1, "2")`.
+```
+
+### Используем `if constexpr` и `static_assert` для явного интерфейса
+
+- Используем `if constexpr` и `static_assert` для явного интерфейса.
+- Проблема в том, что приходится лезть внутрь функции и смотреть на код. Наружение OCP принципа.
+
+```cpp
+template <typename T, typename U>
+bool check_eq (T &&lhs, U &&rhs) {
+  if constexpr (!is_equality_comparable<T, U>::value) {     // <=== Используем if constexpr для выбрасывания плохой ветки.
+    static_assert(0 && "equality comparable expected");     // <=== Используем static_assert для хорошей ошибки.
+    return false;
+  }
+  else {
+    return (lhs == rhs);
+  }
+}
+```
+
+### Используем `Constraints(ограничения)` для явного интерфейса (`requires`)
+
+- https://godbolt.org/z/MWMzxjcoK
+
+```cpp
+template <typename T, typename U>
+requires is_equality_comparable<T, U>::value    // <=== Используем requires для явного интерфейса
+bool check_eq (T &&lhs, U &&rhs) {
+  return (lhs == rhs);
+}
+```
+
+- Ограничения (constraints) можно комбинировать
+- https://godbolt.org/z/4T66PjEcs
+
+```cpp
+template <typename Iter>
+  requires is_forward_iterator<Iter>::value &&                      // <=== Комбинирование ограничений
+           is_totally_ordered<typename Iter::value_type>::value
+Iter my_min_element(Iter first, Iter last) {
+  Iter min = first;
+  while (first != last) {
+    if (*first < *min)
+      min = first;
+    ++first;
+  }
+  return min;
+}
+```
+
+- `requires` - Это хук разрешения имен. Поэтому работает и такой код
+- https://godbolt.org/z/GPs6jzKKj
+- [over.dcl] two function declarations of the same name refer to the same function if they are in the same scope and have equivalent parameter declarations and equivalent **trailing requires-clauses**, if any.
+- По простому функции считаются разными. Они счтаются разными полексемно (лексемы внутри `requires`)
+- `requires` не входит в манглирование.
+
+```cpp
+
+template <typename T> requires (sizeof(T) > 4) // OK
+int foo (T x) { return 1; }
+template <typename T> requires (sizeof(T) <= 4) // OK
+int foo (T x) { return 2; }
+
+// В отличие от SFINAE:
+template <typename T, typename = std::enable_if_t<(sizeof(T) > 4)>> // FAIL
+int foo (T x) { return 1; }
+template <typename T, typename = std::enable_if_t<(sizeof(T) <= 4)>> // FAIL
+int foo (T x) { return 2; }
+
+```
+
+- Проблема с `requires` - это отсутвие отношения частное-общее.
+
+### `Concepts` - ограничения с отношениями частное-общее
+
+- `requires requires` - это `requires-clause + requires-expression`.
+  - `requires-clause` - условие над функцией.
+  - `requires-expression` - выражение, которое мы вычисляем на этапе компиляции. Это `constexpr` предикат над SFINAE характеристиками.
+
+- https://godbolt.org/z/fjPMK4zY7
+
+```cpp
+template <typename T, typename U>
+  requires requires(T t, U u)
+                                { t == u; }     // <=== не вычисляется, а только оценивается(проверяется на валидность).
+bool check_eq (T &&lhs, U &&rhs) {
+  return (lhs == rhs);
+}
+```
+
+- Сравните `requires` и `requires requires`:
+- https://godbolt.org/z/edY544jEb
+
+```cpp
+template <typename T> constexpr int somepred() { return 14; }
+
+template <typename T> requires (somepred<T>() == 42)            // <=== просиходит вычисление, т.е 14 == 42
+bool foo (T&& lhs, T&& rhs) { return lhs < rhs; }
+
+template <typename T>
+requires requires (T t) { somepred<T>() == 42; }                // <=== просиходит оценка, т.е. что операция (T == 42) существует
+bool bar (T&& lhs, T&& rhs) { return lhs < rhs; }
+```
+
+### Что такое `Concept`?
+
+- `requires (T t) { somepred<T>() == 42; }` - вот это условие можно назвать `Concept`. И его можно вынести в переменную типа `concept`.
+- https://godbolt.org/z/PG9aYbj6v
+- Концепты определяют над собой частичный порядок (частное-общее).
+
+```cpp
+requires(T t, U u) {
+    u + v;              // true если u + v синтаксически возможно   <=== [simple]   - проверяют интерфейс.
+    typename T::inner;  // true если T::inner есть                  <=== [type]     - проверяют наличие типов.
+    {*x} -> typename T::inner //                                    <=== [compound] - проверяют совместимость выражений и типов.
+    {*x} -> convertible_to<typename T::inner>; //                   <=== [compound] - convertible_to имеет два аргумента. Второй будет подставлен в то, что выведется из x.
+    { ++t } noexcept; //                                            <=== [compound] - проверка, что есть ++t и что он не кидает исключения.
+    requires sizeof(T) == 4; //                                     <=== [nested]   - вложенные requires. В этом случае внутри форсятся вычисления.
+    //                                                                                Т.е. это нужно для того, чтобы сказать концепту, что надо что-то посчитать
+}
+
+template<class From, class To>
+concept convertible_to =                                // <=== Объявление концепта
+    std::is_convertible_v<From, To> &&
+    requires(From (&f)()) { static_cast<To>(f()); };
+
+template <typename T> int foo(T x)
+requires convertible_to<T, int>                         // <=== Использование концепта
+
+template <Sortable T> void sort(T& t);                  // <=== Можно писать концепт вместо типа. Sortable - это концепт
+```
+
+### Карирование аргументов
+
+```cpp
+requires(T t, U u) {
+    {*x} -> convertible_to<typename T::inner>;                      // <=== просиходит карирование, т.е. получится что-то вроде
+                                                                    // convertible_to<decltype(*x), typename T::inner>;
+}
+
+template <SomeConcept<int> T> struct S; // SomeConcept<int, T>      // <=== карирование аргументов
+
+```
+
+### Концепты определяют над собой частичный порядок (частное-общее)
+
+- https://godbolt.org/z/shxvK3GWK
+
+```cpp
+// RandomAccessIterator : BidirectionalIterator : ForwardIterator : InputIterator
+
+template <InputIterator Iter>                           // <=== [InputIterator] - более общий
+int my_distance(Iter first, Iter last) {
+    int n = 0;
+    while (first != last) { ++first; ++n; }
+    return n;
+}
+
+template <RandomAccessIterator Iter>                    // <=== [RandomAccessIterator] - более частный
+int my_distance(Iter first, Iter last) {
+    return last - first;
+}
 ```

@@ -759,7 +759,7 @@
 - Bjarne Stroustrup, Software Development for Infrastructure - 2012 [TODO]
   - https://www.stroustrup.com/Software-for-infrastructure.pdf
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [IN_PROGRESS]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [DOME]
   - https://www.youtube.com/watch?v=HxdrGM6ZbNs
     - 00:00:00 Неявные интерфейсы
     - 00:08:29 SFINAE вместо контракта
@@ -771,6 +771,35 @@
     - 01:07:35 Частичный порядок ограничений
     - 01:20:00 if constexpr возвращается
     - 01:23:20 Немного о мечтах и литература
+
+- Bjarne Stroustrup, Gabriel Dos Reis — Concepts — Design choices for template argument checking - 2003 [TODO]
+  - https://www.stroustrup.com/N1522-concept-criteria.pdf
+  - Крутая статья про аксиомы и предикаты
+
+- Bjarne Stroustrup, Andrew Sutton — Design of Concept Libraries for C++ - 2011 [TODO]
+  - https://stroustrup.com/sle2011-concepts.pdf
+
+- Bjarne Stroustrup, Gabriel Dos Reis, Andrew Sutton — Concepts Lite - 2013 [TODO]
+  - https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3701.pdf
+
+- Roger Orr — C++ Concepts Lite in Practice, ACCU - 2016 [TODO]
+  - https://www.youtube.com/watch?v=S1Z-RbygAlw
+  - Очень хороший доклад, но записан отвратительно.
+
+- Andrew Sutton — Concepts in 60: everything you need to know about concepts, CppCon - 2018 [TODO]
+  - https://www.youtube.com/watch?v=ZeU6OPaGxwM
+  - Контпример Саттена как раз в этом докладе.
+
+- Arthur O'Dwyer — Concepts as she is spoke, CppCon - 2018 [TODO]
+  - https://www.youtube.com/watch?v=CXn02MPkn8Y
+  - Очень замечательно мотивирует на использование концептов.
+
+- Matias Pusz — C++ concepts and ranges, C++ meeting - 2018 [TODO]
+  - https://www.youtube.com/watch?v=pe05ZWdh0N0
+  - Тут есть переход к ренджам.
+
+- Andreas Fertig — C++20 Templates: The next level: Concepts and more, CppCon - 2021 [TODO]
+  - https://www.youtube.com/watch?v=_FoXWnrGuNU
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 11. Вывод типов - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 12. Вариабельные шаблоны - 2022  [TODO]

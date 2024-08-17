@@ -801,7 +801,27 @@
 - Andreas Fertig — C++20 Templates: The next level: Concepts and more, CppCon - 2021 [TODO]
   - https://www.youtube.com/watch?v=_FoXWnrGuNU
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 11. Вывод типов - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 11. Вывод типов - 2022  [DONE]
+  - https://www.youtube.com/watch?v=zrZdBzXBZtE
+    - 00:00:00 Правые ссылки
+    - 00:13:28 Перегрузка по ссылкам
+    - 00:22:06 Копирование, перемещение и правило пяти
+    - 00:32:57 Moved-from и аннотации
+    - 00:38:50 Правила для auto и универсальные ссылки
+    - 00:48:50 Мотивация и правила decltype и declval
+    - 00:57:00 Магия decltype(auto)
+    - 01:05:26 Perfect forwarding
+    - 01:11:58 Примеры Йосьютиса
+    - 01:26:04 Литература и завершение
+
+- Nicolai Josuttis - The Nightmare of Move Semantics for Trivial Classes, CppCon - 2017 [DONE]
+  - https://www.youtube.com/watch?v=7KjCOe0oBIw
+
+- Andreas Fertig - Back to Basics: C++ Move Semantics, CppCon - 2022 [TODO]
+  - https://www.youtube.com/watch?v=knEaMpytRMA
+  - Вещи относительно `move semantic` структурированы по-другому, чем в лекциях у Константина Владимирова
+  - Поэтому Константин Владимиров рекомендует посмотреть этот взгляд на `move semantic`.
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 12. Вариабельные шаблоны - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 13. Лямбды - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO]

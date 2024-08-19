@@ -100,6 +100,26 @@
   - [Свертки очень важны для концептов, так как у нас нет рекурсии и выхода (нет откусывания пачки)](#свертки-очень-важны-для-концептов-так-как-у-нас-нет-рекурсии-и-выхода-нет-откусывания-пачки)
   - [Пачка параметров обычно должна идти последним аргументом, т.к. из за жадности она заберет все последующие аргументы](#пачка-параметров-обычно-должна-идти-последним-аргументом-тк-из-за-жадности-она-заберет-все-последующие-аргументы)
   - [Пример с `auto` для вывода указателя на поле класса](#пример-с-auto-для-вывода-указателя-на-поле-класса)
+- [10. Lambda-выражения](#10-lambda-выражения)
+  - [Синтаксис `->` для указания типа возвращаемого значения (C++11)](#синтаксис---для-указания-типа-возвращаемого-значения-c11)
+  - [Что такое `λ-выражение` и `closure` без захвата](#что-такое-λ-выражение-и-closure-без-захвата)
+  - [`std::invoke` и callable объекты](#stdinvoke-и-callable-объекты)
+  - [`std::invoke` и указатель на поле класса](#stdinvoke-и-указатель-на-поле-класса)
+  - [Positive Lambda Hack](#positive-lambda-hack)
+  - [Generic Lambda - это лямбда-функция с шаблонным оператором приведения](#generic-lambda---это-лямбда-функция-с-шаблонным-оператором-приведения)
+  - [`decltype([](auto x) { return 2 * x; })` - лучший способ запомнить lambda тип (С++20)](#decltypeauto-x--return-2--x----лучший-способ-запомнить-lambda-тип-с20)
+  - [Явные шаблонные аргументы (С++20)](#явные-шаблонные-аргументы-с20)
+  - [Лямбда-функции c захватом](#лямбда-функции-c-захватом)
+  - [Захват c явным переименованием](#захват-c-явным-переименованием)
+  - [Илучшаем свой идеальный проброс](#илучшаем-свой-идеальный-проброс)
+  - [Захват с вариабельными пачками (C++20)](#захват-с-вариабельными-пачками-c20)
+  - [Карирование функции - это частичная подстановка ее аргументов](#карирование-функции---это-частичная-подстановка-ее-аргументов)
+  - [Захватывается только локальный нестатический контекст](#захватывается-только-локальный-нестатический-контекст)
+  - [Четыре способа создать `std::tuple`](#четыре-способа-создать-stdtuple)
+  - [`std::forward_as_tuple` для решения проблемы форвардинга пачки агрументов в лямбда захват](#stdforward_as_tuple-для-решения-проблемы-форвардинга-пачки-агрументов-в-лямбда-захват)
+  - [`std::apply` - для применения функции к каждому агрументу](#stdapply---для-применения-функции-к-каждому-агрументу)
+  - [`std::any` - стирает типы](#stdany---стирает-типы)
+  - [`std::variant` - альтернатива `std::any`, которая хранит только один из заданных типов](#stdvariant---альтернатива-stdany-которая-хранит-только-один-из-заданных-типов)
 
 ## 01. Strings
 
@@ -2065,4 +2085,431 @@ Node* get_tree(Node* node, First first, Rest... rest)
 auto left = &Node<int>::left;                   // <===
 auto right = &Node<int>::right;                 // <===
 auto subTree = get_tree(root, left, right);
+```
+
+## 10. Lambda-выражения
+
+### Синтаксис `->` для указания типа возвращаемого значения (C++11)
+
+- Основная мотивация: простота вывода из типов аргументов.
+- Также этот синтаксис работает для `λ-выражений`.
+- Объект `adder` – это объект `closure`. Собственно, в лямбде функции через стрелочку можно указать тип, который она возвращает, но это опционально. Она может вывести сама тип, по аналогии как это делает `auto`.
+
+```cpp
+auto foo() { return 2.0; }                                  // <=== есть вывод типа
+auto foo() -> int { return 2.0; }                           // <=== нет вывода типов
+
+auto foo(std::input_iterator auto inp) -> decltype(*inp)    // <=== пользовательский вывод типа
+{ ..... }
+
+auto adder = [](int x, int y) -> int { return x + y; };     // <=== применяется в лямбда-выражениях
+```
+
+### Что такое `λ-выражение` и `closure` без захвата
+
+- `Lambda-выражение` без захвата - это объект `closure` с перегруженным `оператором приведения` к указателю на функцию.
+- Если у лямбда нет состояния, то это, по сути, статический метод. Это делается, чтобы экономить лишний вызов по указателю.
+- Также это позволяет использовать лямбду вместо указателя на функцию.
+
+```cpp
+auto adder = [](int x, int y) -> int { return x + y; };
+
+struct Closure {
+  static int func(int x, int y) { return x + y; }
+  using func_t = std::decay_t<decltype(func)>;
+  operator func_t() const { return func; }          // <=== оператор приведения типа
+};
+
+int (*pf)(int x, int y) = adder; // implicit cast   // <=== такой код будет работать
+```
+
+### `std::invoke` и callable объекты
+
+- [code/tilir_masters/10_10_std_invoke.cpp](code/tilir_masters/10_10_std_invoke.cpp)
+- Для вашего обобщённого кода он абстрагирует callables, включая stateful.
+- Т.е. вместо вызова `obj()` можно использовать `std::invoke(obj)`.
+- `std::invoke` позволяет также получать доступ к полям класса.
+
+```cpp
+struct S {
+  int n = 2;
+  int foo(int y) { return 3; }
+};
+
+auto psf = &S::foo;                  // <=== указатель на метод класса
+auto psn = &S::n;                    // <=== указатель на поле класса
+
+auto r1 = std::invoke(foo, 1);
+auto r2 = std::invoke(psf, s, 1);
+auto r3 = std::invoke(psf, &s, 1);
+auto r4 = std::invoke(psn, s);      // <=== возвращает значение поля
+```
+
+### `std::invoke` и указатель на поле класса
+
+- Благодаря магии `invoke`, лямбды иногда сводятся к проекторам.
+- Указатель на поле класса — это особый вид указателя, который не вызывает функцию, а просто возвращает значение этого поля.
+- Это полезно в обобщённом коде, когда, например, нужно передавать проекции, а не писать сложные лямбды.
+
+```cpp
+template <typename Range, typename Callable>
+void print_range(Range r, Callable c) {
+    for (auto e : r)
+        std::cout << std::invoke(c, e) << " ";
+    std::cout << std::endl;
+}
+
+std::vector<std::pair<int, int>> v = {{1, 1}, {2, 2}, {3, 3}};
+print_range(v, [](const std::pair<int, int> &p)
+    { return p.second; });                              // <=== проекция на второй элемент
+
+print_range(v, &std::pair<int, int>::second);           // <=== проекция на второй элемент
+```
+
+### Positive Lambda Hack
+
+- Интересно, что кложура не копируема (но copy-конструируема), а указатель на функцию копируема.
+- `Positive Lambda Hack` заключается в использовании оператора `+` перед лямбда-функцией для явного вызова приведения кложуры к типу указателя на функцию. Это приводит к тому, что хранится не уникальная кложура, а указатель на функцию, который можно заменять другим указателем на функцию.
+
+```cpp
+auto test = []{};
+test = []{};          // FAIL
+
+auto test = +[]{};    // OK - positive lambda hack - вызов приведения типов руками.
+test = +[]{};
+```
+
+### Generic Lambda - это лямбда-функция с шаблонным оператором приведения
+
+- Аналогичный код внизу (он не компилируется). Проблемы в коде решены в `generic lambda`.
+- https://godbolt.org/z/58Y5vffG5
+
+```cpp
+struct Capture {
+  template <typename T, typename U>
+  static auto func(T x, U y) { return x + y; };
+
+  template <typename T, typename U>
+  using func_t = std::decay_t<decltype(func<T, U>)>;
+
+  template <typename T, typename U>
+  operator func_t<T, U>() { return func; }
+};
+
+TEST(lamdas, callables) {
+  Capture c;
+  auto res = c(1, 1.0);
+  EXPECT_EQ(res, 2);
+}
+```
+
+### `decltype([](auto x) { return 2 * x; })` - лучший способ запомнить lambda тип (С++20)
+
+- https://godbolt.org/z/fzv9oGPx1
+- Этот трюк построен на ленивом инстанцировании шаблонов.
+
+```cpp
+decltype([](auto x) { return 2 * x; }) twice;   // <=== это объект типа лямбда
+auto x = twice(2); // x == 4
+```
+
+### Явные шаблонные аргументы (С++20)
+
+- Синтаксис явных шаблонных аргументов для лямбда-функций позволяет добавлять концепты, которые могут зависеть от нескольких типов.
+- В этом примере используются все виды скобок в языке.
+
+```cpp
+auto l = []<typename T, typename U>(T x, U y)         // <===
+        requires Addable<T, U> { return x + y; };
+```
+
+### Лямбда-функции c захватом
+
+- При наличии захвата, обобщённое λ-выражение — это структура с оператором вызова.
+- Теперь поговорим про лямбда-функции с захватом.
+- В них уже нет оператора приведения к указателю на функцию. В них **есть оператор круглых скобок**.
+- Для отключения `const` в захвате используется `mutable`: `auto l = [x = 1]() mutable { x = 2; };`.
+- Захват по ссылке: `auto l = [&x]() { x = 2; };`. Можем менять `x` даже без `mutable`.
+- Захват по значению: `auto l = [x]() { x = 2; };`.
+- Лайфхак для захвата по константной ссылке: `auto l = [const& x]() { x = 2; };`.
+- Захват по константной ссылке: `auto l = [&x = std::as_const(x)]() { x = 2; };`.
+
+```cpp
+int a = 2, b = 3;
+auto parm_adder = [a, b]                        // <===
+    (int x, int y) {
+        return x * a + y * b;
+};
+
+struct Closure {
+    int a_, b_;
+    Closure(int a, int b) : a_(a), b_(b) {}
+    auto operator()(int x, int y)
+        const                                   // <===
+        { return x * a_ + y * b_; }
+};
+```
+
+### Захват c явным переименованием
+
+- https://godbolt.org/z/aGP1xqh5W
+- https://godbolt.org/z/cTc3oj4x7 - константные ссылки должны же связываться с rvalue-ссылками?
+
+```cpp
+int a = 1;
+auto lmd = [&ra = a, va = a] { return va + ra; };   // <=== хороший тон это явное переименование
+
+std::vector b = {1, 2, 3};
+auto lmd2 = [vb = std::move(b)] { return vb; };     // <=== даёт возможность move-захвата
+                                                    //      полее vb внутри замыкания это value
+```
+
+### Илучшаем свой идеальный проброс
+
+- https://godbolt.org/z/co8YYqsPM
+- Добавляя `std::invoke` мы по сути получаем ничем не отличающийся собственный метод от `std::invoke`.
+- Внезапно мы оказались на двух стульях.
+
+```cpp
+template<typename Fun, typename... Args>
+decltype(auto) transparent(Fun&& fun, Args&&... args) {
+    return std::forward<Fun>(fun)                               // <=== Добавляем std::forward
+        (std::forward<Args>(args)...);
+}
+
+template<typename Fun, typename... Args>
+decltype(auto) transparent(Fun&& fun, Args&&... args) {
+    return std::invoke                                          // <=== Добавляем std::invoke
+        (std::forward<Fun>(fun), std::forward<Args>(args)...);
+}
+```
+
+### Захват с вариабельными пачками (C++20)
+
+- [code/tilir_masters/10_20_lambda_and_folds.cpp](code/tilir_masters/10_20_lambda_and_folds.cpp)
+
+```cpp
+template <typename ... Args>
+int foo(Args ... args) {
+  auto lm1 = [args...] { return sizeof...(args); };                 // возможность раскрыть пачку в списке инициализации
+  auto lm2 = [...xs = args] { return sizeof...(xs); };              // перекладывание пачки в пачку
+  auto lm3 = [&...xs = args] { return sizeof...(xs); };             // захват пачки с capture reference (сделали все ссылками)
+  auto lm4 = [...xs = std::move(args)] { return sizeof...(xs); };   // захват пачки с переименованием (move каждого элемента)
+  return lm1() + lm2() + lm3() + lm4();
+}
+```
+
+### Карирование функции - это частичная подстановка ее аргументов
+
+- **Классическое** карирование - это **подстановка в конец**.
+
+```cpp
+// ЗАДАЧА: Написать функцию curry, которая частично применяет аргументы к функции
+auto add = [](auto x, auto y) { return x + y; }
+auto add4 = curry(add, 4);
+assert(add4(11) == 15);
+
+// РЕШЕНИЕ
+template <typename Fun, typename... Args>
+auto curry(Fun fun, Args... args)                   // <=== Съедаем первую часть аргументов
+{
+    return [=](auto... rest)                        // <=== Съедаем все остальные аргументы
+    {
+        return std::invoke(fun, args..., rest...);  // <=== Восстанавливаем вызов со всеми аргументами
+    };
+}
+```
+
+### Захватывается только локальный нестатический контекст
+
+- [code/tilir_masters/10_24_lambda_local_context.cpp](code/tilir_masters/10_24_lambda_local_context.cpp)
+
+```cpp
+int g = 1;              // <=== не копируется в лямбду, т.к. глобальная.
+
+void foo(int b)
+{
+    int x = 2;
+    static int a = 3;   // <=== не копируется в лямбду, т.к. статическая.
+    if (b == 4)
+    {
+        int y = 5;
+        auto lam = [=]
+        {
+            return x + y + a + b + g;
+        };
+
+#if INCREMENT_ALL_VARIABLES
+        // здесь изменения x, y, b уже не изменят результат
+        // зато изменения a и g − изменят
+        g++; b++; x++; a++; y++;
+#endif
+
+        std::cout << lam() << std::endl;
+    }
+```
+
+**ПРИМЕР НА ПОНИМАНИЕ**
+
+- [code/tilir_masters/10_24_lambda_local_context.cpp](code/tilir_masters/10_24_lambda_local_context.cpp)
+
+```cpp
+auto factory(int parameter)
+{
+    static int a = 0;           // Этот член будет общим
+
+    return [=](int argument)    // <=== Этот вызов всегда возвращает один и тот же класс
+    {
+        static int b = 0;       // Этот член будет общим
+        a += parameter;
+        b += argument;
+        return a + b;
+    };
+}
+
+int main()
+{
+    auto func1 = factory(1);
+    auto func2 = factory(2);
+    std::cout << func1(20) << " " << func1(30) << " " << func2(20) << " " << func2(30) << std::endl;
+}
+```
+
+### Четыре способа создать `std::tuple`
+
+1. конструктор
+2. `tuple<VTypes...> make_tuple(Types&&...)` - создает tuple с автовыводом типов. Похож на захват по значению.
+3. `tuple<CTypes...> tuple_cat(Tuples&&...)` - конкатенация - рассыпаем и захватываем.
+4. `tuple<Types&...> tie(Types&...)` - создает ссылки на переменные.
+5. `tuple<T&&...> forward_as_tuple(T&&...)` - берет T&& и форвардит его в T&&.
+
+```cpp
+// 1. конструктор
+std::tuple<int, double, std::string> t1(1, 2.0, "3");
+
+// 2. make_tuple
+auto t2 = std::make_tuple(1, 2.0, "3");
+
+// 3. tuple_cat
+auto t3 = std::tuple_cat(t1, t2, std::make_pair(1, 2));
+assert(t3 == std::make_tuple(1, 2.0, "3", 1, 2.0, "3", 1, 2));
+
+// 4. tie
+int a; double b; std::string c;
+auto t4 = std::tie(a, b, c);
+
+int c; double d;
+std::tuple<int, double> foo();
+std::tie(c, d) = foo();                 // <=== Через ссылки на переменные записали в них значения.
+
+// Сокращенный синтаксис std::tie - structured binding (C++17)
+auto [c, d] = foo();
+auto && [c, d] = foo();                 // <=== rvalue
+
+int a[2] = {1, 2};
+auto& [xr, yr] = a;                     // <=== Работает и для массивов
+
+struct { int x; double y; } s = {1, 2.0};
+const auto& [xcr, ycr] = s;             // <=== Работает на любых классах, у которых открыты все нестатические элементы
+
+// Связывание для собственных классов
+// Чтобы поддержать связывание для собственного класса, необходимо определить специализации для всего трёх функций
+class Config {
+    int x; double y; std::string z;
+    // открытые члены, включая геттеры вида get_x(), get_y() и get_z()
+};
+template<> struct tuple_size<Config>: integral_constant<size_t, 3> {};  // <=== 1. Размер tuple
+template<> decltype(auto) get<0>(Config& c) { return c.get_x(); }       // <=== 2. get
+template<> struct tuple_element<0, Config> { using type = int; };       // <=== 3. Тип элемента
+// Теперь будет работать (нужно добавить get для остальных).
+auto [id, value, name] = get_config();                                  // <=== Результат
+
+// 5. forward_as_tuple
+auto t5 = std::forward_as_tuple(1, 2.0, "3");
+```
+
+### `std::forward_as_tuple` для решения проблемы форвардинга пачки агрументов в лямбда захват
+
+- [code/tilir_masters/10_28_lambda_perfect_forward_fail.cpp](code/tilir_masters/10_28_lambda_perfect_forward_fail.cpp)
+- [code/tilir_masters/10_30_lambda_perfect_forward_custom_wrapper.cpp](code/tilir_masters/10_30_lambda_perfect_forward_custom_wrapper.cpp)
+- [code/tilir_masters/10_32_lambda_perfect_forward_tuple_custom.cpp](code/tilir_masters/10_32_lambda_perfect_forward_tuple_custom.cpp)
+- [code/tilir_masters/10_34_lambda_perfect_forward_forward_as_tuple.cpp](code/tilir_masters/10_34_lambda_perfect_forward_forward_as_tuple.cpp)
+
+```cpp
+auto foo = []<typename ... T>(T&&... a)
+{
+    return
+        [a = std::forward_as_tuple(a...)]       // <=== Форвардим каждый элемент в пачке
+        () mutable
+    {
+        return ++std::get<0>(a);
+    };
+};
+```
+
+### `std::apply` - для применения функции к каждому агрументу
+
+- [code/tilir_masters/10_36_std_apply.cpp](code/tilir_masters/10_36_std_apply.cpp)
+
+```cpp
+auto add = [](auto x, auto y) { return x + y; };
+auto sum1 = std::apply(add, std::pair(1, 2));
+EXPECT_EQ(sum1, 3);
+
+auto mult = std::apply( [](auto&&... xs)
+                            { return (1 * ... * xs); },
+                        std::make_tuple(1, 2, 3, 4, 5));
+EXPECT_EQ(mult, 120);
+
+// for_each для каждого элемента tuple
+// форвардинг добавить самостоятельно и починить ошибки компиляции TODO
+// auto fn = add;
+// auto t = std::make_tuple(1, 2, 3.0, 4);
+// auto sum2 = std::apply([&fn](auto&& ... xs) {(fn(xs), ...);}, t);
+// EXPECT_EQ(sum2, 10.0);
+```
+
+### `std::any` - стирает типы
+
+- Превращает С++ в Python.
+- [code/tilir_masters/10_38_std_any_type_erasure.cpp](code/tilir_masters/10_38_std_any_type_erasure.cpp)
+
+```cpp
+std::any a = 1;
+EXPECT_EQ(std::any_cast<int>(a), 1);
+EXPECT_EQ(a.has_value(), true);
+a.reset();
+EXPECT_EQ(a.has_value(), false);
+auto h = std::make_any<HeavyObject>(100);
+```
+
+### `std::variant` - альтернатива `std::any`, которая хранит только один из заданных типов
+
+- [code/tilir_masters/10_40_std_variant.cpp](code/tilir_masters/10_40_std_variant.cpp)
+
+```cpp
+std::variant<int, float> v = 12;
+EXPECT_EQ(std::get<int>(v), 12);
+EXPECT_EQ(std::holds_alternative<float>(v), false);
+
+std::vector<std::variant<int, float, std::string>> vec = {10, 1.5f, "hello"};
+
+for (auto& v : vec)
+{
+    std::visit(
+        [](auto&& arg)
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, int>) // <=== Используем if constexpr, чтобы делать специфичные для
+                                                    //      типов операции.
+            {
+                std::cout << arg % 5 << std::endl;
+            }
+            else if constexpr (std::is_same_v<T, float>)
+            {
+                std::cout << "I am a float " << std::round(arg) << std::endl;
+            }
+        },
+        v);
+}
 ```

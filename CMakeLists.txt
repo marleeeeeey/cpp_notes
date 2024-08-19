@@ -35,6 +35,7 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-literal-conversion>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-uninitialized>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-c99-extensions>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-lambda-capture>
 )
 
 # #################### Adding Google Test #######################

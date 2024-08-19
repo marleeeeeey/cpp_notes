@@ -1,1 +1,1 @@
-../../code/tilir_masters/09_14_variadic_templates_empty_pack.cpp
+../../code/tilir_masters/10_40_std_variant.cpp

@@ -97,6 +97,11 @@ int main()
     assert(sum() == 0);
 
     Node<int>* root = createTree();
-    auto subTree = get_tree(root, &Node<int>::left, &Node<int>::right);
+
+    // https://godbolt.org/z/j9YPnvdjs
+    auto left = &Node<int>::left;
+    auto right = &Node<int>::right;
+
+    auto subTree = get_tree(root, left, right);
     assert(subTree->data == 4);
 }

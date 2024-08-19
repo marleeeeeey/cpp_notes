@@ -87,6 +87,19 @@
   - [`decltype(auto)` разбор примера](#decltypeauto-разбор-примера)
   - [`auto` можно уточнять концептами](#auto-можно-уточнять-концептами)
   - [Правила написания правильных ограничений для шаблонов (используйте только позитивные ограничения)](#правила-написания-правильных-ограничений-для-шаблонов-используйте-только-позитивные-ограничения)
+- [09. Variadic Templates](#09-variadic-templates)
+  - [C-style `...`](#c-style-)
+  - [C++ style `...`](#c-style--1)
+  - [`Variadic Templates` - несколько простых примеров](#variadic-templates---несколько-простых-примеров)
+  - [`Variadic Templates` - более сложные примеры](#variadic-templates---более-сложные-примеры)
+  - [Документация по паттернам раскрытия](#документация-по-паттернам-раскрытия)
+  - [Экзотические свертки](#экзотические-свертки)
+  - [Светрки с пустыми пачками тоже работают](#светрки-с-пустыми-пачками-тоже-работают)
+  - [`std::conjunction_v` - проверка всех типов на истинность](#stdconjunction_v---проверка-всех-типов-на-истинность)
+  - [Вариабельные концепты и каррирование](#вариабельные-концепты-и-каррирование)
+  - [Свертки очень важны для концептов, так как у нас нет рекурсии и выхода (нет откусывания пачки)](#свертки-очень-важны-для-концептов-так-как-у-нас-нет-рекурсии-и-выхода-нет-откусывания-пачки)
+  - [Пачка параметров обычно должна идти последним аргументом, т.к. из за жадности она заберет все последующие аргументы](#пачка-параметров-обычно-должна-идти-последним-аргументом-тк-из-за-жадности-она-заберет-все-последующие-аргументы)
+  - [Пример с `auto` для вывода указателя на поле класса](#пример-с-auto-для-вывода-указателя-на-поле-класса)
 
 ## 01. Strings
 
@@ -1755,4 +1768,301 @@ public:
     Customer(S1 &&s1, S2 &&s2 = "") :
         fst(std::forward<S1>(s1)), snd(std::forward<S2>(s2)) {}
 };
+```
+
+## 09. Variadic Templates
+
+### C-style `...`
+
+- [code/tilir_masters/09_10_c-style-dot-dot-dot.cpp](code/tilir_masters/09_10_c-style-dot-dot-dot.cpp)
+- C-style `...`
+  - (1) `variadic function`:    `void f(int x, ...);`
+  - (2) `variadic macros`:      `#define f(x, ...) ...`
+
+```cpp
+int sum_all(int nargs, ...)
+{
+    va_list ap;
+    int cnt = 0;
+    va_start(ap, nargs);
+
+    for (int i = 0; i < nargs; ++i)
+        cnt += va_arg(ap, int);
+
+    va_end(ap);
+    return cnt;
+}
+
+#define NUMARGS(...) (sizeof((int[]){__VA_ARGS__}) / sizeof(int))
+#define DOSUM(...) sum_all(NUMARGS(__VA_ARGS__), __VA_ARGS__)
+```
+
+### C++ style `...`
+
+- Вместо `variadic функции` у нас рекурсивный `variadic template`.
+- [code/tilir_masters/09_12_variadic_templates.cpp](code/tilir_masters/09_12_variadic_templates.cpp)
+
+```cpp
+
+// ERROR
+template <typename T, typename... Ts>
+T sum_all(T&& arg, Ts&&... args)
+{
+    return arg +
+        sum_all(args...);   // error: non-const lvalue reference to type 'int' cannot bind to a temporary of type 'int'
+                            // T = const int&,      Ts = const int&,    return = const int&
+}
+
+// OK - Первый способ починить
+template <typename T, typename... Ts>
+auto                                    // <=== fix: auto режет тип и выводит return = int - OK
+sum_all(T&& arg, Ts&&... args)
+{
+    return arg + sum_all(args...);
+}
+
+// OK - Второй способ починить
+template <typename T, typename... Ts>
+T
+sum_all2(T&& arg, Ts&&... args)
+{
+    return arg + sum_all(
+        std::forward<Ts>(args)...);     // T = int&&,      Ts = int&&,    return = int&& - OK
+}
+
+```
+
+### `Variadic Templates` - несколько простых примеров
+
+- https://eel.is/c++draft/temp.variadic
+
+```cpp
+// Каждый элемент из `args` применяется дважды: один раз внутри первого вызова `f` и один раз внутри второго
+f(f(args...) + f(args)...)  // ->
+                            //      f(f(x, y, z) + f(x),
+                            //      f(x, y, z) + f(y),
+                            //      f(x, y, z) + f(z));
+
+// Каждый элемент `args` комбинируется с другими элементами того же пакета аргументов, создавая несколько вариаций последовательностей.
+f(f(args, args...)...)      // ->
+                            //      f(x, x, y, z),
+                            //      f(y, x, y, z),
+                            //      f(z, x, y, z);
+```
+
+### `Variadic Templates` - более сложные примеры
+
+- Как корректно раскрыть пакет аргументов (`parameter pack`) с использованием конструкции `expand_t`, которая помогает избежать проблем с простым раскрытием пакета через запятую.
+- `void()` используется для создания пустого выражения, чтобы предотвратить выполнение перегруженного оператора `operator,`.
+
+**Иногда случаи, которые кажутся простыми, не работают.**
+
+```cpp
+template <typename ... T>
+void foo(T ... ts) {
+    bar(ts)...;
+}
+```
+
+**Настоящий метод выглядит куда интересней.**
+
+```cpp
+struct expand_t {
+    template <typename ... T>
+    expand_t(T...) {}
+};
+
+template <typename ... T>
+void foo(T ... ts) {
+    expand_t{(bar(ts), void(), 0)...};
+}
+```
+
+### Документация по паттернам раскрытия
+
+- https://eel.is/c++draft/temp.variadic
+
+### Экзотические свертки
+
+- https://godbolt.org/z/j9YPnvdjs
+
+```cpp
+template <typename T> struct Node {
+  T data;
+  Node *left = nullptr;
+  Node *right = nullptr;
+};
+
+template<class T, class... Args>
+Node<T> *tree_get(Node<T> *top, Args... args) {
+  return (top ->* ... ->* args);                    // <===
+}
+
+TEST(variadic, exoticfold) {
+  Node<int> t[5];
+  t[0].left = &t[1];
+  t[1].left = &t[2];
+  t[2].right = &t[3];
+  t[3].data = 5;
+  auto left = &Node<int>::left;                     // <===
+  auto right = &Node<int>::right;                   // <===
+  auto *res = tree_get(&t[0], left, left, right);
+  EXPECT_EQ(res->data, 5);
+}
+```
+
+### Светрки с пустыми пачками тоже работают
+
+- https://godbolt.org/z/z4h9E6ME9
+- [code/tilir_masters/09_14_variadic_templates_empty_pack.cpp](code/tilir_masters/09_14_variadic_templates_empty_pack.cpp)
+- Пустая пачка для `&&` - это `true`, а для `||` - `false`.
+- Пустая пачка для `+` вызывает ошибку компиляции.
+
+```cpp
+template <typename... Ts>
+auto sum_all(Ts... args)
+{
+    return (... + args); // error: unary fold expression has empty expansion for operator '+' with no fallback value
+}
+
+template <typename... Ts>
+auto and_all(Ts... args)
+{
+    return (... && args); // OK => true
+}
+```
+
+### `std::conjunction_v` - проверка всех типов на истинность
+
+- `std::conjunction` — это логическое "и" для типов, которое используется в работе с вариативными шаблонами (variadic templates).
+
+```cpp
+template <typename T, typename ... TS>
+constexpr inline bool are_same_v = std::conjunction_v<std::is_same<T, TS>...>; // <===
+
+template <typename ... TS>
+auto sum_all(TS&& ... args)
+    requires are_same_v<TS...>                  // <===
+{
+    return (... + std::forward<TS>(args));
+}
+
+TEST(variadic, cstyle) {
+    int res;
+    res = sum_all(1, 2, 3, 4);
+    EXPECT_EQ(res, 10);
+}
+
+```
+
+### Вариабельные концепты и каррирование
+
+```cpp
+// Базовый концепт для пачки параметров - это свертка
+template <typename ... Ts>
+    requires (EqualityComparable<Ts> && ... && true)
+void f(Ts ... ts);
+
+// Если переписать через шаблонный параметр, то он будет сворачивать с true
+template <EqualityComparable ... Ts>    // <===
+void f(Ts ... ts);
+
+// Если есть дополнительные аргументы
+template <typename ... Ts>
+    requires (ConvertibleTo<Ts, int> && ... && true)
+void f(Ts ... ts);
+
+// При указании в шаблоне работает КАРРИРОВАНИЕ
+template <ConvertibleTo<int> ... Ts> // ok      <=== Тут типы подставляются перед int: ConvertibleTo<Ts, int>
+void f(Ts ... ts);
+```
+
+### Свертки очень важны для концептов, так как у нас нет рекурсии и выхода (нет откусывания пачки)
+
+- На слайде показан пример реализации одного и того же через откусывание первого параметра из пачки и без откусывания, но с использованием сверток.
+- Важно отметить, что откусывание запрещено в концептах, поэтому если мы пишем концепт для пачки, то мы можем использовать только свертку.
+- В концептах нельзя метапрограммировать. Это свойство запрещено, потому что `requires` — это хук разрешения имён, а метапрограммирование разрешено только на этапе инстанцирования.
+
+```cpp
+template <typename T, typename ... Ts>
+concept Addable = requires(T&& arg, Ts&& ... args) {
+    arg + Addable(std::forward<Ts>(args)...);           // FAIL - откусывание в концептах запрещено
+}
+
+template <typename ... Ts>
+concept Addable = requires(Ts&& ... args) {
+    (std::forward<Ts>(args) + ...);                     // OK - свертка в концептах разрешена
+}
+
+template <typename T, typename ... Ts>
+auto sum_all(T&& arg, Ts&& ... args) {
+    if constexpr(sizeof...(args) != 0)
+        return arg + sum_all(std::forward<Ts>(args)...); // OK - откусывание в шаблонных функциях разрешено
+    return 0;
+}
+
+template <typename ... Ts>
+auto sum_all(Ts&& ... args) {
+    return (std::forward<Ts>(args) + ...);              // OK - свертка в шаблонных функциях разрешена
+}
+```
+
+### Пачка параметров обычно должна идти последним аргументом, т.к. из за жадности она заберет все последующие аргументы
+
+- https://godbolt.org/z/77PEx6xsj
+- https://godbolt.org/z/KsM1Kjhrr
+
+```cpp
+// ОШИБКА
+template <typename T> class Stack {
+  struct StackElem {
+    T elem;
+    StackElem *next;
+    StackElem(T e, StackElem *nxt) : elem(e), next(nxt) {}  // <===
+
+    template <class... Args>
+    StackElem(Args &&... args, StackElem *nxt)              // <=== ERROR: Пачка параметров съест StackElem *nxt
+        : elem(std::forward<Args>(args)...), next(nxt) {}   //      Поэтому будет вызыван конструктор StackElem(T e, StackElem *nxt)
+  };
+
+// ---
+
+// ИСПРАВЛЕНИЕ
+template <typename T> class Stack {
+  struct StackElem {
+    T elem;
+    StackElem *next;
+    StackElem(StackElem *nxt, T e) : elem(e), next(nxt) {}
+
+    template <class... Args>
+    StackElem(StackElem *nxt, Args &&... args)              // <=== Пачка параметров идет после StackElem *nxt, все хорошо!
+        : elem(std::forward<Args>(args)...), next(nxt) {}
+  };
+
+```
+
+### Пример с `auto` для вывода указателя на поле класса
+
+- [code/tilir_basics/template_fold_examples.cpp](code/tilir_basics/template_fold_examples.cpp)
+- https://godbolt.org/z/j9YPnvdjs
+
+```cpp
+// Шаблон для перемещения по дереву, указывая левый или правый указатель.
+template <typename T>
+struct Node
+{
+    T data;
+    Node* left;
+    Node* right;
+};
+
+template <typename Node, typename First, typename... Rest>
+Node* get_tree(Node* node, First first, Rest... rest)
+{
+    return get_tree(node->*first, rest...);
+}
+
+auto left = &Node<int>::left;                   // <===
+auto right = &Node<int>::right;                 // <===
+auto subTree = get_tree(root, left, right);
 ```

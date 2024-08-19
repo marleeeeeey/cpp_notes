@@ -822,7 +822,36 @@
   - Вещи относительно `move semantic` структурированы по-другому, чем в лекциях у Константина Владимирова
   - Поэтому Константин Владимиров рекомендует посмотреть этот взгляд на `move semantic`.
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 12. Вариабельные шаблоны - 2022  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 12. Вариабельные шаблоны - 2022  [DONE]
+  - https://www.youtube.com/watch?v=op7z7R6aBvk
+    - 00:00:00 Троеточия в языке C
+    - 00:07:50 Пачки параметров и их раскрытие
+    - 00:15:20 Рекурсивные шаблоны
+    - 00:24:15 Тонкости процесса раскрытия
+    - 00:34:30 Блокировка запятой и прочие странности
+    - 00:44:45 Свёртки
+    - 00:59:50 Вариабельные концепты
+    - 01:14:20 Семантика размещения
+    - 01:26:00 Литература
+
+- A. Alexandrescu, Variadic templates and Funadic, GoingNative - 2012 [TODO]
+  - https://www.youtube.com/watch?v=_zgq6_zFNGY
+
+- Peter Sommerlad, Variable Templates and Compile-Time Computation with C++14, CppCon - 2016 [TODO]
+  - https://www.youtube.com/watch?v=DM-RXeiSCmc
+
+- S. T. Lavavej, Tuple: what's new and how it works, CppCon - 2016 [TODO]
+  - https://www.youtube.com/watch?v=JhgWFYfdIho
+  - Можно пока не смотреть.
+
+- Andreas Fertig, C++20 Templates: The next level: Concepts and more, CppCon' 2021 [TODO]
+  - https://www.youtube.com/watch?v=ZGPz4hoBPck
+  - Смотреть обязательно.
+
+- Simon Brand, Adding C++17 structured bindings support to your classes - 2016 [TODO]
+  - https://blog.tartanllama.xyz/structured-bindings/
+  - Можно пока не читать.
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 13. Лямбды - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 2  [TODO]

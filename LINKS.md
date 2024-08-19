@@ -271,7 +271,7 @@
 - Klaus Iglberger - Breaking Dependencies: The SOLID Principles - CppCon 2019 [DONE]
   - https://www.youtube.com/watch?v=Ntraj80qN2k
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 14 (доп). OpenGL и Vulkan - 2022 [TODO_SKIPPED]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 14 (доп). OpenGL и Vulkan - 2022 [SKIP]
   - https://www.youtube.com/watch?v=yJE34EuZNzs
     - 00:00:00 Первый квадрат
     - 00:09:56 Фиксированный конвейер
@@ -759,7 +759,7 @@
 - Bjarne Stroustrup, Software Development for Infrastructure - 2012 [TODO]
   - https://www.stroustrup.com/Software-for-infrastructure.pdf
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [DOME]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 10. Концепты - 2022  [DONE]
   - https://www.youtube.com/watch?v=HxdrGM6ZbNs
     - 00:00:00 Неявные интерфейсы
     - 00:08:29 SFINAE вместо контракта

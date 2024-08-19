@@ -9,3 +9,4 @@ build_linux/
 **/~*
 CMakeSettings.json
 leak_report.xml
+DEBUG.md

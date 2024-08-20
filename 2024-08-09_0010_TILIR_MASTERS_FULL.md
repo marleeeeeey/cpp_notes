@@ -120,6 +120,8 @@
   - [`std::apply` - для применения функции к каждому агрументу](#stdapply---для-применения-функции-к-каждому-агрументу)
   - [`std::any` - стирает типы](#stdany---стирает-типы)
   - [`std::variant` - альтернатива `std::any`, которая хранит только один из заданных типов](#stdvariant---альтернатива-stdany-которая-хранит-только-один-из-заданных-типов)
+  - [Изобретаем свою перегрузку методов](#изобретаем-свою-перегрузку-методов)
+  - [`std::function` - это аналог `std::any`, но для функций. По сути это красиво обернутый `void*`.](#stdfunction---это-аналог-stdany-но-для-функций-по-сути-это-красиво-обернутый-void)
 
 ## 01. Strings
 
@@ -2512,4 +2514,64 @@ for (auto& v : vec)
         },
         v);
 }
+```
+
+### Изобретаем свою перегрузку методов
+
+- [code/tilir_masters/10_42_lambda_overloading.cpp](code/tilir_masters/10_42_lambda_overloading.cpp)
+- [code/tilir_masters/10_44_lambda_overloading_deduction_hint.cpp](code/tilir_masters/10_44_lambda_overloading_deduction_hint.cpp)
+
+```cpp
+template<typename ... F>
+struct overloaded : F...
+{
+    using F::operator()...;
+};
+
+template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;      // <=== deduction hint
+
+TEST(std_custom_overloaded, basics)
+{
+    auto f = overloaded(
+        [](int i) { return "int"; },
+        [](double i) { return "double"; },
+        [](std::string i) { return "string"; }
+    );
+
+    EXPECT_EQ(f(1.5), "double");
+    EXPECT_EQ(f(100), "int");
+
+    std::vector<std::variant<int, float, std::string>> vec {1, 2.0f, "3"};
+    for (auto& v: vec)
+    {
+        auto result = std::visit(f, v);
+        std::cout << result << std::endl;
+    }
+}
+```
+
+### `std::function` - это аналог `std::any`, но для функций. По сути это красиво обернутый `void*`.
+
+- `std::function` - это обертка над функцией, которая позволяет хранить любой тип функции. Использует кучу.
+- `auto closure = [x = 1](int y) { return x + y; };` - это объект `closure`. Хранится на стеке.
+- `std::move_only_function<int(int)> f = [x = std::move(v)] {...};` - если хотим захватить не копируемое замыкание. Позволяет вызывать `std::move(f)();` только один раз. (C++23). Имеет вызов только для rvalue reference.
+
+```cpp
+auto factorial = [&] (int i) {
+    return (i == 1) ? 1 : i * factorial(i - 1);     // <=== ERROR: use before deduction
+};
+
+// ***
+
+auto closure = [x](int a) { return x - a; };            // <=== Объект на стеке
+
+std::function<int(int)> factorial = [&](int i)          // <=== Объект в куче (heap indirection)
+{
+    return (i == 1) ? 1 : i * factorial(i - 1);
+};
+
+EXPECT_EQ(factorial(1), 1);
+EXPECT_EQ(factorial(2), 2);
+
+std::cout << factorial.target_type().name() << std::endl;
 ```

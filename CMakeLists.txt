@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 project(cpp_file_example VERSION 1.0)
 
+# ######################### User options ############################
+set(USE_GOOGLE_TEST ON)
+set(USE_GOOGLE_BENCHMARK OFF)
+
 # #################### Setup compiler options #######################
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,20 +40,26 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-uninitialized>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-c99-extensions>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-lambda-capture>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-shorten-64-to-32>
 )
 
-# #################### Adding Google Test #######################
-include(FetchContent)
-FetchContent_Declare(
-    googletest
+if(USE_GOOGLE_TEST)
+    # #################### Adding Google Test #######################
+    # https://github.com/google/googletest
+    include(FetchContent)
+    FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip)
 
-    # Specify the commit you depend on and update it regularly.
-    URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
-)
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+    target_link_libraries(cpp_file_example gtest_main)
+    add_test(NAME example_test COMMAND cpp_file_example)
+endif()
 
-target_link_libraries(cpp_file_example gtest_main)
-add_test(NAME example_test COMMAND cpp_file_example)
+if(USE_GOOGLE_BENCHMARK)
+    # #################### Adding Google Benchmark #######################
+    # https://github.com/google/benchmark
+    add_subdirectory(thirdparty/benchmark)
+    target_link_libraries(cpp_file_example benchmark::benchmark)
+endif()

@@ -865,6 +865,29 @@
     - 01:22:00 Deducing this
     - 01:28:08 Литература и завершение
 
+- D. Abrahams - Unifying Generic Functions and Function Objects, C++Next - 2012 [TODO] [PRIORITY_LOW]
+  - http://cpp-next.com/archive/2012/09/unifying-generic-functions-and-function-objects/
+  - Древняя статья по внедренюю лямбд в С++. Можно не читать.
+
+- Stephan T. Lavavej - functional: What's New, And Proper Usage, CppCon - 2015 [TODO] [PRIORITY_MEDIUM]
+  - https://www.youtube.com/watch?v=zt7ThwVfap0
+  - Хорошее видео немного выше своего времени.
+
+- Arthur O'Dwyer - Back to Basics: Type Erasure, CppCon - 2019 [TODO] [PRIORITY_HIGH]
+  - https://www.youtube.com/watch?v=tbUCHifyT24
+
+- Arthur O'Dwyer - Back to Basics: Lambdas from Scratch, CppCon - 2019 [TODO] [PRIORITY_HIGH]
+  - https://www.youtube.com/watch?v=3jCOwajNch0
+
+- Ben Deane - Deducing this Patterns, CppCon - 2021 [TODO]
+  - https://www.youtube.com/watch?v=jXf--bazhJw
+
+- Sy Brand - C++23’s Deducing this: what it is, why it is, how to use it - 2022 [TODO]
+  - https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/
+
+- Timur Doumler - C++ Lambda Idioms, CppCon - 2022 [TODO] [FUNNY] [PRIORITY_MEDIUM]
+  - https://www.youtube.com/watch?v=xBAduq0RGes
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 2  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 15. Аллокаторы - 2023  [TODO]

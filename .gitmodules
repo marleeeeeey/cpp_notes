@@ -1,0 +1,6 @@
+[submodule "submodules/cpp-masters"]
+	path = submodules/cpp-masters
+	url = https://github.com/marleeeeeey/cpp-masters.git
+[submodule "submodules/cpp-graduate"]
+	path = submodules/cpp-graduate
+	url = https://github.com/marleeeeeey/cpp-graduate.git

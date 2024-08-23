@@ -50,16 +50,10 @@ def dump_chart_to_file(tag_counts, filename="DEBUG.md"):
 # ##############
 
 
-def update_progress_file(md_content):
-    tag_pattern = re.compile(r"\[(DONE|TODO|INPROGRESS)\]")
-    tag_counts = parse_md_file(md_content, tag_pattern)
-    dump_chart_to_file(tag_counts, "PROGRESS.md")
-
-
 def update_debug_file(md_content):
     tag_pattern = re.compile(r"\[(\S*)\]")
     tag_counts = parse_md_file(md_content, tag_pattern)
-    dump_chart_to_file(tag_counts, "DEBUG.md")
+    dump_chart_to_file(tag_counts, "PROGRESS.md")
 
 
 # MAIN
@@ -71,7 +65,6 @@ def main():
     with open("LINKS.md", "r", encoding="utf8") as file:
         md_content = file.read()
 
-    update_progress_file(md_content)
     update_debug_file(md_content)
 
 

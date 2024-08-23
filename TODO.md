@@ -1,7 +1,6 @@
 - Добавить заметки от Егора Б., Егора М., Федора, Вовы Ш. из разных чатов по С++.
 - Поискать и смотреть все выступления Герба Саттера, Andreas Fertig, Sean Parrent, Антона Полухина.
 - В игровой движок внедрить возмоность писать тесты непосредственно в файлах кода проекта, и выкидывать их из компиляции специальным макросом.
-- Попробовать профилировщик
-  - https://pastebin.com/aiimscBv
-  - https://discord.com/channels/331718482485837825/1274414661281910797/1274415791940567132
-  - https://github.com/google/benchmark
+- Профилирование
+  - Zelis, Herald of Krill Issues: I'm using uica https://uica.uops.info/
+  - [9:51 PM]Zelis, Herald of Krill Issues: llvm-mca is also good for this

@@ -109,3 +109,5 @@
 - Своя перегрузка методов на `std::variant`: `template<typename ... F> struct overloaded : F... { using F::operator()...; };`.
 - `std::function` - это аналог `std::any`, но для функций. По сути это красиво обернутый `void*`. Использует кучу в отличие от лямбда функций.
 - `deducing this`: `auto func = [y](this auto&& self, int x) { .... };`  // <=== сделать `move` захвата (`y`) в зависимости от свойств `self`.
+
+### 11. Ranges

@@ -125,6 +125,16 @@
   - [`deducing this`, чтобы добиться `forward` поведения для захвата `closure`](#deducing-this-чтобы-добиться-forward-поведения-для-захвата-closure)
   - [`deducing this` and `std::visit` паттерн](#deducing-this-and-stdvisit-паттерн)
   - [Использование `deducing this` вне лямбда-функций](#использование-deducing-this-вне-лямбда-функций)
+- [11. Ranges](#11-ranges)
+- [11.1 Наблюдения за стандартными алгоритмами](#111-наблюдения-за-стандартными-алгоритмами)
+  - [(1) Sentinel (Сингулярный итератор). Стандартные алгоритмы работают с парами равнозначных итераторов, хотя часто от второго требуется только сравнение.](#1-sentinel-сингулярный-итератор-стандартные-алгоритмы-работают-с-парами-равнозначных-итераторов-хотя-часто-от-второго-требуется-только-сравнение)
+  - [(2) Объединение или разделение? `copy_if` и `transform`](#2-объединение-или-разделение-copy_if-и-transform)
+  - [(3) Энергичность. Стандартные алгоритмы энергичные.](#3-энергичность-стандартные-алгоритмы-энергичные)
+- [11.2 Библиотека Ranges (C++20)](#112-библиотека-ranges-c20)
+  - [Примеры Ranges](#примеры-ranges)
+- [11.2 Концепции ranges](#112-концепции-ranges)
+  - [(1) Concepts применяются для итераторов в ranges](#1-concepts-применяются-для-итераторов-в-ranges)
+  - [(2) Компараторы и проекции в ranges](#2-компараторы-и-проекции-в-ranges)
 
 ## 01. Strings
 
@@ -2705,4 +2715,131 @@ struct S3
     template<typename Self>     // <=== Получаем один метод на все случаи
     auto foo(this Self&&);
 };
+```
+
+## 11. Ranges
+
+## 11.1 Наблюдения за стандартными алгоритмами
+
+### (1) Sentinel (Сингулярный итератор). Стандартные алгоритмы работают с парами равнозначных итераторов, хотя часто от второго требуется только сравнение.
+
+- Сингулярный итератор - это итератор, который нельзя разыменовывать и инкрементировать. Его можно только сравнить.
+- Ренджи работают с парой итераторов - первый обычный, а второй сингулярный (потому что от него не требуется разыменование).
+
+```cpp
+std::for_each(                                              // Алгоритм похож на transform_copy_if
+    std::istream_iterator<int>{is},
+    std::istream_iterator<int>{},                           // <=== Сингулярный итератор
+    [&os](int d) { if (d < 5) { os << d * 2 << " "; } });
+```
+
+### (2) Объединение или разделение? `copy_if` и `transform`
+
+- `transform_copy_if` - это выдуманный алгоритм.
+
+```cpp
+template <typename InputIt, typename OutputIt, typename UnaryPred, typename UnaryFunc>
+OutputIt transform_copy_if(InputIt first, InputIt last, OutputIt d_first, UnaryPred pred, UnaryFunc func);
+
+// Пример использования
+transform_copy_if(istream_iterator<int>{is},
+    istream_iterator<int>{}, ostream_iterator<int>{os, " "},
+    [](int n) { return n < 5; }, [](int n) { return n * 2; });
+
+```
+
+### (3) Энергичность. Стандартные алгоритмы энергичные.
+
+```cpp
+//А может быть наоборот, не объединять, а разделять?
+std::vector<int> v;
+istream_iterator<int> start{is}, fin{};
+ostream_iterator<int> d_start{os, " "}
+
+std::copy_if(start, fin, std::back_inserter(v), [](int n){ return n < 5; }); // <=== copy_if
+std::transform(v.begin(), v.end(), d_start, [] (int n){ return n * 2; });    // <=== transform
+```
+
+## 11.2 Библиотека Ranges (C++20)
+
+### Примеры Ranges
+
+- [code/tilir_masters/11_12_meet_ranges.cpp](code/tilir_masters/11_12_meet_ranges.cpp)
+
+```cpp
+auto t = ranges::istream_view<int>(is) |
+    ranges::views::filter([](int n) { return n < 5; }) |
+    ranges::views::transform([](int n) { return n * 2; });
+```
+
+## 11.2 Концепции ranges
+
+### (1) Concepts применяются для итераторов в ranges
+
+- https://en.cppreference.com/w/cpp/algorithm/ranges/sort
+
+- ranges использует концепты.
+- Базовый концепт - это `ranges::range`.
+- Концепты могут комбинироваться.
+
+```cpp
+template<ranges::random_access_range R,             // <=== concept random_access_range
+         class Comp = ranges::less,
+         class Proj = std::identity >
+requires
+  std::sortable<ranges::iterator_t<R>, Comp, Proj>
+constexpr
+ranges::borrowed_iterator_t<R>
+    sort( R&& r, Comp comp = {}, Proj proj = {} );
+
+// ПРИМЕР КОЦЕПТОВ
+template <typename T> concept range = requires(T&& t) {
+    ranges::begin(t);                                       // <=== begin и end достаточно
+    ranges::end(t);
+};
+
+// ПРИМЕР ИТЕРАТОРОВ
+template <typename T>
+using iterator_t = decltype(ranges::begin(declval<T&>()));  // <=== Итератор
+template <typename T>
+using sentinel_t = decltype(ranges::end(declval<T&>()));    // <=== Сингулярный итератор
+
+// ПРИМЕР КОМБИНИРОВАНИЯ КОНЦЕПТОВ
+template<class T> concept input_range =
+    range<T> && input_iterator<iterator_t<T>>;              // <=== input_range   = range + input_iterator
+template<class T> concept forward_range =
+    range<T> && input_iterator<iterator_t<T>>;              // <=== forward_range = range + forward_iterator
+```
+
+### (2) Компараторы и проекции в ranges
+
+- [code/tilir_masters/11_16_ranges.cpp](code/tilir_masters/11_16_ranges.cpp)
+- [submodules/cpp-masters/ranges/proj.cc](submodules/cpp-masters/ranges/proj.cc)
+- https://quick-bench.com/q/KZEK53ef70061_-N1gbjMOTOE7c - показывает, что короткая форма работает чуть дольше.
+- https://quick-bench.com/q/rUMr3meHTgQfYOIW7ValdUjSeIU
+- Компаратор семантически должен удовлетворять требованиям `strict weak ordering`.
+- Проекция `std::identity` - это просто возвращение аргумента. Туда можно вставить лямбду.
+
+```cpp
+template<ranges::random_access_range R,
+         class Comp = ranges::less,                 // <=== comparator, немного отличается от std::less
+         class Proj = std::identity >               // <=== projector
+requires
+  std::sortable<ranges::iterator_t<R>, Comp, Proj>
+constexpr
+ranges::borrowed_iterator_t<R>
+    sort( R&& r, Comp comp = {}, Proj proj = {} );
+
+// Теперь у нас есть альтернатива: сложный компаратор или проекция.
+ranges::sort(v,
+[](auto a, auto b) { return a.x < b.x; }    // <=== comparator
+);                                          // <=== нет проекции
+
+ranges::sort(v,
+{},                                         // <=== нет компаратора
+[](auto a) { return a.x; }                  // <=== проекция
+);
+
+ranges::sort(v, {},
+    &S::x);                                 // <=== упрощенный вариант записи проекции
 ```

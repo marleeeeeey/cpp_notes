@@ -4,8 +4,28 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "001. Options: -DLINK_GOOGLE_TEST=ON",
+      "command": "python ./scripts/vscode_tasks_generator.py --test",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: -DLINK_GOOGLE_BENCHMARK=OFF",
+      "command": "python ./scripts/vscode_tasks_generator.py --benchmark",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: -DCMAKE_BUILD_TYPE=Release",
+      "command": "python ./scripts/vscode_tasks_generator.py --config",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: -DCMAKE_CXX_STANDARD=23",
+      "command": "python ./scripts/vscode_tasks_generator.py --standard",
+      "type": "shell",
+    },
+    {
       "label": "010. Set Current File As Sourse",
-      "command": "cmake -E echo ${file} > file_to_build.txt && python ${workspaceFolder}/replace_slashes.py",
+      "command": "cmake -E echo ${file} > file_to_build.txt && python ${workspaceFolder}/scripts/replace_slashes.py",
       "type": "shell",
       "options": {
         "statusbar": {
@@ -17,7 +37,7 @@
     {
       "label": "020. + Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake -E copy build/Debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-O2 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF&& cmake -E copy build/release/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -29,7 +49,7 @@
     },
     {
       "label": "030. + Build",
-      "command": " cmake --build build/Debug -- -k 0 ",
+      "command": " cmake --build build/release -- -k 0 ",
       "dependsOn": [
         "020. + Configure"
       ],
@@ -43,7 +63,7 @@
     },
     {
       "label": "040. + Run",
-      "command": "${workspaceFolder}/build/Debug/cpp_file_example.exe",
+      "command": "${workspaceFolder}/build/release/cpp_file_example.exe",
       "dependsOn": [
         "030. + Build"
       ],
@@ -57,7 +77,7 @@
     },
     {
       "label": "050. + Run with Deleaker",
-      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/Debug/cpp_file_example.exe /someOption && python ${workspaceFolder}/parse_deleaker_report.py",
+      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/release/cpp_file_example.exe /someOption && python ${workspaceFolder}/scripts/parse_deleaker_report.py",
       "dependsOn": [
         "030. + Build"
       ],
@@ -77,6 +97,17 @@
       "dependsOn": [
         "G010. Create Build Directory"
       ]
+    },
+    {
+      "label": "005. Calc Links Progress to Mermaid Pie Chart",
+      "command": "python ./scripts/mermaid_pie_chart_generation.py && ./PROGRESS.md",
+      "type": "shell",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "PieChart"
+        }
+      },
     },
   ]
 }

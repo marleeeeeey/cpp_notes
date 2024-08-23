@@ -2,11 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 project(cpp_file_example VERSION 1.0)
 
 # ######################### User options ############################
-set(USE_GOOGLE_TEST ON)
-set(USE_GOOGLE_BENCHMARK OFF)
+option(LINK_GOOGLE_TEST "Link Google Test" ON)
+option(LINK_GOOGLE_BENCHMARK "Link Google Benchmark" OFF)
 
 # #################### Setup compiler options #######################
-set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json.
 
@@ -41,9 +40,11 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-c99-extensions>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-lambda-capture>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-shorten-64-to-32>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-anonymous-struct>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-nested-anon-types>
 )
 
-if(USE_GOOGLE_TEST)
+if(LINK_GOOGLE_TEST)
     # #################### Adding Google Test #######################
     # https://github.com/google/googletest
     include(FetchContent)
@@ -57,7 +58,7 @@ if(USE_GOOGLE_TEST)
     add_test(NAME example_test COMMAND cpp_file_example)
 endif()
 
-if(USE_GOOGLE_BENCHMARK)
+if(LINK_GOOGLE_BENCHMARK)
     # #################### Adding Google Benchmark #######################
     # https://github.com/google/benchmark
     add_subdirectory(thirdparty/benchmark)

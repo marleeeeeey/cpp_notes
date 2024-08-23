@@ -4,3 +4,6 @@
 [submodule "submodules/cpp-graduate"]
 	path = submodules/cpp-graduate
 	url = https://github.com/marleeeeeey/cpp-graduate.git
+[submodule "thirdparty/benchmark"]
+	path = thirdparty/benchmark
+	url = https://github.com/google/benchmark.git

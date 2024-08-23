@@ -15,7 +15,7 @@ def read_stack_entry(stack_entry, ignore_paths_regexs=None):
                 return None
 
     line = stack_entry.get("Line")
-    return f"{function_name:50} in {file_name}:{line}"
+    return f"{function_name:50}\n      in {file_name}:{line}"
 
 
 def read_stack_trace_as_lines(stack_trace_nodes, ignore_path_regexs=None):
@@ -31,8 +31,14 @@ def print_deleaker_report(xml_path):
     tree = ET.parse(xml_path)
     root = tree.getroot()
 
+    found_leaks = False
+
     for snapshot in root.findall("Snapshot"):
         for allocation in snapshot.findall("Allocation"):
+
+            if found_leaks == False:
+                print("Leaks detected:")
+                found_leaks = True
 
             address = allocation.get("Value")
             type = allocation.get("Type")
@@ -52,17 +58,22 @@ def print_deleaker_report(xml_path):
                 print(f"  Module: {module}")
                 print("  Stack trace:")
                 stack_trace_nodes = allocation.find("StackTrace")
-                stack_trace_lines = read_stack_trace_as_lines(stack_trace_nodes, {"vctools.*startup"})
+                stack_trace_lines = read_stack_trace_as_lines(stack_trace_nodes)
                 for stack_line in stack_trace_lines:
                     print(f"    {stack_line}")
                 print("----------------------------")
+
+    if not found_leaks:
+        print("No leaks detected.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    args = parser.parse_args()
-    VERBOSE = args.verbose
+    args = parser.parse_known_args()
+
+    if hasattr(args, "verbose"):
+        VERBOSE = args.verbose
 
     print("************************************")
     print("DELEAKER REPORT")

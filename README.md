@@ -41,13 +41,14 @@ In the [code folder](/code), there are examples of my programs illustrating the 
 
 #### Prerequisites
 
-- C++ compiler with C++23 support (Clang, GCC, MSVC)
-- CMake (optional*)
-- Ninja (optional*)
-- VSCode (optional*)
+- C++ compiler with C++23 support ([Clang](https://clang.llvm.org), [GCC](https://gcc.gnu.org), [MSVC](https://visualstudio.microsoft.com/vs/features/cplusplus/))
+- [CMake](https://cmake.org) (optional*)
+- [Ninja](https://ninja-build.org) (optional*)
+- [VSCode](https://code.visualstudio.com) (optional*)
 - lldb (optional*)
-- python (optional*) - for VSCode task automation.
-- Deleaker (optional*) - for memory leak detection on Windows (analog of Valgrind).
+- [python](https://www.python.org) (optional*) - for VSCode task automation.
+- [Deleaker](https://www.deleaker.com) (optional*) - for memory leak detection on Windows (analog of Valgrind).
+- [Google Benchmark](https://github.com/google/benchmark) (optional* as submodule) - for performance testing.
 
 _* Optional tools are used for better integration with VSCode and debugging._
 
@@ -66,11 +67,11 @@ To build the examples with CMake, you may use the following commands:
 
 ```
 mkdir build && cd build
-mkdir Debug && cd Debug
+mkdir debug && cd debug
 cmake -E echo ../../code/hello_world.cpp > file_to_build.txt
-cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++
-cmake --build build/Debug -- -k 0
-./build/Debug/cpp_file_example.exe
+cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_COMPILER=clang++
+cmake --build build/debug -- -k 0
+./build/debug/cpp_file_example.exe
 ```
 
 *You have to choose which file to build by editing the `file_to_build.txt` file.

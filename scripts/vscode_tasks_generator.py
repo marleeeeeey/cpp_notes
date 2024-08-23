@@ -32,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--benchmark", action="store_true", default=False, help="Toogle Google Benchmark Linking")
     parser.add_argument("--config", action="store_true", default=False, help="Toogle Debug/Release Configuration")
     parser.add_argument("--standard", action="store_true", default=False, help="Toogle C++ Standard")
+    parser.add_argument("--deleaker_verbose", action="store_true", default=False, help="Toogle Deleaker Verbose")
     args = parser.parse_args()
 
     if args.test:
@@ -48,4 +49,9 @@ if __name__ == "__main__":
     if args.standard:
         toggle_text_in_vscode_task_content(
             ["-DCMAKE_CXX_STANDARD=11", "-DCMAKE_CXX_STANDARD=17", "-DCMAKE_CXX_STANDARD=20", "-DCMAKE_CXX_STANDARD=23"]
+        )
+
+    if args.deleaker_verbose:
+        toggle_text_in_vscode_task_content(
+            ["parse_deleaker_report.py --verbose", "parse_deleaker_report.py --no-verbose"]
         )

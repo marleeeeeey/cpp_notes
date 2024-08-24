@@ -49,6 +49,7 @@ In the [code folder](/code), there are examples of my programs illustrating the 
 - [python](https://www.python.org) (optional*) - for VSCode task automation.
 - [Deleaker](https://www.deleaker.com) (optional*) - for memory leak detection on Windows (analog of Valgrind).
 - [Google Benchmark](https://github.com/google/benchmark) (optional* as submodule) - for performance testing.
+- [Google Test](https://google.github.io/googletest/) (optional* loaded via CMake) - for unit testing.
 
 _* Optional tools are used for better integration with VSCode and debugging._
 
@@ -60,6 +61,8 @@ CMake build preferred before manual build because it generates `compile_commands
 2. Open `code/*.cpp` file you want to build and start task `010. Set Current File As Source`.
 3. Start task `040. + Run` to build and run the program. See settings in [.vscode/tasks.json](.vscode/tasks.json).
 4. For debugging press `F5`. It will build the program and start debugging with `lldb`. See settings in [.vscode/launch.json](.vscode/launch.json).
+
+Video example of usage VSCode with My Task Runner setup for C++ development: [YouTube](https://www.youtube.com/watch?v=-Tg7pT-8Rhc).
 
 #### Build examples with CMake
 

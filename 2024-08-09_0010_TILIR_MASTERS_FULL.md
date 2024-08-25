@@ -151,7 +151,7 @@
   - [Установка ресурса по умолчанию на программу](#установка-ресурса-по-умолчанию-на-программу)
   - [Сторожевой узел (Sentinel Node)](#сторожевой-узел-sentinel-node)
   - [Создаем собственный prm контейнер (union, CRTP и сторожевой узел)](#создаем-собственный-prm-контейнер-union-crtp-и-сторожевой-узел)
-  - [13. Smart Pointers](#13-smart-pointers)
+- [13. Smart Pointers](#13-smart-pointers)
   - [Список возможных алтернатив указателям](#список-возможных-алтернатив-указателям)
   - [PRVALUE elision и NRVO](#prvalue-elision-и-nrvo)
   - [`make_unique` не может быть использован в случае закрытых конструкторов](#make_unique-не-может-быть-использован-в-случае-закрытых-конструкторов)
@@ -165,6 +165,17 @@
   - [`weak_ptr` - решение проблемы циклических ссылок](#weak_ptr---решение-проблемы-циклических-ссылок)
   - [`make_shared` может привести к проблемам при использовании `weak_ptr`](#make_shared-может-привести-к-проблемам-при-использовании-weak_ptr)
   - [COW строки на основе `shared_ptr`](#cow-строки-на-основе-shared_ptr)
+- [14. Динамический полиморфизм](#14-динамический-полиморфизм)
+  - [Примеры статического и динамического полиморфизма](#примеры-статического-и-динамического-полиморфизма)
+  - [Мотивации использования динамического полиморфизма:](#мотивации-использования-динамического-полиморфизма)
+  - [Как работает виртуальная таблица](#как-работает-виртуальная-таблица)
+  - [CRTP, как альтернатива виртуальным функциям](#crtp-как-альтернатива-виртуальным-функциям)
+  - [CRTP mixin](#crtp-mixin)
+  - [CRTP-mixin для clone (C++20, C++23)](#crtp-mixin-для-clone-c20-c23)
+  - [Симметрия исключений и множественного наследования](#симметрия-исключений-и-множественного-наследования)
+  - [Виртуальное наследование и влияение его на инициализацию](#виртуальное-наследование-и-влияение-его-на-инициализацию)
+  - [Смердженные виртуальные таблицы после виртуального наследования](#смердженные-виртуальные-таблицы-после-виртуального-наследования)
+  - [`dynamic_cast`](#dynamic_cast)
 
 ## 01. Strings
 
@@ -3452,7 +3463,7 @@ slist& operator=(slist&& rhs) { // увы, никакого noexcept
 }
 ```
 
-### 13. Smart Pointers
+## 13. Smart Pointers
 
 ### Список возможных алтернатив указателям
 
@@ -3652,3 +3663,245 @@ struct Node {
 - COW (Copy-On-Write) - это оптимизация, при которой копирование объекта происходит только в момент изменения.
 - `shared_ptr<const std::string>` — это тривиальное и довольно безопасное COW (Copy-On-Write).
 - `shared_ptr` позволяет разделять строку между несколькими объектами, и копировать её только в момент изменения.
+
+## 14. Динамический полиморфизм
+
+### Примеры статического и динамического полиморфизма
+
+- Статический полиморфизм
+  - Перегрузка функций.
+  - Специализация и частичная специализация шаблонов.
+- Динамический полиморфизм
+  - Виртуальные функции.
+
+### Мотивации использования динамического полиморфизма:
+
+- Нужно переиспользовать интерфейс базового класса для разных производных классов через косвенность (Альтернатива: CRTP).
+- Фабричный метод, который в зависимости от условия времени выполнения создает объекты разных типов. (Алтернатива: `std::variant` если список типов заранее известен).
+- Складывать в контейнер много разнородных объектов (А точнее склывадть указатели на объекты).
+
+### Как работает виртуальная таблица
+
+![virtual_table](screenshots/virtual_table.png)
+
+- https://godbolt.org/z/9xeeTY3vr
+
+```cpp
+struct Base
+{
+    virtual void foo() = 0;
+    virtual ~Base() {}
+};
+
+struct Derived : Base
+{
+    void foo() override;
+};
+
+int main()
+{
+    Derived d;      // vptr filled in ctor
+    Base *b = &d;   // ref and pointer ok
+    b->draw();      // call via dynamic type
+}
+```
+
+### CRTP, как альтернатива виртуальным функциям
+
+- https://godbolt.org/z/rG4EW4YPj
+- [code/tilir_masters/14_12_crtp_as_virt_alternative.cpp](code/tilir_masters/14_12_crtp_as_virt_alternative.cpp)
+- https://godbolt.org/z/Eea11nh3a - ассемблер для понимания производительности.
+- Данный подход бесплатен в плане производительности.
+- CRTP не стирает тип, поэтому не получится использовать указатель на базовый класс, чтобы складывать объекты разных типов в контейнер.
+
+```cpp
+template <typename Derived>
+struct object_t
+{
+    void draw(std::ostream& os, size_t pos) const
+        { static_cast<const Derived*>(this)->draw(os, pos); }       // Приводим к типу Derived и вызываем его метод
+protected:                                                          // Чтобы нельзя было создать объект этого класса
+    object_t() = default;
+};
+
+struct int_t : public object_t<int_t>
+{
+    int data;
+    int_t(int data) : data(data) {}
+    void draw(std::ostream& os, size_t pos) const { os << std::string(pos, ' ') << data; }
+};
+
+template <typename T>
+void call_interface(object_t<T>& obj, std::ostream& os)
+{
+    obj.draw(os, 0);
+}
+```
+
+### CRTP mixin
+
+- https://godbolt.org/z/88rv3vhdn
+- [code/tilir_masters/14_14_crtp_mixin.cpp](code/tilir_masters/14_14_crtp_mixin.cpp)
+- Используется множественное наследование от object_t для интерфейса и от Comparisons для операторов сравнения.
+
+```cpp
+template <typename Derived>
+struct Comparisons
+{};
+
+template <typename Derived>
+bool operator==(const Comparisons<Derived>& o1, const Comparisons<Derived>& o2)
+{
+    const Derived& d1 = static_cast<const Derived&>(o1);
+    const Derived& d2 = static_cast<const Derived&>(o2);
+    return !(d1 < d2) && !(d2 < d1);
+}
+
+template <typename Derived>
+bool operator!=(const Comparisons<Derived>& o1, const Comparisons<Derived>& o2)
+{
+    return !(o1 == o2);
+}
+
+template <typename Derived>
+struct object_t
+{
+    void draw(std::ostream& os, size_t pos) const { static_cast<const Derived*>(this)->draw(os, pos); }
+protected:
+    object_t() = default;
+};
+
+struct int_t : public object_t<int_t>, public Comparisons<int_t>
+{
+    int data;
+    int_t(int data) : data(data) {}
+    void draw(std::ostream& os, size_t pos) const { os << std::string(pos, ' ') << data; }
+    bool less(const int_t& rhs) const { return data < rhs.data; }
+};
+
+bool operator<(const int_t& lhs, const int_t& rhs)
+{
+    return lhs.less(rhs);
+}
+```
+
+### CRTP-mixin для clone (C++20, C++23)
+
+- https://godbolt.org/z/865rEP1EW
+- [code/tilir_masters/14_16_crtp_mixin_clone.cpp](code/tilir_masters/14_16_crtp_mixin_clone.cpp)
+- Чтобы не писать функцию clone в каждом классе наследника, можно использовать CRTP-mixin.
+- `deducing this` - убийца CRTP.
+
+```cpp
+struct object_t {
+    virtual std::unique_ptr<object_t> clone() const = 0;
+    virtual ~object_t() {}
+};
+
+template <typename Base, typename Derived>
+    struct MixClonable : public Base {                      // Наследование тут нужно, чтобы потом использовать override и static_cast
+        std::unique_ptr<Base> clone() const override {      // Override тут
+            return std::unique_ptr<Base>(
+                new Derived(static_cast<Derived const &>(*this)));
+}
+};
+
+struct int_t : public MixClonable<object_t, int_t> {
+
+// В С++23 можно улучшить код используя `deducing this`
+#if CPP_23
+template <typename Base> struct MixClonable : public Base {
+template <typename Self>
+std::unique_ptr<Base> clone(this Self&& self) const override {
+    return std::unique_ptr<Base>(new Self(self));
+}
+};
+
+struct int_t : public MixClonable<object_t> {
+int data;
+    void draw(std::ostream &os, size_t pos) const override;
+};
+#endif
+```
+
+### Симметрия исключений и множественного наследования
+
+- https://godbolt.org/z/aWGb9WrEn
+- [code/tilir_masters/14_18_symmetry_exceptions_and_diamond_inh.cpp](code/tilir_masters/14_18_symmetry_exceptions_and_diamond_inh.cpp)
+- Через RTTI не видимы неоднозначение базовые классы.
+- Через RTTI не видимы недоступные (protected inheritance) базовые классы.
+
+```cpp
+try {
+    IOFile iof;
+    File &f = iof;      // если мы так не сможем
+    throw IOFile();
+}
+catch(File&) {
+                        // то и сюда мы не попадём
+}
+```
+
+### Виртуальное наследование и влияение его на инициализацию
+
+```cpp
+struct File {
+    File(int);
+    virtual ~File() {}
+
+struct InputFile : virtual public File {                // <===  Правильное место для virtual
+    InputFile(int b) : File(b) {}                       // <=== File(b) будет проигнорировано
+
+struct OutputFile : virtual public File {               // <===  Правильное место для virtual
+    OutputFile(int c) : File(c), c{c} {}                // <=== File(c) будет проигнорировано
+
+struct IOFile : public InputFile, public OutputFile {
+    IOFile(int d) : File(d), InputFile(d), OutputFile(d) {}     // <=== Тут нужно проинициализировать File
+```
+
+### Смердженные виртуальные таблицы после виртуального наследования
+
+- Положением виртуальных таблиц управляет самая верхняя база.
+- Содержимым виртуальных таблиц управляет most derived класс.
+
+![merged_vtables](screenshots/merged_vtables.png)
+
+### `dynamic_cast`
+
+- https://godbolt.org/z/sjTKvofcs
+- [code/tilir_masters/14_20_dynamic_cast.cpp](code/tilir_masters/14_20_dynamic_cast.cpp)
+- https://android.googlesource.com/platform/abi/cpp/+/eb789ea833d8d800662b67914d9c1785a58c2caa/src/dynamic_cast.cc
+
+- `dynamic_cast` может делать три вещи при виртуальном наследовании, которые не может делать `static_cast`.
+  - (1) Преобразование к `void*` - находит `most derived` (нижнему) объект, даже если вы его не знаете (самый дешевый).
+  - (2) Переходит к дочернему типу через виртуальные базы.
+  - (3) Приведение вбок (между разными ветками).
+
+- Часто компилятор заменяет `dynamic_cast` на `static_cast`, если он уверен, что преобразование будет успешным.
+
+```cpp
+struct A;
+struct B : virtual public A;
+struct C : virtual public A;
+struct D : public B, public C;
+
+#if FAILED_CODE
+    D* d2 = b;                      // error: cannot initialize a variable of type 'D *' with an lvalue of type 'B *'
+    B* b2 = &a;                     // error: cannot initialize a variable of type 'B *' with an rvalue of type 'A **'
+    B* b2 = static_cast<B*>(a);     // (2) error: cannot cast 'A *' to 'B *' via virtual base 'A'
+    C* c2 = static_cast<C*>(b);     // (3) error: static_cast from 'B *' to 'C *', which are not related by inheritance, is not allowed
+#endif
+
+    D* d2 = static_cast<D*>(b);     // OK
+    d2->print();
+
+    void* unknown = dynamic_cast<void*>(a);     // (1) Преобразование к void*, возвращает указатель на most derived объект, т.е. на D.
+    if (unknown)
+        std::cout << "unknown" << std::endl;
+
+    B* b2 = dynamic_cast<B*>(a);                // (2) Преобразование вниз (к дочернему типу через виртуальные базы)
+    b2->print();
+
+    C* c2 = dynamic_cast<C*>(b);                // (3) Приведение вбок (между разными ветками)
+    c2->print();
+```

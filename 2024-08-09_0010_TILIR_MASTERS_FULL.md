@@ -135,6 +135,36 @@
 - [11.2 Концепции ranges](#112-концепции-ranges)
   - [(1) Concepts применяются для итераторов в ranges](#1-concepts-применяются-для-итераторов-в-ranges)
   - [(2) Компараторы и проекции в ranges](#2-компараторы-и-проекции-в-ranges)
+- [12. Allocators](#12-allocators)
+  - [Foreword: глобальные аллокаторы (аллокаторы в C)](#foreword-глобальные-аллокаторы-аллокаторы-в-c)
+  - [Проблемы использования наивных аллокаторов. (С++98)](#проблемы-использования-наивных-аллокаторов-с98)
+  - [Полный пример аллокатора на старых С++(С++98)](#полный-пример-аллокатора-на-старых-сс98)
+  - [Allocator traits (C++11)](#allocator-traits-c11)
+  - [Пример `freelist_alloc`, который не освобождает память при удалении объектов](#пример-freelist_alloc-который-не-освобождает-память-при-удалении-объектов)
+  - [Локальный (arena-based) подход](#локальный-arena-based-подход)
+  - [Решение проблемы разных аллокаторов в одном контейрене в C++11: scoped alloc](#решение-проблемы-разных-аллокаторов-в-одном-контейрене-в-c11-scoped-alloc)
+  - [В C++17 придумали концепцию `polymorphic_allocator`, который принимает `memory_resource`](#в-c17-придумали-концепцию-polymorphic_allocator-который-принимает-memory_resource)
+  - [Существующие в стандарте ресурсы](#существующие-в-стандарте-ресурсы)
+  - [Пример современного полиморфного аллокатора в С++20 (std::pmr)](#пример-современного-полиморфного-аллокатора-в-с20-stdpmr)
+  - [Как можно использовать стандартный контейнер `std::vector` с полиморфным аллокатором](#как-можно-использовать-стандартный-контейнер-stdvector-с-полиморфным-аллокатором)
+  - [Case study: тестовый memory resource](#case-study-тестовый-memory-resource)
+  - [Установка ресурса по умолчанию на программу](#установка-ресурса-по-умолчанию-на-программу)
+  - [Сторожевой узел (Sentinel Node)](#сторожевой-узел-sentinel-node)
+  - [Создаем собственный prm контейнер (union, CRTP и сторожевой узел)](#создаем-собственный-prm-контейнер-union-crtp-и-сторожевой-узел)
+  - [13. Smart Pointers](#13-smart-pointers)
+  - [Список возможных алтернатив указателям](#список-возможных-алтернатив-указателям)
+  - [PRVALUE elision и NRVO](#prvalue-elision-и-nrvo)
+  - [`make_unique` не может быть использован в случае закрытых конструкторов](#make_unique-не-может-быть-использован-в-случае-закрытых-конструкторов)
+  - [`std::tuple` используется для оптимизации хранения указателя и делитера в классе `unique_ptr`.](#stdtuple-используется-для-оптимизации-хранения-указателя-и-делитера-в-классе-unique_ptr)
+  - [Как можно использовать полиморфный аллокатор для управления удалением объектов через `unique_ptr`](#как-можно-использовать-полиморфный-аллокатор-для-управления-удалением-объектов-через-unique_ptr)
+  - [`aliasing ctors` для `shared_ptr`, чтобы вернуть `shared_ptr` на часть объекта](#aliasing-ctors-для-shared_ptr-чтобы-вернуть-shared_ptr-на-часть-объекта)
+  - [CRTP (Curiously Recurring Template Pattern) - полиморфизм без использования виртуальных функций](#crtp-curiously-recurring-template-pattern---полиморфизм-без-использования-виртуальных-функций)
+  - [`enable_shared_from_this` (пример CRTP техники)](#enable_shared_from_this-пример-crtp-техники)
+  - [`static_pointer_cast` для приведения типов `shared_ptr`](#static_pointer_cast-для-приведения-типов-shared_ptr)
+  - [`shared_ptr` vs `unique_ptr`](#shared_ptr-vs-unique_ptr)
+  - [`weak_ptr` - решение проблемы циклических ссылок](#weak_ptr---решение-проблемы-циклических-ссылок)
+  - [`make_shared` может привести к проблемам при использовании `weak_ptr`](#make_shared-может-привести-к-проблемам-при-использовании-weak_ptr)
+  - [COW строки на основе `shared_ptr`](#cow-строки-на-основе-shared_ptr)
 
 ## 01. Strings
 
@@ -2843,3 +2873,782 @@ ranges::sort(v,
 ranges::sort(v, {},
     &S::x);                                 // <=== упрощенный вариант записи проекции
 ```
+
+// TODO - Продложить просмотр лекции с 32 минуты и затем сделать все заметки до конца.
+    https://www.youtube.com/watch?v=sfweY8osTEs
+
+## 12. Allocators
+
+### Foreword: глобальные аллокаторы (аллокаторы в C)
+
+- Аллокаторы в С
+  - **В языке C аллокаторы пользуются хорошей репутацией**.
+  - Разные компании разрабатывают свои библиотеки аллокации, и тогда оператор `malloc` начинает обращаться к этим библиотекам.
+- Аллокаторы в С++
+  - Однако **в C++ аллокаторы пользуются плохой репутацией**, потому что в C++ они означают совсем другое, и их использование может быть более сложным и специфичным.
+
+- Под словом "аллокатор" в C и подобных языках называется механизм, реализующий глобальный `malloc` и `free`.
+- `ptmalloc` — стандартный аллокатор `glibc`, one size fits all.
+- `jemalloc` — более совершенный по многим параметрам аллокатор. Используется во FreeBSD, Mozilla, Facebook.
+- `tcmalloc`, `tbbmalloc`, `mimalloc` — аллокаторы от Google, Intel, Microsoft.
+- `ltcmalloc`
+
+- Однако в C++ аллокация памяти с помощью операторов `new` и `delete` может работать независимо от `malloc` и `free`.
+  - Операторы `new` и `delete` в C++ могут быть переопределены на уровне класса или глобально,
+  - что позволяет использовать свои собственные механизмы управления памятью, отличные от стандартного `malloc`.
+  - Это дает возможность более гибкого управления памятью и позволяет создавать специализированные аллокаторы для конкретных типов объектов или ситуаций.
+
+- **аллокаторы в C++ изначально не задумывались как механизм выделения памяти в традиционном понимании**.
+  - Основная идея аллокаторов заключалась в том, чтобы абстрагировать различия в указателях, которые использовались различными вендорами для расширения возможностей работы с памятью.
+  - Например, разные вендоры предлагали свои расширения для работы с указателями **(например, `far pointers`)**, но стандарт языка понимал только обычные указатели (`T*`).
+  - Алекс Степанов хотел **скрыть эти различия за интерфейсом аллокаторов**, чтобы контейнеры могли работать с различными типами памяти и указателей **без необходимости напрямую взаимодействовать с конкретными расширениями вендоров**.
+  - Таким образом, **аллокаторы служат скорее адаптером к различным механизмам выделения памяти, чем самостоятельным механизмом выделения**.
+
+### Проблемы использования наивных аллокаторов. (С++98)
+
+- https://godbolt.org/z/d3MfWYfjj
+- [code/tilir_masters/12_10_alloc_problems.cpp](code/tilir_masters/12_10_alloc_problems.cpp)
+
+```cpp
+// Представим, что у вас в программе есть особый распределитель памяти s_malloc.
+template<typename T> struct s_alloc {
+    typedef T value_type;
+    typedef T* pointer;
+
+    pointer allocate (size_t n) {
+        return static_cast<pointer>(s_malloc(n * sizeof(T)));
+    }
+
+    void deallocate(pointer p, size_t n) { s_free(p); }
+};
+```
+
+**Взаимозаменяемость аллокаторов**:
+
+- Когда мы создаем два объекта, использующих разные аллокаторы, возникает вопрос, должны ли эти объекты быть взаимозаменяемыми. Например:
+
+```cpp
+vector<int, s_alloc<int>> v1, v2;
+// тут много кода
+v1 = v2; // Что должно произойти? Должны ли аллокаторы быть взаимозаменяемыми и не влиять на процесс присваивания?
+
+// РЕШЕНИЕ В C++98: все конкретные экземпляры любого типа аллокаторов должны быть эквивалентными.
+template <typename T>
+bool operator== (const s_alloc<T>&, const s_alloc<T>&) {
+    return true;
+}
+
+template <typename T, typename U>
+bool operator!= (const s_alloc<T>&, const s_alloc<T>&) {
+    return false;
+}
+```
+
+**Проблема приведения аллокаторов**:
+
+- Когда мы говорим о контейнерах, таких как `std::list`, внутри которых выделяется память не только под элементы типа `T`, но и под структуры, которые содержат указатели на следующий и предыдущий элементы, возникает вопрос, как аллокатор должен с этим справляться.
+- Внутри списка создаются не просто объекты типа `T`, а узлы, которые содержат указатели на другие узлы. В таком случае нужно, чтобы аллокатор мог корректно выделять память для этих узлов, а не только для элементов типа `T`.
+- Эти проблемы особенно важны при реализации таких оптимизаций, как Small Vector Optimization, где необходимо учитывать, как и где выделяется память, чтобы не нарушить работу аллокатора и контейнера в целом.
+
+```cpp
+std::list<T, s_alloc<T>> list;
+
+// РЕШЕНИЕ В C++98: Это снимает проблему приведения из allocator<T> в allocator<__list_node<T>>
+
+template<typename T> struct s_alloc {
+    // тут всё как было
+    template<typename U> s_alloc(const s_alloc<U>&) {}                  // <=== Обратите внимание, тут теперь тип U != T
+    template<typename U> struct rebind { typedef s_alloc<U> other; };
+};
+```
+
+**Обязанность также предоставлять методы construct и destroy**:
+
+- Методы использовались для конструирования и разрушения объектов в заранее выделенной памяти.
+
+```cpp
+template<typename T> struct s_alloc {
+    // тут всё как было
+    void construct(pointer p, const T& t) { new(p) T(t); }
+    void destroy(pointer p) { p->~T(); }
+};
+```
+
+### Полный пример аллокатора на старых С++(С++98)
+
+- `Coercion ctor` - конструктор, который позволяет неявное преобразование одного типа в другой.
+- `rebind` — это механизм, который позволяет аллокатору выделять память для другого типа, отличного от того, для которого аллокатор был изначально параметризован.
+  - Это позволяет создавать новый аллокатор для типа `U`, используя существующий аллокатор для типа `T`.
+
+```cpp
+template <typename T>
+struct logging_alloc
+{
+    typedef T value_type;
+    typedef T* pointer;
+
+    pointer allocate(size_t n)                                  // Запрос на выделение памяти
+    {
+        printf("allocate %zu elements\n", n);
+        void* Chunk = ::operator new(n * sizeof(value_type));
+        return static_cast<pointer>(Chunk);
+    }
+
+    void deallocate(pointer p, size_t n)                        // Запрос на освобождение памяти
+    {
+        printf("deallocate\n");
+        ::operator delete(p);
+    }
+
+    template <typename U>
+    logging_alloc(const logging_alloc<U>&)                      // Coercion ctor - для приведения аллокаторов
+    {
+        printf("coercion ctor\n");
+    }
+
+    logging_alloc() { printf("default ctor\n"); }
+    logging_alloc(const logging_alloc&) { printf("copy ctor\n"); }
+
+#if __cplusplus < 201103L
+    // these required only for C++98, but having it is good practice
+    typedef const T* const_pointer;
+    typedef T& reference;
+    typedef const T& const_reference;
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+
+    // rebind will be deprecated in C++20, but required in C++98
+    template <typename U>
+    struct rebind                                               // rebind - для выделения памяти для другого типа
+    {
+        typedef logging_alloc<U> other;
+    };
+
+    // C++98 also requires construct and destroy
+    void construct(pointer p, const T& t)                       // Запрос на конструирование объекта
+    {
+        printf("construct\n");
+        new (p) T(t);
+    }
+
+    void destroy(pointer p)                                     // Запрос на разрушение объекта
+    {
+        printf("destroy\n");
+        p->~T();
+    }
+
+    // C++98 also explicitly requires max_size
+    size_type max_size() const                                  // Запрос на максимальный размер
+    {
+        printf("max_size\n");
+        return numeric_limits<size_type>::max() / sizeof(T);
+    }
+#endif
+};
+
+template <typename T>
+bool operator==(const logging_alloc<T>&, const logging_alloc<T>&)
+{
+    return true;
+}
+
+template <typename T>
+bool operator!=(const logging_alloc<T>&, const logging_alloc<T>&)
+{
+    return false;
+}
+
+TEST(allocs, attempt1)
+{
+    std::vector<int, logging_alloc<int>> v;
+
+    for (int i = 0; i < 16; ++i)
+        v.push_back(i);
+    printf("---\n");
+    std::vector<int, logging_alloc<int>> v2 = v;
+    v2.push_back(16);
+    EXPECT_EQ(v2[16], 16);
+
+// problems:
+
+// 1. Assign (what to do with allocator on assign?)
+#if defined(PROBLEM1)
+    v = v2;
+#endif
+
+// 2. Rebind (how to create allocator for the list node from T?)
+#if defined(PROBLEM2)
+    std::list<int, logging_alloc<int>> l(v.begin(), v.end());
+#endif
+}
+```
+
+### Allocator traits (C++11)
+
+- **Преимущества использования `allocator_traits`:**
+  - **Унификация интерфейса аллокаторов:** Стандартный способ работы с различными аллокаторами.
+  - **Поддержка новых возможностей C++:** Совместимость с современными стандартами языка.
+  - **Облегчение написания собственных аллокаторов:** Меньше шаблонного кода и более простая интеграция.
+
+- **`allocator_traits` упрощают работу с аллокаторами и автоматически обрабатывают необходимость `rebind`.**
+
+```cpp
+// Использование `allocator_traits` для аллокации другого типа:
+std::allocator<int> alloc;
+using AllocForDouble = std::allocator_traits<std::allocator<int>>::rebind_alloc<double>;
+AllocForDouble alloc_double = alloc;
+double* p = alloc_double.allocate(1);
+```
+
+- **`allocator_traits` решает проблему разделения ответственности между выделением памяти (`allocate`) и конструированием объектов в этой памяти (`construct`)**.
+  - allocate работает с pointer, а construct — с типом T*.
+  - Метод `allocate` выделяет память под определенное количество элементов типа, для которого предназначен аллокатор. В примере на слайде метод `allocate` просто вызывает соответствующий метод аллокатора `a.allocate(n)`, где `n` — количество выделяемых элементов.
+  - Метод `construct` занимается непосредственно конструированием объектов в ранее выделенной памяти. В примере метод `construct` пытается вызвать соответствующий метод аллокатора `a.construct`, если он существует. Если такой метод отсутствует, то используется placement new, чтобы создать объект `T` в ранее выделенной памяти по адресу `p`, передавая в конструктор аргументы `args`.
+
+```cpp
+template <typename Alloc>
+class allocator_traits {
+    // тут всё остальное
+    static pointer allocate(Alloc &a, size_type n) {
+        return a.allocate(n);
+    }
+    template <typename T, typename ... Args>
+    static void construct(Alloc &a, T* p, Args&& ... args) {
+        a.construct(p, std::forward<Args>(args)...) ||
+        new (static_cast<void*>(p)) T(std::forward<Args>(args)...);
+    }
+};
+```
+
+### Пример `freelist_alloc`, который не освобождает память при удалении объектов
+
+- https://godbolt.org/z/qWY8rrGbz
+- [code/tilir_masters/12_12_freelist_alloc.cpp](code/tilir_masters/12_12_freelist_alloc.cpp) (С++11 works, C++20 doesn't work).
+- Основная идея этого аллокатора заключается в том, чтобы минимизировать количество операций выделения и освобождения памяти, которые могут быть дорогими с точки зрения производительности.
+
+```cpp
+
+template <typename T>
+class freelist_alloc
+{
+    union node
+    {
+        node* next;
+        storage_type storage;
+    };
+
+    node* list = nullptr;                       // <=== Список свободных узлов
+
+    T* allocate(size_type n)
+    {
+        printf("allocate %zu from: ", n);
+        if (n == 1)
+        {
+            auto ptr = list;
+            if (ptr)
+            {
+                printf("freelist\n");
+                list = list->next;              // <=== Взяли из списка свободных узлов
+            }
+            else
+            {
+                printf("new node\n");
+                ptr = new node;
+            }
+            return reinterpret_cast<T*>(ptr);
+        }
+
+        printf("new memory\n");
+        return static_cast<T*>(::operator new(n * sizeof(T)));
+    }
+
+    void deallocate(T* ptr, size_type n) noexcept
+    {
+        printf("deallocate %zu to: ", n);
+        if (n == 1)
+        {
+            printf("freelist\n");
+            auto node_ptr = reinterpret_cast<node*>(ptr);
+            node_ptr->next = list;              // <=== Положили в список свободных узлов
+            list = node_ptr;
+        }
+        else
+        {
+            printf("global delete\n");
+            ::operator delete(ptr);
+        }
+    }
+};
+
+TEST(allocs, freelist) {
+    std::vector<int, freelist_alloc<int>> v;
+    for (int i = 0; i < 16; ++i)
+        v.push_back(i);
+    printf("----\n");
+    std::list<int, freelist_alloc<int>> l(v.begin(), v.end());
+    printf("----\n");
+    l.remove(0);
+    l.remove(6);
+    l.remove(9);
+    l.insert(l.begin(), -1);
+    l.insert(l.begin(), -3);
+    l.insert(l.begin(), -5);
+    printf("----\n");
+}
+```
+
+### Локальный (arena-based) подход
+
+- Ареной называется класс, управляющий локальным ресурсом.
+- Оператор `alignas` в C++ используется для указания конкретного выравнивания данных в памяти. Выравнивание определяет, на какой границе памяти (например, на границе 8, 16 или 32 байт) должен располагаться объект. Это может быть важно для производительности, особенно на некоторых архитектурах процессоров, где доступ к данным на выровненных адресах может быть быстрее.
+
+```cpp
+template <size_t N, size_t alignment = alignof(max_align_t)>
+class arena {
+    alignas(alignment) char buf_[N];                            // <=== Использование оператора alignas
+    char* ptr_;
+public:
+    arena() noexcept : ptr_(buf_) {}
+    arena(const arena&) = delete;
+    arena& operator=(const arena&) = delete;
+    template <size_t ReqAlign> char* allocate(size_t n);
+    void deallocate(char* p, size_t n) noexcept;
+```
+
+### Решение проблемы разных аллокаторов в одном контейрене в C++11: scoped alloc
+
+- Единый аллокатор для всех элементов: Все элементы контейнера используют тот же самый аллокатор, что и контейнер.
+- Передача аллокатора: Когда контейнер создает новые элементы, он передает им свой аллокатор.
+- Использование Scoped Allocator упрощает управление памятью и устраняет необходимость вручную управлять аллокаторами для элементов контейнера.
+
+```cpp
+using String = std::string<char, std::char_traits<char>, CustomAlloc<char>>;
+using Vector = std::vector<String,
+    td::scoped_allocator_adaptor<CustomAlloc<String>>>;     // <=== scoped_allocator_adaptor
+CustomAlloc<String> As(LOCAL);
+CustomAlloc<char> Ac(As);
+
+Vector V(As);
+V.push_back(String("hello"));   // Ok, не требует аргумента
+V.push_back("world");           // Тоже ok и это вообще волшебно
+```
+
+### В C++17 придумали концепцию `polymorphic_allocator`, который принимает `memory_resource`
+
+- Если убрать типы, то мы должны вручную передать alignment.
+- Используем идиому NVI, чтобы можно было безопасно работать с аргументами по умолчанию.
+- Особенность `polymorphic_allocator`
+  - Всегда scoped и всегда является локальным аллокатором.
+
+```cpp
+template <class Tp> class polymorphic_allocator:
+public scoped_allocator_adaptor<__details::polymorphic_allocator_imp<Tp>>
+```
+
+- Содержит указатель на memory_resource `private: memory_resource* memory_rsrc;`
+- При этом копирующий конструктор копирует этот указатель `polymorphic_allocator(const polymorphic_allocator& other) = default;`
+- Запрещает копирующее присваивание `polymorphic_allocator& operator=(const polymorphic_allocator& rhs) = delete;`
+  - Запрет на копирующее присваивание и использование копирующего конструктора с копированием указателя на ресурс памяти обеспечивают безопасность и целостность работы контейнеров с памятью.
+  - Это предотвращает случайные изменения аллокатора и гарантирует, что весь контейнер будет использовать один и тот же ресурс памяти на протяжении всего своего жизненного цикла.
+
+```cpp
+struct memory_resource {
+    void* allocate(size_t n, size_t align = alignof(max_align_t)) {
+        return do_allocate(n, align);
+    }
+
+    void deallocate(void* p, size_t n) {
+        do_deallocate(p, n);
+    }
+
+    bool is_equal(const memory_resource& other) const noexcept {
+        return do_is_equal(other);
+    }
+
+protected:
+    virtual void* do_allocate(size_t n, size_t align) = 0;
+    virtual void do_deallocate(void* p, size_t n) = 0;
+    virtual bool do_is_equal(const memory_resource& other) const noexcept = 0;
+};
+
+template<typename T> struct polymorphic_allocator {                     // <=== polymorphic_allocator
+    polymorphic_allocator();
+    polymorphic_allocator(memory_resource *mr);
+    T* allocate (size_t n);
+    void deallocate(T* p, size_t n);
+    // и так далее
+};
+```
+
+### Существующие в стандарте ресурсы
+
+- Теперь, когда существует `memory_resource`, от него можно наследовать.
+  - `null_memory_resource` – самый интересный ресурс, всегда `nullptr`.
+  - `new_delete_resource` – стандартный ресурс с `new/delete`.
+  - `synchronize_pool_resource` – мультипул с многопоточной синхронизацией.
+  - `unsynchronize_pool_resource` – быстрый мультипул без синхронизации.
+  - `monotonic_buffer_resource` – монтонное выделение.
+- Тут встречаются два новых термина – мультипул (`multipool`) и монотонное (`monotonic`) выделение.
+- Это две стратегии работы с памятью, настолько себя зарекомендовавшие, что их предложили в стандарт.
+
+### Пример современного полиморфного аллокатора в С++20 (std::pmr)
+
+- https://godbolt.org/z/bPs7TMjEq
+- [code/tilir_masters/12_14_polimorfic_alloc_cpp20.cpp](code/tilir_masters/12_14_polimorfic_alloc_cpp20.cpp)
+- `std::pmr::vector` принимает аллокатор, в конструктор, а не в шаблонный тип.
+- Бенчмарк: https://quick-bench.com/q/Uxk1Z3xATEaf0JBw6xVwiiUezCQ
+
+```cpp
+constexpr size_t sz = 1000 * sizeof(double);
+alignas(double) char buffer[sz];                        // <=== Буфер на стеке
+std::pmr::monotonic_buffer_resource alloc(buffer, sz);  // <=== Аллокатор на основе буфера
+std::pmr::vector<double> v1(&alloc);                    // <=== Использует аллокатор alloc
+
+double start = 0.0;
+std::generate_n(std::back_inserter(v1), 10, [start]() mutable { return (start += 1.1); });
+for (auto x : v1)
+    std::cout << x << std::endl;
+```
+
+### Как можно использовать стандартный контейнер `std::vector` с полиморфным аллокатором
+
+- В С++17 в пространство prm включена вся стандартная библиотека.
+
+```cpp
+namespace pmr {
+    template <class T> using vector = ::std::vector<T, std::pmr::polymorphic_allocator<T>>;
+}
+```
+
+### Case study: тестовый memory resource
+
+- Тестовый ресурс памяти проверяет что аллокация соответствует деаллокации и проверяет утечки
+- [code/tilir_masters/12_18_custom_memory_resourse.cpp](code/tilir_masters/12_18_custom_memory_resourse.cpp)
+- test_resource наследует `pmr::memory_resource`, что делает его специализированным ресурсом памяти.
+- `pmr::memory_resource *parent_;` - Этот указатель указывает на родительский ресурс памяти, к которому текущий ресурс может обращаться в случае нехватки собственной памяти. Это важный механизм, позволяющий создавать цепочки ресурсов, где один ресурс "делегирует" управление памятью другому.
+
+```cpp
+
+struct test_resource : public pmr::memory_resource {
+    // тут всякий интерфейс
+private:
+    struct allocation_rec {
+        void *ptr_;
+        size_t nbytes_, nalign_;
+    };
+    pmr::memory_resource *parent_;
+    pmr::vector<allocation_rec> blocks_;
+};
+```
+
+### Установка ресурса по умолчанию на программу
+
+- Для тестирования удобно установить логгирующий ресурс по умолчанию.
+- Обратите внимание: ресурс обязательно static, ему ещё освобождать всё в деструкторах.
+
+```cpp
+int main() {
+    static test_resource newdefault{pmr::new_delete_resource()};
+    pmr::set_default_resource(&newdefault);
+    // .... и так далее ....
+}
+```
+
+### Сторожевой узел (Sentinel Node)
+
+- **Сторожевой узел** — это специальный узел, который всегда присутствует в структуре данных, такой как связный список, независимо от того, пуст ли список или нет. Он служит в качестве маркера, который помогает упростить алгоритмы работы со списком.
+
+```cpp
+template <typename T>
+struct Node {
+    T data;
+    Node* next;
+    Node* prev;
+};
+
+template <typename T>
+class LinkedList {
+private:
+    Node<T> sentinel;                           // <=== Сторожевой узел
+    size_t size;
+
+public:
+    LinkedList() : size(0) {
+        sentinel.next = &sentinel;
+        sentinel.prev = &sentinel;
+    }
+
+    void insert_front(const T& value) {
+        Node<T>* newNode = new Node<T>
+            {value, sentinel.next, &sentinel};
+        sentinel.next->prev = newNode;          // <=== Вставка в начало
+        sentinel.next = newNode;
+        size++;
+    }
+
+    void remove_front() {
+        if (size == 0) return;
+        Node<T>* frontNode = sentinel.next;     // <=== Удаление из начала
+        sentinel.next = frontNode->next;
+        frontNode->next->prev = &sentinel;
+        delete frontNode;
+        size--;
+    }
+
+    // Другие методы списка...
+};
+
+```
+
+### Создаем собственный prm контейнер (union, CRTP и сторожевой узел)
+
+- `union` сам по себе не вызывает конструкторы по умолчанию для своих членов.
+
+```cpp
+// УСТРОЙСТВО УЗЛА КОНТЕЙНЕРА
+template <typename Tp> struct node;
+template <typename Tp> struct node_base {
+    node<Tp> *next_ = nullptr;
+    // тут явно запрещены копирование и присваивание
+};
+template <typename Tp> struct node : node_base<Tp> {    // <=== CRTP - наследование без виртуальных функций.
+    union { Tp value_; };                               // <=== union, чтобы не вызывать конструкторы.
+};
+
+// КЛАСС КОНТЕЙНЕРА ЛИСТ
+template <typename T> struct slist {
+    using value_type = T;
+    using iterator = <итератор>;
+    // всё остальное
+private:
+    node_base head_;                                    // <=== сторожевой узел пустого списка
+    node_base *ptail_;
+    size_t size_;
+    allocator_type alloc_; // храним аллокатор
+};
+
+// Ключевой метод: emplace, так как insertion будет реализован через него.
+// Реализован без оглядки на безопасность исключений.
+template <typename T>
+template <typename ... Args> iterator
+slist<T>::emplace(iterator i, Args&& ... args) {
+    node *ret = alloc_.resource()->allocate(sizeof(node), alignof(node));
+    node *ret = static_cast<node*>(mem);
+    ret->next_ = i.prev->next_;
+    alloc_.construct(std::addressof(ret->value_), std::forward<Args>(args)...);
+    i.prev->next_ = ret;
+    // какая-то обработка крайних случаев, инкремент размера, etc
+}
+
+// Поэтому необходимо предусмотреть копирование если пришёл объект того же класса с другим аллокатором.
+slist& operator=(slist&& rhs) { // увы, никакого noexcept
+    if (alloc_ == rhs.alloc_) {
+        swap(rhs.head_, head_);
+        swap(rhs.tail_p_, tail_p_);
+    }
+    else
+        operator=(rhs); // копирование
+    return *this;
+}
+```
+
+### 13. Smart Pointers
+
+### Список возможных алтернатив указателям
+
+1. Семантика значения (не используем указатели).
+2. Запрет копирования и перемещения (`const std::unique_ptr`).
+3. Запрет копирования (`std::unique_ptr`).
+4. Подсчёт ссылок в контрольном блоке (`std::shared_ptr`).
+5. Интрузивный подсчёт ссылок (`boost::intrusive_ptr`).
+
+### PRVALUE elision и NRVO
+
+- https://godbolt.org/z/E6G4W8azx
+- [code/tilir_masters/13_10_prvalue_ellision.cpp](code/tilir_masters/13_10_prvalue_ellision.cpp)
+- Представим, что в классе `ScopedPointer` запрещен конструктор копирования и перемещения.
+- NRVO: Возвращение именованного объекта по значению фактически работает как перемещение.
+
+```cpp
+void foo(ScopedPointer<int>);                   // Аргумент конструируется как будто-бы на стеке внутри функции
+foo(ScopedPointer<int>{new int(42)});           // OK
+
+auto bar() {
+    return ScopedPointer<int>{new int(42)};     // OK
+}
+auto n = bar();                                 // n конструируется в месте вызова bar
+
+auto buz() {
+    ScopedPointer<int> t{new int(42)};
+    return t;                                   // <=== FAIL, NRVO case
+}
+```
+
+### `make_unique` не может быть использован в случае закрытых конструкторов
+
+```cpp
+class A {
+    int val;
+    A(int v) : val(v) {}
+public:
+    // это не сработает
+    unique_ptr<A> createNext() { return make_unique<A>(val); }
+
+    // это сработает
+    unique_ptr<A> createNext() { return unique_ptr<A>(new A(val)); }
+};
+```
+
+### `std::tuple` используется для оптимизации хранения указателя и делитера в классе `unique_ptr`.
+
+- `std::tuple` используется для хранения пары значений: указателя на объект типа `T` и `Deleter`. Основная идея заключается в том, что если делитер является *stateless* (то есть не хранит внутреннего состояния), то благодаря *Empty Base Class Optimization* (EBCO) он не будет занимать дополнительное место в `std::tuple`.
+
+```cpp
+template <typename T, typename Deleter = default_delete<T>>
+class unique_ptr {
+    std::tuple<T*, Deleter> content_;
+};
+```
+
+### Как можно использовать полиморфный аллокатор для управления удалением объектов через `unique_ptr`
+
+```cpp
+// ЗАДАЧА
+struct Bar { pmr::string data{"data"}; };
+struct Foo {
+    std::unique_ptr<Bar> bar_{ std::make_unique<Bar>() };
+};
+
+// ИСПОЛЬЗОВАНИЕ
+pmr::vector<Foo> foos; // по умолчанию стоит test_resource
+foos.emplace_back();
+foos.emplace_back();
+
+// Поскольку в стандарте нет `pmr::unique_ptr`, сделаем это руками
+class Foo {
+    unique_ptr<Bar, polymorphic_allocator_delete> d_bar;
+
+public:
+    Foo(polymorphic_allocator<byte> alloc) : d_bar(nullptr, alloc) {
+        // тут выделение ресурса в терминах аллокатора
+    }
+};
+
+// Пользовательский удалитель, который конструируется с помощью полиморфного аллокатора
+class polymorphic_allocator_delete {
+    polymorphic_allocator<byte> alloc;
+
+public:
+    polymorphic_allocator_delete(polymorphic_allocator<byte> alloc) : alloc(alloc) {}
+
+    template <typename T> void operator()(T *ptr) {
+        alloc.destroy(ptr);
+        alloc.deallocate(ptr, 1);
+    }
+};
+```
+
+### `aliasing ctors` для `shared_ptr`, чтобы вернуть `shared_ptr` на часть объекта
+
+- Помогает сокрыть внутреннюю структуру объекта и предоставить доступ к его части через `shared_ptr`.
+
+```cpp
+template <typename Data> class Tree {
+    struct Node {
+        shared_ptr<Node> left, right;
+        Data d;
+    };
+    shared_ptr<Node> top_;
+public:
+    shared_ptr<Data> find(int inorder_pos) {    // <=== Возвращает shared_ptr на Data, а не на Node
+        // ТУТ поиск, shared_ptr<Node> spn
+        return {spn, &(spn->d)};                // <=== aliasing ctor
+    }
+};
+```
+
+### CRTP (Curiously Recurring Template Pattern) - полиморфизм без использования виртуальных функций
+
+- CRTP (Curiously Recurring Template Pattern)
+- CRTP - полиморфизм без использования виртуальных функций
+
+```cpp
+template <class T>
+class Base {
+    // Базовый класс, использующий тип T
+};
+
+class Derived : public Base<Derived> {
+    // Производный класс, указывающий сам себя в качестве параметра шаблона
+};
+
+```
+
+### `enable_shared_from_this` (пример CRTP техники)
+
+- Сохраняет некий указатель на контрольный блок в классе.
+- Предоставляет для конструктора интерфейс по проверке, что такое указатель в классе есть.
+- Если наследования от `enable_shared_from_this` нет, то `shared_from_this` бросит исключение `bad_weak_ptr`.
+- Такой подход по сути не дает нам возможности создавать объекты на стеке, и превращяет С++ в Java.
+
+```cpp
+struct Node: enable_shared_from_this<Node> {
+    shared_ptr<Node> getspn() {
+        return shared_from_this();
+    }
+};
+
+auto n = make_shared<Node>(); // контрольный блок создан
+shared_ptr<Node> gp1 = n.getspn(); // OK
+```
+
+### `static_pointer_cast` для приведения типов `shared_ptr`
+
+```cpp
+shared_ptr<Base> b = make_shared<Derived>();
+shared_ptr<Derived> d = static_pointer_cast<Derived>(b);
+```
+
+### `shared_ptr` vs `unique_ptr`
+
+В отличие от UniquePtr, SharedPtr не содержит Deleter как параметр шаблона, а принимает его просто по указателю. Это своего рода смещение ответственности, потому что тип SharedPtr не должен зависеть от типа Deleter, а ControlBlock должен знать о Deleter.
+
+- `std::shared_ptr` не содержит `Deleter` в качестве параметра шаблона.
+- `std::shared_ptr` хранит `Deleter` в контрольном блоке, а не в самом объекте.
+- Это своего рода смещение ответственности, потому что тип `std::shared_ptr` не должен зависеть от типа `Deleter`, а контрольный блок должен знать о `Deleter`.
+
+### `weak_ptr` - решение проблемы циклических ссылок
+
+- Слабый указатель не владеет объектом, на который указывает.
+- Контрольный блок убивает данные, которые он охраняет, когда заканчивается `счетчик сильных ссылок`.
+- Контрольный блок убивает себя сам, когда заканчивается `счетчик слабых ссылок`.
+
+![weak_ptr.png](screenshots/weak_ptr.png)
+
+```cpp
+struct Node {
+    weak_ptr<Node> parent;
+    shared_ptr<Node> left, right;
+};
+
+{
+    shared_ptr<Node> master = make_shared<Node>(); // счётчик: 1
+    shared_ptr<Node> slave = make_shared<Node>();  // счётчик: 1
+    slave->parent = master;                        // счётчик: 1
+    master->left = slave;                          // счётчик: 2
+} // OK, уничтожен master, после чего slave
+```
+
+### `make_shared` может привести к проблемам при использовании `weak_ptr`
+
+- `make_shared` создает объект и контрольный блок в одном куске памяти.
+- Когда счетчик сильных ссылок становится равным нулю, вызывается деструктор, но память не освобождается.
+- Память освобождается только после того, как счетчик слабых ссылок становится равным нулю.
+
+![make_shared_problem_weak_ptr.png](screenshots/make_shared_problem_weak_ptr.png)
+
+### COW строки на основе `shared_ptr`
+
+- COW (Copy-On-Write) - это оптимизация, при которой копирование объекта происходит только в момент изменения.
+- `shared_ptr<const std::string>` — это тривиальное и довольно безопасное COW (Copy-On-Write).
+- `shared_ptr` позволяет разделять строку между несколькими объектами, и копировать её только в момент изменения.

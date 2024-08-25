@@ -888,11 +888,100 @@
 - Timur Doumler - C++ Lambda Idioms, CppCon - 2022 [TODO] [FUNNY] [PRIORITY_MEDIUM]
   - https://www.youtube.com/watch?v=xBAduq0RGes
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 2  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 15. Аллокаторы - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=sfweY8osTEs
+    - 00:00:00 Проблемы комбинируемости алгоритмов
+    - 00:08:30 Переход к диапазонам
+    - 00:18:45 Разбираем ranges sort
+    - 00:32:26 Провисающие итераторы и ranges::dangling
+    - 00:43:01 Отображения и subrange
+    - 00:51:19 Странные ограничители и счётные итераторы
+    - 01:09:30 Поверхностная константность и move-only диапазоны
+    - 01:15:10 Интерфейс view, CRTP и ответ в чём была проблема
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 2  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=CVMDB3c3too
+    - 00:00:00 Внутри трансформа
+    - 00:09:40 Провисания и borrow checking
+    - 00:22:20 Неуверенное поведение
+    - 00:25:20 Внутри фильтра и const-итерируемость
+    - 00:35:25 Комбинируемость
+    - 00:38:45 Pull model
+    - 00:48:20 Собственный адаптер
+    - 01:01:20 Тримминг Бриндла
+    - 01:08:03 Завершение и обзор литературы
+    - 01:16:20 Бонус: простые числа
+    - 01:33:08 Выводы и титры
+
+- Jeff Garland - "From STL to Ranges: Using Ranges Effectively", CppCon - 2019 [TODO]
+  - https://www.youtube.com/watch?v=vJ290qlAbbw
+
+- Tristan Brindle - "An Overview of Standard Ranges", CppCon 2019 [TODO]
+  - https://www.youtube.com/watch?v=SYLgG7Q5Zws
+
+- Tristan Brindle - "Conquering C++ 20 Ranges", CppCon - 2020 [TODO]
+  - https://www.youtube.com/watch?v=3MBtLeyJKg0
+
+- Tristan Brindle - "C++ 20 Ranges in Practice", CppCon - 2020 [TODO]
+  - https://www.youtube.com/watch?v=d_E-VLyUnzc
+
+- Chris Di Bella - "What a View! Building Your Own (Lazy) Range Adaptors", CppCon - 2019 [TODO]
+  - https://www.youtube.com/watch?v=YWayW5ePpkY
+
+- Arno Schödl - Better C++ Ranges, CppNow - 2021 [TODO]
+  - https://www.youtube.com/watch?v=P8VdPsLLcaE
+
+- Nicolai Josuttis - My Favourite C++20 Code Examples, ACCU - 2022 [TODO]
+  - https://www.youtube.com/watch?v=UCIKbUvEKfI
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 15. Аллокаторы - 2023  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=5xN9bcdHggw
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 16. Полиморфные аллокаторы - 2023  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 17. Умные указатели - 2023  [TODO]
+  - https://www.youtube.com/watch?v=QwuHX-VjhXI
+
+- Howard Hinnant - stack_alloc - 2015 [TODO]
+  - http://howardhinnant.github.io/stack_alloc.html
+
+- Alisdar Meredith - "Making allocators work", CppCon (parts 1 and 2) - 2014 [TODO]
+  - https://www.youtube.com/watch?v=YkiYOP3d64E
+  - https://www.youtube.com/watch?v=Q5kyiFevMJQ
+
+- Andrei Alexandrescu - "std::allocator Is to Allocation what std::vector Is to Vexation", CppCon - 2015 [TODO]
+  - https://www.youtube.com/watch?v=LIb3L4vKZ7U
+
+- Bob Steagall - "How to write a custom allocator", CppCon - 2017 [TODO]
+  - https://www.youtube.com/watch?v=kSWfushlvB8
+
+- Pablo Halpern - N3916 proposal (Polymorphic Memory Resources) - 2016 [TODO]
+  - https://isocpp.org/blog/2014/02/n3916
+
+- Pablo Halpern - "Allocators, the good parts", CppCon - 2017 [TODO]
+  - https://www.youtube.com/watch?v=v3dz-AKOVL8
+
+- John Lakos - "Local (arena) memory allocators", CppCon (parts 1 and 2) - 2017 [TODO]
+  - https://www.youtube.com/watch?v=ko6uyw0C8r0
+  - https://www.youtube.com/watch?v=CFzuFNSpycI
+
+- David Sankel, "C++17 std::pmr comes with a cost", C++Now'18
+  - https://www.youtube.com/watch?v=FLbXjNrAjbc
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 17. Умные указатели - 2023  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=OzqFXMDrrgk
+    - 00:00:00 Проблема владения и value-семантика
+    - 00:06:50 RAII и альтернативы владения
+    - 00:13:15 Уникальное владение
+    - 00:28:07 Обобщённые ресурсы
+    - 00:38:30 Дружим с аллокаторами
+    - 00:46:20 Разделяемые указатели
+    - 00:59:00 CRTP и разделение самого себя
+    - 01:08:40 As good, as...
+    - 01:14:31 Циклическое владение и слабые указатели
+    - 01:22:25 Интрузивные указатели и завершение
+
+- Herb Sutter, "Leak-Freedom in C++... By Default", CppCon 2016 [TODO]
+  - https://www.youtube.com/watch?v=JfmTagWcqoE
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 18. Динамический полиморфизм - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 1 - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 2 - 2023  [TODO]

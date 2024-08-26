@@ -176,6 +176,21 @@
   - [Виртуальное наследование и влияение его на инициализацию](#виртуальное-наследование-и-влияение-его-на-инициализацию)
   - [Смердженные виртуальные таблицы после виртуального наследования](#смердженные-виртуальные-таблицы-после-виртуального-наследования)
   - [`dynamic_cast`](#dynamic_cast)
+  - [14.1 ПРОБЛЕМА (Пример Sean Parent и хранение/возврат разных типов без виртуализации](#141-проблема-пример-sean-parent-и-хранениевозврат-разных-типов-без-виртуализации)
+  - [14.2 Решение (Задача Дионне - ручное управление таблицами)](#142-решение-задача-дионне---ручное-управление-таблицами)
+  - [14.3 Решение (От Sean Parent - сведение полиморфизма к перегрузке - value семантика и полиморфизм)](#143-решение-от-sean-parent---сведение-полиморфизма-к-перегрузке---value-семантика-и-полиморфизм)
+- [15. Concurrency](#15-concurrency)
+  - [Важные термины](#важные-термины)
+  - [`std::thread`](#stdthread)
+  - [`data race`](#data-race)
+  - [`volatile` не работает для предупреждения `data race`](#volatile-не-работает-для-предупреждения-data-race)
+  - [`data race` и не скалярные типы](#data-race-и-не-скалярные-типы)
+  - [`std::mutex` -\> `std::lock_guard`](#stdmutex---stdlock_guard)
+  - [15.0 Гарантии безопасности относительно многопоточности](#150-гарантии-безопасности-относительно-многопоточности)
+  - [15.1 Если объект защищен `синхронизацией`, то он безопасен.](#151-если-объект-защищен-синхронизацией-то-он-безопасен)
+  - [15.2 Объект, никакие операции с которым в этом окружении не приводят к `data race`.](#152-объект-никакие-операции-с-которым-в-этом-окружении-не-приводят-к-data-race)
+  - [15.3 `API race` - когда у объекта такое API, которое может привести к проблемам в многопоточном коде.](#153-api-race---когда-у-объекта-такое-api-которое-может-привести-к-проблемам-в-многопоточном-коде)
+  - [15.4 `deadlock` - когда два потока ждут друг друга.](#154-deadlock---когда-два-потока-ждут-друг-друга)
 
 ## 01. Strings
 
@@ -3904,4 +3919,473 @@ struct D : public B, public C;
 
     C* c2 = dynamic_cast<C*>(b);                // (3) Приведение вбок (между разными ветками)
     c2->print();
+```
+
+### 14.1 ПРОБЛЕМА (Пример Sean Parent и хранение/возврат разных типов без виртуализации
+
+**ПРОБЛЕМА**
+
+```cpp
+struct int_t; // поддерживает draw(const int_t&)
+struct myclass_t; // поддерживает draw(const myclass_t&)
+using document_t = std::vector<???>;
+document.push_back(int_t(42));          // <=== Хотим, чтобы работало добавление разнородных типов
+document.push_back(1.0);                //
+document.push_back(myclass_t());        //
+for (auto v : document) draw(v);
+```
+
+- Проблемы динамического полиморфизма
+  - Требует ссылочной семантики `void dothejob(int_t &t1, int_t &t2) { t1.reset(t2.clone()); }`.
+  - Провоцирует выделения в куче `object_t *create(int type) { if (type == 0) return new int_t;`.
+    - Кто будет владеть объектов в этом случае: `std::unique_ptr`, `std::shared_ptr`, `raw pointer`?
+  - Работа с указателем пораждают инцидентные структуры данных.
+    - Если по одному указателю изменить объект, то другой объект тоже изменится, т.к. они могут ссылаться на один и тот же объект.
+
+**СПОСОБЫ РЕШЕНИЯ**
+
+1. Инверсия полиморфизма (сведение его к перегрузке).
+2. Ручное управление таблицами.
+
+### 14.2 Решение (Задача Дионне - ручное управление таблицами)
+
+- Блестящее решение задачи Дионне от подписчика https://github.com/kelbon/AnyAny . [TODO] Глянуть этот пример.
+- Мы хотели бы общий интерфейс но при этом **value-семантику**
+
+```cpp
+// Мы хотели бы общий интерфейс но при этом value-семантику.
+interface drawable { void draw(std::ostream&); };
+struct double_t { void draw(std::ostream&); };
+struct int_t { void draw(std::ostream&); };
+
+// Чтобы пользоваться как-то так:
+std::vector<drawable> document;
+document.push_back(int_t{});
+document.push_back(double_t{});
+for (auto&& d : document) d.draw()
+
+// *************************************************************
+
+class drawable {
+    vtable *vptr;
+    void *ptr;
+public:
+    template <typename Any>
+    drawable(Any x) : vptr(&vtable_for<Any>), ptr(new Any(x)) {}    // <=== Конструктор
+    void draw(ostream &os) { vptr->draw(ptr, os); }                 // <=== Метод
+}
+
+struct vtable {
+    void (*draw)(void *self, std::ostream&);                        // <=== Указатели на функцию
+    void (*delete) (void *self);                                    //      инициализируются лямбдами (ниже)
+};
+
+template <typename T> vtable vtable_for = {                         // <=== Глобальная шаблонная переменная
+    [](void *self, std::ostream &os)                                // <=== Деградация лямбд в указатели
+        { static_cast<T*>(self)->draw(os); },
+    [](void *self) { delete static_cast<T*>(self); }                // <=== static_cast нужен, потому что delete должен знать тип
+};
+
+// *************************************************************
+
+// Решение от подписчика https://github.com/kelbon/AnyAny .
+//  возможность хранить данные прямо в объекте
+//  возможность аллокаторы и pmr контейнеры
+template <typename Alloc, size_t SooS, TTA... Methods>
+class basic_any : public plugin_t<Methods, basic_any<Alloc, SooS, Methods...>>...
+{
+    const vtable<Methods...>* vtable_ptr = nullptr;
+    void* value_ptr = &data;
+    alignas(std::max_align_t) std::array<std::byte, SooS> data;
+    Alloc alloc;
+
+// ИСПОЛЬЗОВАНИЕ
+template<typename T> struct Draw {
+    static void do_invoke(const T& self, std::ostream& os) {
+        self.draw(os);
+    }
+};
+
+using any_drawable = aa::any_with<Draw>;
+
+struct double_t { void draw(std::ostream&); };
+struct int_t { void draw(std::ostream&); };
+
+any_drawable obj = int_t{};
+aa::invoke<Draw>(obj)
+
+// *************************************************************
+
+// Решение Киллбона-Дионе по реализации своей std::function без кучи через Small Object Optimization.
+// - Разобраться с библиотекой AnyAny (https://github.com/kelbon/AnyAny) и написать рабочий код, который будет делать работать с функциями, как внизу.
+template <typename Alloc, size_t SooS, typename F>
+struct basic_function;
+
+template <typename Alloc, size_t SooS, typename R, typename ... Args>
+struct basic_function<Alloc, SooS, R(Args...)>                          // <=== Специализация, которая принимает функцию и аргументы.
+{
+    R operator()(Args ... args) { aa::invoke<Call>(poly, args...); }    // <=== Call - это структура, которая задает интерфейс
+private:                                                                //      состоящий из оператора вызова.
+    aa::any_with<Alloc, SooS, Call> poly;
+};
+```
+
+### 14.3 Решение (От Sean Parent - сведение полиморфизма к перегрузке - value семантика и полиморфизм)
+
+- https://godbolt.org/z/xEPrf7azx
+
+```cpp
+using document_t = std::vector<object_t>;
+
+// ХОТИМ, ЧТОБЫ РАБОТАЛО ТАК
+document_t document;
+document.emplace_back(0);
+document.emplace_back(std::string("Hello"));
+document.emplace_back(myclass_t{});
+
+// Overload set способен поддерживать что угодно.
+void draw(const int &x, std::ostream &out);
+void draw(const std::string &x, std::ostream &out);
+
+// можем ли мы занести всё в общий контейнер?
+class object_t {
+    std::unique_ptr<concept_t> self_;
+public:
+    void draw(std::ostream &out) {
+    self_->draw_(out, position); // делегирует к overloaded
+}
+```
+
+**ФИНАЛЬНЫЙ КОД**
+
+- [code/tilir_masters/14_22_sean_parent_custom_poly.cpp](code/tilir_masters/14_22_sean_parent_custom_poly.cpp)
+- [code/tilir_masters/14_22_sean_parent_custom_poly.drawio](code/tilir_masters/14_22_sean_parent_custom_poly.drawio)
+
+![sean_parrent_poly_by_value](screenshots/sean_parrent_poly_by_value.png)
+
+```cpp
+template <typename T>
+void draw(const T& x, std::ostream& out, size_t position)               // <=== OVERLOAD для любого типа, который умеет выводиться в поток
+{
+    out << std::string(position, ' ') << x << std::endl;
+}
+
+class myclass_t
+{};
+
+void draw(const myclass_t&, std::ostream& out, size_t position)         // <=== OVERLOAD для myclass_t
+{
+    out << std::string(position, ' ') << "myclass_t" << std::endl;
+}
+
+class object_t;
+using document_t = std::vector<object_t>;
+
+void draw(const document_t& x, std::ostream& out, size_t position);
+
+// Идея Parent reversal
+class object_t
+{
+    struct concept_t                                                // <=== Является деталью реализации object_t
+    {
+        virtual ~concept_t() = default;
+        virtual std::unique_ptr<concept_t> copy_() const = 0;       // <=== Виртуальный конструктор копирования
+        virtual void draw_(std::ostream&, size_t) const = 0;        // <=== Виртуальная функция draw_, которая переопределяется в потомках
+    };
+
+    template <typename T>
+    struct model final : concept_t                                  // <=== Модель будет создаваться в шаблонном конструкторе.
+    {                                                               //      Наследует чисто асбтрактный класс concept_t.
+        T data_;
+        model(T x) : data_(std::move(x)) {}
+
+        std::unique_ptr<concept_t> copy_() const override           // <=== Умеет делать copy
+        { return std::make_unique<model>(*this); }
+
+        void draw_(std::ostream& out, size_t position) const override   // <=== Умеет делать draw
+        { ::draw(data_, out, position); }                               // <=== ДЕЛЕГИРОВАНИЕ К ПЕРЕГРУЗКЕ!!!
+    };
+
+    std::unique_ptr<concept_t> self_;                               // <=== Может хранить объект любого типа.
+public:                                                             //      CRTP наоборот - шаблонный класс наследуем от нешаблонного, чтобы унифицировать type erasure.
+    template <typename T>
+    object_t(T x) : self_(std::make_unique<model<T>>(std::move(x)))
+    {}
+
+    // copy ctor, move ctor and assignment
+public:
+    object_t(const object_t& x) : self_(x.self_->copy_()) {}
+    object_t(object_t&& x) noexcept = default;
+    object_t& operator=(object_t x) noexcept
+    {
+        self_ = std::move(x.self_);
+        return *this;
+    }
+public:
+    friend void draw(const object_t& x, std::ostream& out, size_t position)     // <=== OVERLOAD для самого object_t
+    { x.self_->draw_(out, position); }
+};
+
+void draw(const document_t& x, std::ostream& out, size_t position)
+{
+    out << std::string(position, ' ') << "<document>" << std::endl;
+    for (const auto& e : x)
+        draw(e, out, position + 2);
+    out << std::string(position, ' ') << "</document>" << std::endl;
+}
+
+int main()
+{
+    document_t document;
+    document.emplace_back(0);
+    document.emplace_back(std::string("Hello"));
+    document.emplace_back(document);
+    document.emplace_back(myclass_t{});
+    draw(document, std::cout, 0);
+}
+
+```
+
+## 15. Concurrency
+
+### Важные термины
+
+- `thread of execution` - is a single flow of control within a program.
+- `execution of entire program` consists of execution of all of its threads.
+- `логическая многопоточность` - это когда один поток выполняет несколько задач поочередно.
+- `аппаратная многопоточность` - это когда несколько потоков выполняются одновременно на разных ядрах процессора.
+- `Объект` - это что угодно, что требует места для хранения значения.
+- `memory location` - is either an object of scalar type or a maximal sequence of adjacent bit-fields all having non-zero width.
+
+### `std::thread`
+
+- https://godbolt.org/z/xbb1aKxzs
+- [code/tilir_masters/15_10_thread_basics.cpp](code/tilir_masters/15_10_thread_basics.cpp)
+- Если вы не сделали `join` или `detach` на `std::thread`, то это UB.
+
+```cpp
+TEST(threads, basic)
+{
+    int j = 0;
+    std::thread t([&j] { j += 1; });
+    t.join();                           // <=== Ожидание завершения потока
+    EXPECT_EQ(j, 1);
+}
+```
+
+### `data race`
+
+- https://godbolt.org/z/Gn3szo5ad
+- [code/tilir_masters/15_12_thread_race.cpp](code/tilir_masters/15_12_thread_race.cpp)
+- `Data race`
+  - Two expression evaluations **conflict** if **one of them modifies** a memory location and the **other one reads or modifies** the same memory location.
+  - The execution of a program contains a data race if it contains two potentially concurrent **conflicting** actions, at least **one of which is not atomic**, and neither happens before the other, except for the special case for signal handlers described below. **Any such data race results in undefined behavior**.
+
+```cpp
+void race()
+{
+    // going up
+    for (int i = 0; i < 1000000; ++i)
+    {
+        x += 1;
+        use(x);
+    }
+
+    // going down
+    for (int i = 0; i < 1000000; ++i)
+    {
+        x -= 1;
+        use(x);
+    }
+}
+
+int main()
+{
+    std::thread t1{race};
+    std::thread t2{race};
+    t1.join();
+    t2.join();
+}
+```
+
+**КОСТЫЛЬ**
+
+```cpp
+void race() {
+    stick_this_thread_to_core(0);
+    for(int i = 0; i < 100; ++i) { x += 1; use(x); }
+    for(int i = 0; i < 100; ++i) { x -= 1; use(x); }
+}
+```
+
+### `volatile` не работает для предупреждения `data race`
+
+- https://godbolt.org/z/GbbParKeh
+- [code/tilir_masters/15_14_volatile.cpp](code/tilir_masters/15_14_volatile.cpp)
+- `volatile` - это обещание компилятору, что значение переменной может измениться вне текущего потока выполнения.
+
+### `data race` и не скалярные типы
+
+- [code/tilir_masters/15_16_race2.cpp](code/tilir_masters/15_16_race2.cpp)
+
+```cpp
+unsigned x = 0,         // <=== x - является скалярным объектом, поэтому ниже data race
+    i = 0, j = 0;
+char x2[] = {0, 0};     // <=== x2 - не является скалярным объектом, поэтому гонки нет
+
+// std::cout            // <=== std::cout - не является скалярным объектом. Это структура.
+                        //      Т.е. это точно не область памяти. А будет гонка или UB, зависит
+                        //      от реализации std::cout - есть ли внутрии нее скалярные не атомарные объекты.
+
+void readerf()
+{
+    while (i++ < 'g')
+    {
+        x += 0x1;
+        x2[0] += 0x1;
+        use(x);
+    }
+}
+
+void writerf()
+{
+    while (j++ < 'g')
+    {
+        x += 0x10000;
+        x2[1] += 0x1;
+        use(x);
+    }
+}
+
+```
+
+### `std::mutex` -> `std::lock_guard`
+
+- `std::mutex` - вводит отношения `happens-before` между доступами. На `lock` все потоки серриализуются.
+- https://godbolt.org/z/o3njfP1Wj
+- Интерфейс `mutex` очень простой: `lock`, `unlock`, `try_lock`. Нет метода `is_locked` - не ясно, в каком состоянии находится mutex.
+- Возникает проблема с исключениями.
+
+```cpp
+  for (int i = 0; i < 1000000; ++i) {
+    mforx.lock();                       // <=== lock
+    x += 1;
+    use(x);
+    mforx.unlock();                     // <=== unlock
+  }
+```
+
+- Простейший RAII - `std::lock_guard` - создает критическую секцию до конца скоупа.
+- https://godbolt.org/z/4s3s9MbWo
+
+```cpp
+  for (int i = 0; i < 1000000; ++i) {
+    std::lock_guard<std::mutex> lk{mforx};      // <=== RAII
+    x += 1;
+    use(x);
+  }
+```
+
+### 15.0 Гарантии безопасности относительно многопоточности
+
+- Пример Каргила по безопасности исключений (вспомнить):
+  - https://godbolt.org/z/TWYK9Pr1M
+  - [code/tilir_masters/15_18_exception_safety_cargill_example.cpp](code/tilir_masters/15_18_exception_safety_cargill_example.cpp)
+
+### 15.1 Если объект защищен `синхронизацией`, то он безопасен.
+
+```cpp
+{
+    lock_guard<mutex> lk{mforx};
+    *px += 1;                       // <=== Не безопасно. Сам указатель защищен, а данные под ним нет.
+}
+```
+
+### 15.2 Объект, никакие операции с которым в этом окружении не приводят к `data race`.
+
+```cpp
+mutex bufmut_;
+
+void pop() {
+    lock_guard<mutex> lk{bufmut_};
+    size_ -= 1;
+    destroy(buffer_ + size_);
+}
+```
+
+### 15.3 `API race` - когда у объекта такое API, которое может привести к проблемам в многопоточном коде.
+
+- Например конфликт между `pop` и `empty`.
+- Например конфликт между `pop` и `top`.
+
+```cpp
+// конфликт между `pop` и `empty`
+if (!s.empty()) {           // <=== Оба потока могут пройти эту проверку, даже если в объекте один элемент.
+    auto elem = s.top();
+    s.pop();                // <=== ОШИБКА1: Первый поток удаляет элемент, а второй поток снять несуществующий объект.
+    use(elem);
+}
+
+// конфликт между `pop` и `top`
+if (!s.empty()) {           // <=== Оба потока могут пройти эту проверку, даже если в объекте ДВА элемента.
+    auto elem = s.top();    // <=== ОШИБКА2: Первый поток берет последний элемент, и второй поток берет тот же элемент.
+    s.pop();
+    use(elem);
+}
+```
+
+### 15.4 `deadlock` - когда два потока ждут друг друга.
+
+- https://godbolt.org/z/aqsjGxaG7
+- [code/tilir_masters/15_20_deadlock.cpp](code/tilir_masters/15_20_deadlock.cpp)
+- [code/tilir_masters/15_22_philosofy_eats.cpp](code/tilir_masters/15_22_philosofy_eats.cpp)
+- `std::lock` - решает проблему `deadlock`. Он берет несколько мьютексов сразу и лочит их всегда в одном порядке.
+- `std::lock_guard` - дополнительным параметром принимает `std::adopt_lock`, чтобы не пытаться лочить мьютекс, который уже залочен.
+- `std::scoped_lock` (C++17) - RAII, который лочит сразу несколько мьютексов в правильном порядке. Заменяет `std::lock` + `std::lock_guard`.
+
+```cpp
+template <typename T>
+void MyBuffer::swap(MyBuffer<T> &rhs) noexcept {
+    if (this == &rhs) return;
+    std::lock_guard<mutex> lk1{bufmut_};        // <=== a.swap(b) и b.swap(a) - deadlock
+    std::lock_guard<mutex> lk2{rhs.bufmut_};    // <===
+    std::swap(buffer_, rhs.buffer_);
+    std::swap(size_, rhs.size_);
+    std::swap(capacity_, rhs.capacity_);
+}
+
+// Наивное решение на примере обедающих философов
+void mylock(std::mutex& left, std::mutex& right)
+{
+    for (;;)
+    {
+        left.lock();                // <=== Филосов берет левую вилку
+        if (right.try_lock())       // <=== Пытается взять правую вилку
+            break;
+        left.unlock();              // <=== Если не получилось, отпускает левую вилку
+        std::this_thread::yield();
+    }
+}
+
+// C++14
+template <typename T>
+void MyBuffer::swap(MyBuffer<T> &rhs) noexcept {
+    if (this == &rhs) return;
+    std::lock(bufmut_, rhs.bufmut_);                            // <=== std::lock, который лочит сразу несколько мьютексов
+    std::lock_guard<mutex> lk1{bufmut_, std::adopt_lock};       // <=== RAII, которые не пытает лочить
+    std::lock_guard<mutex> lk2{rhs.bufmut_, std::adopt_lock};   //      ...
+    swap(arr_, rhs.arr_);
+    swap(size_, rhs.size_);
+    swap(used_, rhs.used_);
+}
+
+// C++17
+template <typename T>
+void MyBuffer::swap(MyBuffer<T> &rhs) noexcept {
+    if (this == &rhs) return;
+    std::scoped_lock sl{bufmut_, rhs.bufmut_};          // <=== std::scoped_lock - RAII, который лочит сразу несколько мьютексов
+    std::swap(arr_, rhs.arr_);
+    std::swap(size_, rhs.size_);
+    std::swap(used_, rhs.used_);
+}
 ```

@@ -9,7 +9,7 @@
       "type": "shell",
     },
     {
-      "label": "001. Options: -DLINK_GOOGLE_BENCHMARK=ON",
+      "label": "001. Options: -DLINK_GOOGLE_BENCHMARK=OFF",
       "command": "python ./scripts/vscode_tasks_generator.py --benchmark",
       "type": "shell",
     },
@@ -47,7 +47,7 @@
     {
       "label": "020. + Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-O2 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=ON&& cmake -E copy build/release/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-O2 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF&& cmake -E copy build/release/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -72,7 +72,7 @@
       "type": "shell"
     },
     {
-      "label": "040. + Run",
+      "label": "040. + Build and Run",
       "command": "${workspaceFolder}/build/release/cpp_file_example.exe",
       "dependsOn": [
         "030. + Build"
@@ -80,13 +80,13 @@
       "options": {
         "statusbar": {
           "hide": false,
-          "label": "Run"
+          "label": "Build and Run"
         }
       },
       "type": "shell"
     },
     {
-      "label": "050. + Run with Deleaker",
+      "label": "050. + Build and Run with Deleaker",
       "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/release/cpp_file_example.exe /someOption && python ${workspaceFolder}/scripts/parse_deleaker_report.py --no-verbose",
       "dependsOn": [
         "030. + Build"
@@ -95,6 +95,17 @@
         "statusbar": {
           "hide": false,
           "label": "RunWithDeleaker"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "040. + Run Latest",
+      "command": "${workspaceFolder}/build/release/cpp_file_example.exe",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "Run Latest"
         }
       },
       "type": "shell"

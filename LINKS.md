@@ -934,7 +934,7 @@
 - Nicolai Josuttis - My Favourite C++20 Code Examples, ACCU - 2022 [TODO]
   - https://www.youtube.com/watch?v=UCIKbUvEKfI
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 15. Аллокаторы - 2023  [TODO_NOTES]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 15. Аллокаторы - 2023  [DONE]
   - https://www.youtube.com/watch?v=5xN9bcdHggw
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 16. Полиморфные аллокаторы - 2023  [TODO]
@@ -966,7 +966,7 @@
 - David Sankel, "C++17 std::pmr comes with a cost", C++Now'18
   - https://www.youtube.com/watch?v=FLbXjNrAjbc
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 17. Умные указатели - 2023  [TODO_NOTES]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 17. Умные указатели - 2023  [DONE]
   - https://www.youtube.com/watch?v=OzqFXMDrrgk
     - 00:00:00 Проблема владения и value-семантика
     - 00:06:50 RAII и альтернативы владения
@@ -983,7 +983,42 @@
   - https://www.youtube.com/watch?v=JfmTagWcqoE
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 18. Динамический полиморфизм - 2023  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 1 - 2023  [TODO]
+  - https://www.youtube.com/watch?v=_Jn7MAZYL2M
+    - 00:00:00 Мотивация динамического полиморфизма
+    - 00:06:35 Виртуальные функции
+    - 00:12:45 CRTP как альтернатива общему интерфейсу
+    - 00:20:38 Виртуальное копирование и CRTP mixins
+    - 00:28:35 Dreaded diamond и симметрии
+    - 00:39:30 Виртуальное наследование
+    - 00:47:55 Динамическое приведение
+    - 00:53:45 Проблемы виртуальных функций
+    - 01:00:20 Задача Дионне и ручное управление таблицами
+    - 01:14:00 Инверсия Шона Парента
+    - 01:25:55 Завершение и обзор литературы
+
+- Sean Parent - "Better Code Runtime Polymorphism", NDC - 2017 [TODO]
+  - https://www.youtube.com/watch?v=QGcVXgEVMJg
+
+- Louis Dionne - "Runtime Polymorphism: Back to the Basics", CppCon - 2017 [TODO]
+  - https://www.youtube.com/watch?v=gVGtNFg4ay0
+
+- Arthur O'Dwyer, "dynamic_cast From Scratch", CppCon 2017  [TODO]
+  - https://www.youtube.com/watch?v=QzJL-8WbpuU
+  - Тонкости и сложности устройства вируальных таблиц.
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 1 - 2023  [DONE]
+  - https://www.youtube.com/watch?v=xTpAJWe7ZD4
+    - 00:00:00 Потоки исполнения
+    - 00:09:42 Области памяти и гонка
+    - 00:15:35 Volatile
+    - 00:27:20 Правила гонки и pthread
+    - 00:36:15 Мьютексы и их тонкости
+    - 00:46:20 Интермедия: безопасность исключений
+    - 00:54:05 Безопасность относительно потоков
+    - 01:00:30 API races
+    - 01:08:10 Deadlocks
+    - 01:14:20 Завершение
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 2 - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 20. Очереди - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 1 - 2023  [TODO]

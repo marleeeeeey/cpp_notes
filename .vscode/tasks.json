@@ -14,7 +14,7 @@
       "type": "shell",
     },
     {
-      "label": "001. Options: -DCMAKE_BUILD_TYPE=Release",
+      "label": "001. Options: -DCMAKE_BUILD_TYPE=Debug",
       "command": "python ./scripts/vscode_tasks_generator.py --config",
       "type": "shell",
     },
@@ -47,7 +47,7 @@
     {
       "label": "020. + Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-O2 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF&& cmake -E copy build/release/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-O2 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF&& cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -59,7 +59,7 @@
     },
     {
       "label": "030. + Build",
-      "command": " cmake --build build/release -- -k 0 ",
+      "command": " cmake --build build/debug -- -k 0 ",
       "dependsOn": [
         "020. + Configure"
       ],
@@ -73,7 +73,7 @@
     },
     {
       "label": "040. + Build and Run",
-      "command": "${workspaceFolder}/build/release/cpp_file_example.exe",
+      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
       "dependsOn": [
         "030. + Build"
       ],
@@ -87,7 +87,7 @@
     },
     {
       "label": "050. + Build and Run with Deleaker",
-      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/release/cpp_file_example.exe /someOption && python ${workspaceFolder}/scripts/parse_deleaker_report.py --no-verbose",
+      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/debug/cpp_file_example.exe /someOption && python ${workspaceFolder}/scripts/parse_deleaker_report.py --no-verbose",
       "dependsOn": [
         "030. + Build"
       ],
@@ -101,7 +101,7 @@
     },
     {
       "label": "040. + Run Latest",
-      "command": "${workspaceFolder}/build/release/cpp_file_example.exe",
+      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
       "options": {
         "statusbar": {
           "hide": false,

@@ -1,1 +1,1 @@
-C:/dev/cpp_notes/code/tilir_masters/15_22_philosofy_eats.cpp
+C:/dev/cpp_notes/code/tilir_masters/15_32_size_of_sync_objects.cpp

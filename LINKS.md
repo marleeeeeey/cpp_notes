@@ -1019,7 +1019,29 @@
     - 01:08:10 Deadlocks
     - 01:14:20 Завершение
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 2 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 2 - 2023  [DONE]
+
+- Howard Hinnant - Dining Philosophers Rebooted - 2014 [TODO]
+  - https://howardhinnant.github.io/dining_philosophers.html
+
+- Herb Sutter - Lock Free Programming or Juggling Razor Blades - 2014 [TODO]
+  - https://www.youtube.com/watch?v=c1gO9aB9nbs
+
+- Geoffrey Romer - What do you mean "thread-safe"?, CppCon - 2018 [TODO]
+  - https://www.youtube.com/watch?v=s5PCh_FaMfM
+
+- Anthony Williams - C++ Concurrency in Action: Practical Multithreading - 2019 [TODO]
+  - https://www.amazon.com/C-Concurrency-Action-Practical-Multithreading/dp/1933988770
+
+- Rainer Grimm - Concurrency with Modern C++ - 2019 [TODO]
+  - https://www.youtube.com/watch?v=1kRcoWc0OwA
+
+- Anthony Williams - Concurrency in C++20 and Beyond - CppCon 2019 [TODO]
+  - https://www.youtube.com/watch?v=UsSmA62eQwY
+
+- Sean Parent - Better code – Concurrency - 2017 [TODO]
+  - https://www.youtube.com/watch?v=zULU6Hhp42w
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 20. Очереди - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 1 - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 2 - 2023  [TODO]

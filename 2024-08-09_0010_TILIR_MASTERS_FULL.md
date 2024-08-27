@@ -191,6 +191,14 @@
   - [15.2 Объект, никакие операции с которым в этом окружении не приводят к `data race`.](#152-объект-никакие-операции-с-которым-в-этом-окружении-не-приводят-к-data-race)
   - [15.3 `API race` - когда у объекта такое API, которое может привести к проблемам в многопоточном коде.](#153-api-race---когда-у-объекта-такое-api-которое-может-привести-к-проблемам-в-многопоточном-коде)
   - [15.4 `deadlock` - когда два потока ждут друг друга.](#154-deadlock---когда-два-потока-ждут-друг-друга)
+  - [DCL - Double-Checked Locking - плохой паттерн](#dcl---double-checked-locking---плохой-паттерн)
+  - [Класс `std::flag_once` и `std::call_once` решают проблему DCL](#класс-stdflag_once-и-stdcall_once-решают-проблему-dcl)
+  - [`std::unique_lock` - введен для работы с `std::condition_variable`. Помимо RAII его можно `unlock` и `lock` в любой момент.](#stdunique_lock---введен-для-работы-с-stdcondition_variable-помимо-raii-его-можно-unlock-и-lock-в-любой-момент)
+  - [Как посылать уведомления(события) между потоками - `std::condition_variable`](#как-посылать-уведомлениясобытия-между-потоками---stdcondition_variable)
+  - [`mutable` - ключевое слово для маркировки mutex в классе для указания, что оно не является инвариантом класса.](#mutable---ключевое-слово-для-маркировки-mutex-в-классе-для-указания-что-оно-не-является-инвариантом-класса)
+  - [Блокировки на чтении и записи, когда чтение происходит в 1000 раз чаще: `std::shared_mutex`](#блокировки-на-чтении-и-записи-когда-чтение-происходит-в-1000-раз-чаще-stdshared_mutex)
+  - [Реккурсивные блокировки - `std::recursive_mutex` - антипаттерн](#реккурсивные-блокировки---stdrecursive_mutex---антипаттерн)
+  - [Размеры объектов синхронизации](#размеры-объектов-синхронизации)
 
 ## 01. Strings
 
@@ -4388,4 +4396,164 @@ void MyBuffer::swap(MyBuffer<T> &rhs) noexcept {
     std::swap(size_, rhs.size_);
     std::swap(used_, rhs.used_);
 }
+```
+
+### DCL - Double-Checked Locking - плохой паттерн
+
+- https://godbolt.org/z/Ec3Kea6b1
+- [code/tilir_masters/15_24_dcl_bad_pattern.cpp](code/tilir_masters/15_23_dcl_bad_pattern.cpp)
+- Код всегда работает корректно, но это все равно UB.
+
+```cpp
+if (!resptr)                                // <=== Мы читаем значение.
+{
+    std::lock_guard<std::mutex> lk{resmut};
+    {
+        if (!resptr)
+            resptr = new resource();        // <=== В момент, когда пишем новое - это UB.
+    }
+}
+```
+
+### Класс `std::flag_once` и `std::call_once` решают проблему DCL
+
+- https://godbolt.org/z/rj8sd6ojM
+- [code/tilir_masters/15_26_once_flag.cpp](code/tilir_masters/15_26_once_flag.cpp)
+- `std::call_once` берет в себя `std::flag_once`, что-то делает и потом если этот флаг не инициализирован, то вызывает функцию, переданную ей вторым аргументом.
+- Если `init_resource` бросает исключение, то `std::call_once` флаг не изменится и будет вызыван повторно. Так будет до тех пор, пока `init_resource` не завершится успешно.
+
+```cpp
+// Специальный примитив, вместе с std::call_once защищающий однократное создание.
+resource *resptr;
+std::once_flag resflag;
+
+void init_resource() { resptr = new resource();}
+
+// И где-то далее в коде
+std::call_once(resflag, init_resource);             // <=== std::call_once - вызывает функцию init_resource только один раз.
+
+resptr->use()
+```
+
+### `std::unique_lock` - введен для работы с `std::condition_variable`. Помимо RAII его можно `unlock` и `lock` в любой момент.
+
+```cpp
+{
+    std::unique_lock<mutex> ul{resmut}; // <=== locked by ctor
+    res->use();
+    ul.unlock();                        // <=== support unlock
+    // something on unlocked
+    ul.lock();                          // <=== support lock
+    res->use();
+}                                       // <=== unlocked by dtor
+```
+
+### Как посылать уведомления(события) между потоками - `std::condition_variable`
+
+- https://godbolt.org/z/n35bsq1sn
+- [code/tilir_masters/15_28_cond_variable.cpp](code/tilir_masters/15_28_cond_variable.cpp)
+- [submodules/cpp-masters/concurrency/focus_demo.cc](submodules/cpp-masters/concurrency/focus_demo.cc)
+- Ожидание `std::condition_variable::wait(...)` может закончиться само по себе (`spurious wake up`)
+- Как пользоваться perf (https://youtu.be/vVRNJjf1MCE?list=PL3BR09unfgcgf7R88ZQRQqWOdLy4pRW2h&t=2860) [TODO]
+
+```cpp
+resource *resptr = nullptr;
+std::mutex resmut;
+std::condition_variable data_cond;
+
+// thread 1
+{
+    lock_guard<mutex> lk{resmut};
+    resptr = new resource();
+}
+data_cond.notify_one();                     // <=== Посылка уведомления
+
+// thread 2
+std::unique_lock<mutex> lk{resmut};
+data_cond.wait(lk,                          // unlock & wait
+    [] { return (resptr != nullptr); });    // <=== Проверка условия для проверки что это не spurious wake up.
+resptr->use();                              //      Блокировка, если условие выполнилось. Либо снова спим.
+
+std::thread t3{processing};                 // <=== 1. Поток, который будет обрабатывать данные
+std::thread t2{processing};                 // <=== 2. Поток, который может зависнуть и не дождаться уведомления никогда
+std::thread t1{preparation};
+```
+
+### `mutable` - ключевое слово для маркировки mutex в классе для указания, что оно не является инвариантом класса.
+
+- `mutable` - ключевое слово для маркировки mutex в классе для указания, что оно не является инвариантом класса.
+- `mutable` наружает SRP, так как класс теперь кроме своей работы занимается еще и защитой своих данных в многопоточной среде.
+
+```cpp
+class S {
+    mutable std::mutex m_;                          // <=== mutable - маркирует, что это не инвариант класса
+    T value_;
+public:
+    T get() const {                                 // <=== const - метод, который не меняет инвариант объекта, но имеет право менять mutable поля.
+        std::unique_lock<std::mutex> lock{m_};
+        return value_;
+    }
+    // ...
+}
+```
+
+### Блокировки на чтении и записи, когда чтение происходит в 1000 раз чаще: `std::shared_mutex`
+
+- [submodules/cpp-masters/concurrency/shared_lock_bench.cc](submodules/cpp-masters/concurrency/shared_lock_bench.cc)
+- [code/tilir_masters/15_30_shared_mutex.cpp](code/tilir_masters/15_30_shared_mutex.cpp)
+- https://quick-bench.com/q/UDLS-Js5aCo35Y64tiYoRgU5D2w
+- `std::shared_mutex` - умеет работать с `std::shared_lock` и `std::unique_lock`.
+- `std::shared_lock` - если `std::unique_lock` захвачен, тогда захвати тоже и остановись. А если `std::unique_lock` не захвачен, то проскочи насквозь.
+- Хотя потоки не толкаются локтями, но сам по себе `std::shared_mutex` дороже, чем `std::mutex`.
+  - `std::unique_lock` вызывает ptherad_mutex_lock и ptherad_mutex_unlock, которые **не входят в kernal space**. Он работает в user space с помощью futex.
+  - `std::shared_lock` вызывает ptherad_rwlock_rdlock и ptherad_rwlock_unlock, которые **входят в kernal space**. Поэтому он дороже.
+
+```cpp
+mutable std::shared_mutex m_;                       // <=== std::shared_mutex
+T value_;
+
+T get() const {
+    std::shared_lock<std::shared_mutex> lock{m_};   // <=== std::shared_lock - проскакивает, если std::unique_lock не захвачен
+    return value_;
+}
+
+void modify(const T &newval) {
+    std::unique_lock<std::shared_mutex> lock{m_};   // <=== std::unique_lock - блокирует на запись
+    value_ = newval;
+}
+```
+
+### Реккурсивные блокировки - `std::recursive_mutex` - антипаттерн
+
+- `std::recursive_mutex` - АНТИПАТТЕРН - внутри себя ведет счетчик расщелкиваний и защелкиваний.
+
+```cpp
+template <typename T> struct sometype {
+    foo() {
+        lock_guard<recursive_mutex> lk{mut_};
+        // всё остальное
+    }
+    bar() {
+        lock_guard<recursive_mutex> lk{mut_};
+        foo();
+    }
+```
+
+### Размеры объектов синхронизации
+
+- https://godbolt.org/z/jzeWK8ena
+
+```cpp
+//                       Clang+MSVC        GCC
+once_flag:                  8               4
+lock_guard<mutex>:          8               8
+scoped_lock<mutex>:         8               8
+unique_lock<mutex>:         16              16     // Хранит еще и флаг, что он владеет мьютексом
+shared_lock<mutex>:         16              16
+condition_variable:         72              48     //
+mutex:                      80              40     // Тяжелый!!! Потому что он хранится не в kernel space, а в user space. Экономит время, но не место.
+recursive_mutex:            80              40
+timed_mutex:                160             40
+recursive_timed_mutex:      160             40
+shared_mutex:               8               56
 ```

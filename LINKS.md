@@ -1020,6 +1020,18 @@
     - 01:14:20 Завершение
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 19. Многопоточность, часть 2 - 2023  [DONE]
+  - https://www.youtube.com/watch?v=vVRNJjf1MCE
+    - 00:00:00 Консенсус компиляторов
+    - 00:04:28 Одноразовая инициализация
+    - 00:08:20 DCL и std::once_flag
+    - 00:17:40 События и оповещения
+    - 00:27:20 Unique lock и spurious wakeup
+    - 00:38:40 Сеанс чёрной магии и фокусы strace
+    - 00:47:40 Упражения и задания в perf
+    - 00:52:25 Mutable mutex
+    - 00:57:35 Разделяемые блокировки
+    - 01:09:34 Остальные типы блокировок
+    - 01:15:34 Размеры основных типов и литература
 
 - Howard Hinnant - Dining Philosophers Rebooted - 2014 [TODO]
   - https://howardhinnant.github.io/dining_philosophers.html

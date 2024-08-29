@@ -4,3 +4,4 @@
 - Профилирование
   - Zelis, Herald of Krill Issues: I'm using uica https://uica.uops.info/
   - [9:51 PM]Zelis, Herald of Krill Issues: llvm-mca is also good for this
+- Поискать про инструментарий TLA для формальной верификации алгоритмов

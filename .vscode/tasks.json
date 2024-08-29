@@ -111,6 +111,17 @@
       "type": "shell"
     },
     {
+      "label": "040. + Run Latest In Loop",
+      "command": "python ./scripts/infinite_runner.py ${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "Run Inf"
+        }
+      },
+      "type": "shell"
+    },
+    {
       "label": "090. Compile ACTIVE file to ASM",
       "type": "shell",
       "command": "cmake -E make_directory build && clang -O1 -g0 -mllvm --x86-asm-syntax=intel -S ${file} -o ${workspaceFolder}/build/${fileBasename}.s",

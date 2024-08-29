@@ -153,3 +153,12 @@
   - `std::unique_lock` вызывает ptherad_mutex_lock и ptherad_mutex_unlock, которые **не входят в kernal space**. Он работает в user space с помощью futex.
   - `std::shared_lock` вызывает ptherad_rwlock_rdlock и ptherad_rwlock_unlock, которые **входят в kernal space**. Поэтому он дороже.
 `std::recursive_mutex` - АНТИПАТТЕРН - внутри себя ведет счетчик расщелкиваний и защелкиваний.
+
+## 16. Многопоточные очеререди (multithreaded queues)
+
+- Ментальная модель `mutex` - это очередь. Три котенка забегают в трубу за лягушкой.
+`std::future` и `std::promise` - используются для возврата значения из потока.
+- `std::promise::set_exception` - устанавливает исключение в `std::future`. Встроенный механизм для передачи исключений между потоками. Выбрасывается в момент `std::future::get`.
+- `std::packaged_task`  - это функтор (т.е. его можно исполнить на thread), который уже содержит `std::promise` внутри себя.
+- `std::jthread` (C++20) умеет принимать `std::stop_token` и умеет вызывать `join` в деструкторе.
+- `std::shared_future` - это `std::future`, который можно копировать. Делается из обычного `std::future`. Чем-то похожа на `std::shared_ptr`.

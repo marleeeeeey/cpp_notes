@@ -199,6 +199,19 @@
   - [Блокировки на чтении и записи, когда чтение происходит в 1000 раз чаще: `std::shared_mutex`](#блокировки-на-чтении-и-записи-когда-чтение-происходит-в-1000-раз-чаще-stdshared_mutex)
   - [Реккурсивные блокировки - `std::recursive_mutex` - антипаттерн](#реккурсивные-блокировки---stdrecursive_mutex---антипаттерн)
   - [Размеры объектов синхронизации](#размеры-объектов-синхронизации)
+- [16. Многопоточные очеререди (multithreaded queues)](#16-многопоточные-очеререди-multithreaded-queues)
+  - [1. хотим уйти от проектирования многопоточного кода, потому что с ним много проблем](#1-хотим-уйти-от-проектирования-многопоточного-кода-потому-что-с-ним-много-проблем)
+  - [2. Дальнейшие улучшения очереди - удаляем лишний condition\_variable путем использования безграничной очереди](#2-дальнейшие-улучшения-очереди---удаляем-лишний-condition_variable-путем-использования-безграничной-очереди)
+  - [Возврат данных из потоков - `std::future` и `std::promise`](#возврат-данных-из-потоков---stdfuture-и-stdpromise)
+  - [Правила осторожности с `std::promise` и `std::future`](#правила-осторожности-с-stdpromise-и-stdfuture)
+  - [Маршаллинг исключений между потоками: `std::future` и `std::promise`](#маршаллинг-исключений-между-потоками-stdfuture-и-stdpromise)
+  - [ВКЛАДЫВАНИЕ ИСКЛЮЧЕНИЙ](#вкладывание-исключений)
+  - [`std::packaged_task` уже содержит `std::promise` внутри себя](#stdpackaged_task-уже-содержит-stdpromise-внутри-себя)
+  - [Коммуникация в другую сторону - хотим что-то требовать от потока (например останова) - `std::jthread` (C++20)](#коммуникация-в-другую-сторону---хотим-что-то-требовать-от-потока-например-останова---stdjthread-c20)
+  - [`std::jthread` (C++20) умеет принимать `std::stop_token`.](#stdjthread-c20-умеет-принимать-stdstop_token)
+  - [`std::shared_future` - много потоков могут ждать одного состояния](#stdshared_future---много-потоков-могут-ждать-одного-состояния)
+  - [Представте, если вы хотите подождать чего-то, что произойдет в другом потоке - барьеры](#представте-если-вы-хотите-подождать-чего-то-что-произойдет-в-другом-потоке---барьеры)
+  - [Мы хотим перейти от очереди интов, к очереди задач (функторов).](#мы-хотим-перейти-от-очереди-интов-к-очереди-задач-функторов)
 
 ## 01. Strings
 
@@ -4557,3 +4570,210 @@ timed_mutex:                160             40
 recursive_timed_mutex:      160             40
 shared_mutex:               8               56
 ```
+
+## 16. Многопоточные очеререди (multithreaded queues)
+
+### 1. хотим уйти от проектирования многопоточного кода, потому что с ним много проблем
+
+- [submodules/cpp-masters/queues/classic_queue_wrong-01.cc](submodules/cpp-masters/queues/classic_queue_wrong-01.cc)
+- [submodules/cpp-masters/queues/classic_queue_wrong-02.cc](submodules/cpp-masters/queues/classic_queue_wrong-02.cc)
+- Сложно написать мнопоточный вектор или мепу.
+- Но можно написать многопоточную (thread-safe) очередь - producer и consumer. И все остальное делать так, как будто потоков нет.
+- Очередь серриализует исполнение задач, в случае задач, которые не зависят друг от друга.
+
+```cpp
+// ИНТЕРФЕЙС КЛАССИЧЕСКОЙ ОЧЕРЕДИ
+template <typename T>
+class ts_queue {
+    mutable std::mutex Mut;                         // <=== Мьютекс для защиты данных
+    std::condition_variable CondCons;               // <=== Для оповещения потребителя, что пора просыпаться
+    std::condition_variable CondProd;               // <=== Для оповещения производителя, что пора просыпаться
+
+    std::vector<T> Buffer;                          // ограниченный размер
+    int NCur = -1;                                  // позиция в буфере
+public:
+    ts_queue(int Size) : Buffer(Size) {}
+    void push(T Data);                              //
+    void wait_and_pop(T &Data);                     // <=== Компромис по безопасности исключений и по потокам для ожидания
+};
+
+void ts_queue::push(T Data) {
+    std::unique_lock<mutex> lk{Mut};
+    CondProd.wait(lk, [Buffer](){ !full(); });
+    NCur += 1;
+    Buffer[NCur] = Data;
+    CondCons.notify_one();
+}
+
+void ts_queue::wait_and_pop(T& Data) {
+    std::unique_lock<mutex> lk{Mut};
+    CondCons.wait(lk, [Buffer](){ !empty(); });     // <=== ПРОБЛЕМА: есть вероятность, что один из consumers уснет, а второй разберет все задачи и случится зависание.
+    Data = Buffer[NCur];                            //      Для диагностики удобно пользовать strace.
+    NCur -= 1;
+    CondProd.notify_one();
+}
+
+void ts_queue::wake_and_done() {
+    Done = true;
+    CondCons.notify_all();                          // <=== Как возможное решение проблемы пробуждения последних спящих потребителей,
+    CondProd.notify_all();                          //      не забыть такое вызывать в конце цикла работы с задачами. Еще проверять везде Done
+}                                                   //      CondCons.wait(lk, [Buffer](){ !empty() || Done; });
+```
+
+### 2. Дальнейшие улучшения очереди - удаляем лишний condition_variable путем использования безграничной очереди
+
+- [code/tilir_masters/16_12_remote_consumer_cond_variable.cpp](code/tilir_masters/16_12_remote_consumer_cond_variable.cpp)
+- Сделать очередь бесконечной, чтобы избавится от одной condition_variable для producer.
+- Но вместо уведомления для всех consumer, что мы закончили, мы можем использовать задачу-маркер (limiter task).
+
+```cpp
+
+  void wait_and_pop(T &Data) {
+    std::unique_lock<std::mutex> Lk{Mut};
+    Cond.wait(Lk, [this] { return !Q.empty(); });
+    T Task = std::move(Q.front());                  // <=== Используем очередь.
+    if (Task == Limiter<T>())                       // <=== Если это limiter task, то завершаемся
+      return;
+    Data = Task;
+    Q.pop();
+  }
+
+```
+
+### Возврат данных из потоков - `std::future` и `std::promise`
+
+- Наивный возврат через глобальную переменную: [example](code/tilir_masters/16_14_thread_with_generic_lambda.cpp)
+- [code/tilir_masters/16_16_future_promise.cpp](code/tilir_masters/16_16_future_promise.cpp)
+
+```cpp
+TEST(threads, basic)
+{
+    std::promise<int> p;
+    std::future<int> f = p.get_future();                // <=== 0. Связываем promise и future
+
+    auto divi = [](auto&& result, auto a, auto b)
+    {
+        result.set_value(a / b);                        // <=== 2. Устанавливаем значение в promise в одном потоке
+    };
+
+    std::thread t(divi, std::move(p), 30, 6);           // <=== 1. Передача promise по rvalue
+    t.detach();
+
+    EXPECT_EQ(f.get(), 5);                              // <=== 3. Получаем значение из future (синхронизация потоков) из другого потока
+}
+```
+
+### Правила осторожности с `std::promise` и `std::future`
+
+```cpp
+// Обещание которое никто не собирается выполнять это deadlock.
+promise<int> pr; auto fut = pr.get_future();
+fut.get();                                  // forever - DEADLOCK
+
+// Обещание которое уже выполнено это исключение.
+std::promise<int> pr; pr.set_value(10);
+pr.set_value(10); // Error: promise already satisfied - EXCEPTION
+
+// Как и нарушенное обещание.
+promise<int> pr; auto fut = pr.get_future();
+{ promise<int> pr2(move(pr)); } // Error: broken promise - EXCEPTION
+```
+
+### Маршаллинг исключений между потоками: `std::future` и `std::promise`
+
+- [code/tilir_masters/16_18_thread_exceptions.cpp](code/tilir_masters/16_18_thread_exceptions.cpp)
+- `std::promise::set_exception` - устанавливает исключение в `std::future`. Встроенный механизм для передачи исключений между потоками. Выбрасывается в момент `std::future::get`.
+
+```cpp
+auto divi = [](auto&& result, auto a, auto b) {
+    try {
+        if (b == 0) throw "Divide by zero";                 // <=== 1. Бросаем исключение
+        result.set_value(a / b);
+    } catch(...) {
+        result.set_exception(std::current_exception());     // <=== 2. Упаковываем исключение в promise
+    }
+};
+
+// .... всё то же самое ....
+std::cout << "result: " << f.get() << std::endl;            // <=== 3. Получаем исключение из future
+```
+
+### ВКЛАДЫВАНИЕ ИСКЛЮЧЕНИЙ
+
+```cpp
+try {
+    open_file("nonexistent.file");
+    } catch(...) {
+    std::throw_with_nested(runtime_error("run() failed"));      // <=== В runtime_error вкладывается исключение из open_file
+}
+
+// где-то дальше:
+catch(runtime_error &e) {                                       // <=== Перехватываем runtime_error
+    cout << e.what() << endl;
+    std::rethrow_if_nested(e);                                  // <=== Выбрасываем вложенное исключение
+}
+```
+
+### `std::packaged_task` уже содержит `std::promise` внутри себя
+
+- https://godbolt.org/z/cvMKTojav
+-
+- Нам не нужно думать о передаче в поток `std::promise`.
+- `std::packaged_task`  - это функтор (т.е. его можно исполнить на thread), который уже содержит `std::promise` внутри себя.
+
+```cpp
+auto divi = [](auto a, auto b) {
+    if (b == 0)
+    throw std::overflow_error("Divide by zero");
+    return a / b;
+};
+
+std::packaged_task<int(int, int)> task {divi};      // <=== 1. Создаем задачу
+std::future<int> f = task.get_future();             // <===  НЕЯВНЫЙ PROMISE
+std::thread t(std::move(task), 30, 0);              // <=== 2. Передаем задачу в поток
+```
+
+### Коммуникация в другую сторону - хотим что-то требовать от потока (например останова) - `std::jthread` (C++20)
+
+- Автоматически делает `join` в деструкторе.
+
+```cpp
+// Класс std::jthread это нововведение C++20, он делает join в деструкторе.
+int foo() {
+    std::jthread thread(thread_func, 5);
+}                                                       // <=== деструктор вызывает join
+
+// Кроме того, он может проверять имеет ли смысл вызов join.
+std::jthread t;
+EXPECT_EQ(t.joinable(), false);                         // <===
+
+t = std::jthread(foo);
+EXPECT_EQ(t.joinable(), true);                          // <===
+
+t.join();
+EXPECT_EQ(t.joinable(), false);                         // <===
+```
+
+### `std::jthread` (C++20) умеет принимать `std::stop_token`.
+
+```cpp
+// Также он принимает stop token для прерываемости.
+void bar(std::stop_token stop_token, int value) {           // <=== std::stop_token
+    while (!stop_token.stop_requested())                    // <=== проверка на запрос остановки
+    std::cout << value++ << "\n";
+}
+
+int foo() {
+    std::jthread t(bar, 5); // начинает печатать 5 6 7....
+    std::this_thread::sleep_for(1s);
+    t.request_stop();                                       // <=== попросили остановиться.
+}
+```
+
+### `std::shared_future` - много потоков могут ждать одного состояния
+
+- `std::shared_future` - это `std::future`, который можно копировать.
+
+### Представте, если вы хотите подождать чего-то, что произойдет в другом потоке - барьеры
+
+### Мы хотим перейти от очереди интов, к очереди задач (функторов).

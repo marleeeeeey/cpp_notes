@@ -3,6 +3,7 @@
 - [Overview](#overview)
 - [Courses and materials](#courses-and-materials)
 - [How to build the examples](#how-to-build-the-examples)
+- [Troubleshooting](#troubleshooting)
 
 ### Overview
 
@@ -86,3 +87,12 @@ To build the examples, you may use any C++ compiler. Every file is a separate pr
 ```
 clang -O2 -g code/hello_world.cpp -o build/hello_world.exe
 ```
+
+### Troubleshooting
+
+#### Connect to valgrant box from VSCode
+
+1. `echo "ssh-rsa ..." >> ~/.ssh/authorized_keys` to add your public key to the `vagrant` user.
+1. Install the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) extension.
+2. Press `F1` and type `Remote-SSH: Connect to Host...`.
+3. Enter `vagrant@127.0.0.1 -p 2222`.

@@ -42,6 +42,7 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-shorten-64-to-32>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-anonymous-struct>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-nested-anon-types>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-implicit-int-float-conversion>
 )
 
 if(LINK_GOOGLE_TEST)

@@ -1042,7 +1042,7 @@
 - Geoffrey Romer - What do you mean "thread-safe"?, CppCon - 2018 [TODO]
   - https://www.youtube.com/watch?v=s5PCh_FaMfM
 
-- Anthony Williams - C++ Concurrency in Action: Practical Multithreading - 2019 [TODO]
+- Anthony Williams - C++ Concurrency in Action: Practical Multithreading - 2019 [IN_PROGRESS]
   - https://www.amazon.com/C-Concurrency-Action-Practical-Multithreading/dp/1933988770
 
 - Rainer Grimm - Concurrency with Modern C++ - 2019 [TODO]
@@ -1054,10 +1054,93 @@
 - Sean Parent - Better code – Concurrency - 2017 [TODO]
   - https://www.youtube.com/watch?v=zULU6Hhp42w
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 20. Очереди - 2023  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 1 - 2023  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 2 - 2023  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 3 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 20. Очереди - 2023  [DONE]
+  - https://www.youtube.com/watch?v=CMnRgnoWzmA
+    - 00:00:00 Введение: продолжаем сагу о sigatomic.
+    - 00:04:50 Ментальная модель мьютекса.
+    - 00:10:00 Ограниченная очередь
+    - 00:16:15 Небольшая проблема и её воспроизведение
+    - 00:24:10 Пробуждение в конце
+    - 00:28:50 Неограниченная очередь
+    - 00:35:20 Коммуникация с потоками: divide
+    - 00:45:00 Канал future/promise
+    - 00:49:00 Маршаллинг исключений и упакованные задачи
+    - 00:56:50 Joinable threads
+    - 00:59:40 Проблема барьера
+    - 01:06:40 Очередь упакованных задач
+    - 01:14:12 Задача-вызов и литература
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 1 - 2023  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=JRUbzoVfkkw
+   - 00:00:00 Разбор ошибок: из стека в очередь.
+   - 00:07:30 Разбор ошибок: поднимаем тесты.
+   - 00:15:19 Разбор ошибок: неочевидные случаи.
+   - 00:20:50 Атомарность: мотивация.
+   - 00:30:45 Дуальность атомиков и мьютексов.
+   - 00:40:50 Атомарность чего угодно.
+   - 00:46:55 Compare and swap.
+   - 00:59:20 Специальные атомики и байка про find_if.
+   - 01:09:10 DCL и атомики. Синглтоны.
+   - 01:18:55 Thread local и завершение.
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 2 - 2023  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=hb_kREmFnX0
+   - 00:00:00 Иерархия lock-free ещё раз
+   - 00:07:10 Проблемы проектирования: shared pointers
+   - 00:14:55 Перестановка строк
+   - 00:19:42 Формальная верификация
+   - 00:25:20 Livelocks
+   - 00:28:45 Lock-free stack
+   - 00:38:30 Reclamation
+   - 00:45:10 ABA problem
+   - 00:49:55 Atomic shared pointers
+   - 00:55:00 Hazard pointers
+   - 01:00:20 Аппаратное решение ABA и переупорядочение
+   - 01:11:30 Chasing counters
+   - 01:17:05 Happens-before и завершение
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 21. Атомики, часть 3 - 2023  [TODO_NOTES]
+  - https://www.youtube.com/watch?v=Y1q_Z2T2UcE
+   - 00:00:00 Введение и краткий повтор.
+   - 00:09:40 Виды барьеров и модели памяти.
+   - 00:16:45 Пример ассемблера трёх архитектур
+   - 00:25:20 Особенности relaxed
+   - 00:32:00 Барьеры и chasing counters
+   - 00:43:04 Sequentially consistence
+   - 00:54:10 Bounded lock-free queue
+   - 01:14:00 Бенчмаркинг и выводы
+   - 01:25:16 Литература
+
+- Hans Boehm - "Using weakly ordered C++ atomics correctly" - 2016 [TODO]
+  - https://www.youtube.com/watch?v=M15UKpNlpeM
+
+- Charles Bay - "Instruction Re-ordering Everywhere: The C++ 'As-If' Rule and the Role of Sequence" - 2016 [TODO]
+  - https://www.youtube.com/watch?v=8yUSMJWlEsk
+
+- Frank Birbacher - "Atomics, memory orders, what for" - 2017 [TODO]
+  - https://www.youtube.com/watch?v=A_vAG6LIHwQ
+
+- Tony Van Eerd - "An Interesting Lock-free Queue: Part 2 of N" - 2017 [TODO]
+  - https://www.youtube.com/watch?v=HP2InVqgBFM
+
+- Tony Van Eerd - "Introduction to the C++ memory model and lock free programming" - 2018 [TODO]
+  - https://www.youtube.com/watch?v=RWCadBJ6wTk
+
+- Tony Van Eerd - "The Continuing Saga of the Lock-free Queue: Part 3 of N" - 2018 [TODO]
+  - https://www.youtube.com/watch?v=mu6XB-WRNxs
+
+- Maged Michael - "Hazard Pointer Synchronous Reclamation Beyond Concurrency TS2" - 2021 [TODO]
+  - https://www.youtube.com/watch?v=lsy8RRq2hHM
+
+- Антон Полухин — Анатомия асинхронных движков - 2022 [DONE]
+  - https://www.youtube.com/watch?v=bSJp3lRjU7k
+
+- Антон Полухин - C++ на практике, C++ Siberia - 2019 [DONE]
+  - https://www.youtube.com/watch?v=g2iyNH2Gh1k
+
+- Антон Полухин - Разработка приложений на С++ с использованием Boost - 2020 [TODO]
+  - https://www.labirint.ru/books/761225/
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 22. Параллелизм - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [TODO]
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 2 - 2023  [TODO]

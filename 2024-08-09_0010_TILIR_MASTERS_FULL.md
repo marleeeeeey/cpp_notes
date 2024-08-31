@@ -211,7 +211,13 @@
   - [`std::jthread` (C++20) умеет принимать `std::stop_token`.](#stdjthread-c20-умеет-принимать-stdstop_token)
   - [`std::shared_future` - много потоков могут ждать одного состояния](#stdshared_future---много-потоков-могут-ждать-одного-состояния)
   - [Представте, если вы хотите подождать чего-то, что произойдет в другом потоке - барьеры](#представте-если-вы-хотите-подождать-чего-то-что-произойдет-в-другом-потоке---барьеры)
-  - [Мы хотим перейти от очереди интов, к очереди задач (функторов).](#мы-хотим-перейти-от-очереди-интов-к-очереди-задач-функторов)
+  - [`std::latch` - барьеры в C++20](#stdlatch---барьеры-в-c20)
+  - [Мы хотим перейти от очереди интов, к очереди задач (функторов, разных по сигнатуре).](#мы-хотим-перейти-от-очереди-интов-к-очереди-задач-функторов-разных-по-сигнатуре)
+- [17. Atomics (TODO - make notes)](#17-atomics-todo---make-notes)
+- [18. Parallelism](#18-parallelism)
+  - [`std::packaged_task` + `std::thread` = `std::async`](#stdpackaged_task--stdthread--stdasync)
+  - [Синхронизация на GPU](#синхронизация-на-gpu)
+  - [`std::execution` (C++26) - новый способ управления параллелизмом](#stdexecution-c26---новый-способ-управления-параллелизмом)
 
 ## 01. Strings
 
@@ -4772,8 +4778,138 @@ int foo() {
 
 ### `std::shared_future` - много потоков могут ждать одного состояния
 
-- `std::shared_future` - это `std::future`, который можно копировать.
+- `std::shared_future` - это `std::future`, который можно копировать. Делается из обычного `std::future`. Чем-то похожа на `std::shared_ptr`.
+- Используя его много потоков могут ждать одного состояния.
+
+```cpp
+std::promise<void> ReadyP;
+std::shared_future<void> ReadyF = ReadyP.get_future();      // <=== Создаем shared_future из обычного future (это нормально)
+std::thread Fst([](auto SF) { SF.wait(); }, ReadyF);        // Передаем shared_future в поток1 через копирование
+std::thread Snd([](auto SF) { SF.wait(); }, ReadyF);        // Передаем shared_future в поток2 через копирование
+ReadyP.set_value();                                         // <=== Тут происходит разблокировка обоих потоков
+Fst.join();
+Snd.join();
+```
 
 ### Представте, если вы хотите подождать чего-то, что произойдет в другом потоке - барьеры
 
-### Мы хотим перейти от очереди интов, к очереди задач (функторов).
+- https://godbolt.org/z/zda8Wjsch
+- [code/tilir_masters/16_22_bariers_analog.cpp](code/tilir_masters/16_22_bariers_analog.cpp)
+- Пример ниже показывает, как можно сделать барьеры с помощью `std::promise` и `std::shared_future`.
+- Это похоже на корутину.
+
+```cpp
+void prepare(std::promise<void> &&Ready, std::shared_future<void> BackLink) {
+    // do something
+    Ready.set_value();                      // <=== Сигнализируем, что мы готовы
+    BackLink.wait(); // --- hold here ---   // <=== Ждем, пока другой поток разрешит нам продолжить
+    // do something else when signaled
+}
+```
+
+### `std::latch` - барьеры в C++20
+
+- https://godbolt.org/z/M8n1vTc3o
+- [code/tilir_masters/16_24_std_latch_from_docs.cpp](code/tilir_masters/16_24_std_latch_from_docs.cpp)
+- [code/tilir_masters/16_26_latch.cpp](code/tilir_masters/16_26_latch.cpp)
+- `std::latch` - это классический семафор с возможностью уменьшения счетчика.
+- Этот подход возвращает нам симмметрию.
+- Начальный счетчик ставится в конструкторе и уменьшается методом `count_down`.
+- Пока счетчик не станет равным нулю, потоки будут ждать методом `wait`.
+
+```cpp
+void prepare(std::latch &L, std::latch &BackL) {
+    // do something
+    L.count_down();                         // <=== Уменьшаем счетчик, когда готовы. Если счетчик станет равным нулю, то ожидающие потоки разблокируются.
+    BackL.wait(); // --- hold here ---      // <=== Ждем, пока другой поток разрешит нам продолжить. Т.е. когда счетчик станет равным нулю.
+    // do something else when signaled
+}
+```
+
+### Мы хотим перейти от очереди интов, к очереди задач (функторов, разных по сигнатуре).
+
+- [code/tilir_masters/16_28_sometimes_lost_tasks_example.cpp](code/tilir_masters/16_28_sometimes_lost_tasks_example.cpp)
+- Пример выше иногда теряет таски. Хороший пример для дебаггинга и анализа многопоточных проблем. [TODO]
+- Кажется, что `std::function` умеет стирать типы и как будто бы решает проблему.
+- Но `std::function` нам не нравится, потому что его можно копировать. Мы хотим только перемещать.
+- Есть `std::move_only_function`.
+
+```cpp
+// Пусть есть несколько разных по аргументам и типу результата функций.
+int fn1(int x, int y, int z) { return x + y + z; }
+double fn2(std::vector<int> v) { return v.size() + 0.5; }
+
+// Теперь хочется сделать очередь, в которой стояли бы экземпляры вызова
+// этих функций (функция и упакованные аргументы) и отдать на пул.
+std::vector<std::thread> consumers;
+for (int i = 0; i < nthreads; ++i)
+    consumers.emplace_back(consumer_thread_func);
+
+// ПРИМЕР
+template <typename F, typename... Args>
+auto create_task(F f, Args&&... args)
+{
+    std::packaged_task<std::remove_pointer_t<F>> tsk{f};
+    auto fut = tsk.get_future();
+    task_t t{[ct = std::move(tsk),                                              // <=== 1. Захватываем задачу
+              args = std::make_tuple(std::forward<Args>(args)...)]() mutable    // <=== 2. Захватываем аргументы
+             {
+                 std::apply([ct = std::move(ct)](auto&&... args) mutable        // <=== 3. Вызываем задачу
+                 { ct(args...); }, std::move(args));
+                 return 0;                                                      // <=== 4. Возвращаем 0, т.к. это не сентинел, а обычная задача.
+             }};
+
+    return std::make_pair(std::move(t), std::move(fut));
+}
+```
+
+## 17. Atomics (TODO - make notes)
+
+## 18. Parallelism
+
+### `std::packaged_task` + `std::thread` = `std::async`
+
+- https://godbolt.org/z/fdKWorWGq
+- [code/tilir_masters/18_10_std_async.cpp](code/tilir_masters/18_10_std_async.cpp)
+- Основной элемент синтаксического сахара это `std::async`.
+- Теперь вся механика скрыта внутри и маршалинг исключений мы получаем бесплатно.
+- `std::async` первым аргументом принимает стратегию запуска задачи - `std::launch::async` или `std::launch::deferred`.
+- Политика `deferred` - отложенное выполнение - может быть заменена корутинами!
+
+```cpp
+auto divi = [](auto a, auto b) {
+    if (b == 0)
+    throw std::overflow_error("Divide by zero");
+    return a / b;
+};
+
+std::future<int> f = std::async(divi, 30, 5);
+auto x = f.get();
+```
+
+### Синхронизация на GPU
+
+Следующие фреймворки помогают использовать возможности параллелизации и векторизации на GPU, значительно повышая вычислительную производительность.
+
+- **GLSL** (OpenGL Shading Language): Обычно используется для написания шейдеров в графических приложениях.
+- **CUDA**: Платформа параллельных вычислений и API-модель, созданная NVIDIA, позволяющая использовать GPU для обработки задач общего назначения.
+- **OpenMP**: (`#pragma omp target parallel`) Директива OpenMP для выполнения параллельных вычислений на устройствах, таких как GPU.
+- **SYCL**: Высокоуровневая модель программирования, которая позволяет разрабатывать код, способный выполняться как на CPU, так и на GPU, что облегчает использование гетерогенных вычислительных систем.
+
+### `std::execution` (C++26) - новый способ управления параллелизмом
+
+- https://github.com/facebookexperimental/libunifex
+
+```cpp
+// Асинхронный поток производит значения лениво.
+// Это пока что не предложено в стандарт, но выглядит очень интересным развитием идеи ranges.
+ex::scheduler auto sched = context.get_scheduler();
+
+ex::stream auto stream = ex::range_stream{0, 10} |
+    ex::transform_stream([](int x) { return x * x; });
+
+ex::sender auto sender = ex::via_stream(sched, stream) |
+    ex::for_each([](int x) { std::cout << x << std::endl; });
+
+tt::sync_wait(sender | ex::then([]() { std::cout << "done\n"; }));
+```

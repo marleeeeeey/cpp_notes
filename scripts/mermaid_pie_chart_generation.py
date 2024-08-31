@@ -17,6 +17,9 @@ def parse_md_file(md_content, tag_pattern):
         if match:
             tags.append(match.group(1))
 
+    # Sort the tags
+    tags.sort()
+
     return Counter(tags)
 
 
@@ -51,7 +54,7 @@ def dump_chart_to_file(tag_counts, filename="DEBUG.md"):
 
 
 def update_debug_file(md_content):
-    tag_pattern = re.compile(r"\[(\S*)\]")
+    tag_pattern = re.compile(r"\[([\S_]*)\]")
     tag_counts = parse_md_file(md_content, tag_pattern)
     dump_chart_to_file(tag_counts, "PROGRESS.md")
 

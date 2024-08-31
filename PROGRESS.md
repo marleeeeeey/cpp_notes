@@ -3,10 +3,10 @@
 ```mermaid
 pie
   "DONE" : 45
-  "TODO" : 101
+  "IN_PROGRESS" : 1
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
+  "TODO" : 101
 ```
 
 ### 2024-08-20
@@ -14,10 +14,10 @@ pie
 ```mermaid
 pie
   "DONE" : 45
-  "TODO" : 108
+  "IN_PROGRESS" : 1
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
+  "TODO" : 108
 ```
 
 ### 2024-08-23
@@ -25,10 +25,10 @@ pie
 ```mermaid
 pie
   "DONE" : 45
-  "TODO" : 108
+  "IN_PROGRESS" : 1
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
+  "TODO" : 108
 ```
 
 ### 2024-08-24
@@ -36,10 +36,10 @@ pie
 ```mermaid
 pie
   "DONE" : 45
-  "TODO" : 108
+  "IN_PROGRESS" : 1
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
+  "TODO" : 108
 ```
 
 ### 2024-08-26
@@ -47,11 +47,11 @@ pie
 ```mermaid
 pie
   "DONE" : 48
-  "TODO" : 121
+  "IN_PROGRESS" : 1
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
   "TODO_NOTES" : 2
+  "TODO" : 121
 ```
 
 ### 2024-08-28
@@ -59,21 +59,25 @@ pie
 ```mermaid
 pie
   "DONE" : 49
-  "TODO" : 127
+  "IN_PROGRESS" : 1
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
   "TODO_NOTES" : 2
+  "TODO" : 127
 ```
 
-### 2024-08-31
+### 2024-09-01
 
 ```mermaid
 pie
-  "DONE" : 52
-  "TODO" : 130
+  "DONE" : 53
+  "IN_PROGRESS" : 3
   "REVIEW" : 1
   "SKIP" : 2
-  "IN_PROGRESS" : 1
+  "TODO" : 120
+  "TODO1" : 3
+  "TODO3" : 5
+  "TODO4" : 1
+  "TODO5" : 1
   "TODO_NOTES" : 5
 ```

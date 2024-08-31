@@ -291,7 +291,7 @@
     - 01:46:44 VulkanHPP и C++API
     - 01:55:13 Обзор литературы и cliffhanger
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 15. Вычисления на GPU. - 2022 [TODO] [SKIPPED]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 15. Вычисления на GPU. - 2022 [TODO]
   - https://www.youtube.com/watch?v=Ccclo1GCX0A
     - 00:00:00 Гетерогенные вычисления и OpenCL
     - 00:09:31 Владение ресурсами и контексты
@@ -378,7 +378,7 @@
 - Jonathan Boccara's blog - Fluent C++ [TODO]
   - https://www.fluentcpp.com/
 
-- Как препроцессор разворачивает код [TODO] [TOOL]
+- Тула для просмотра, как компилятор препроцессит и разворачивает код (шаблоны) [TODO3]
   - https://cppinsights.io/
 
 - Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 20. Итераторы - 2022 [DONE]
@@ -394,7 +394,7 @@
     - 01:20:08 Обратный обход и вставка
     - 01:29:00 Завершение и анонс инвалидации
 
-- Замеры времени выполнения [TODO] [TOOL]
+- Замеры времени выполнения [TODO]
   - https://quick-bench.com/
 
 - Scott Meyers - "Effective STL: 50 Specific Ways to Improve Your Use of the Standard Template Library" - 2001 [TODO]
@@ -406,7 +406,7 @@
 - Patrick Neidzelski - Building and Extending the Iterator Hierarchy in a Modern, Multicore World, CppCon - 2016 [TODO]
   - https://www.youtube.com/watch?v=N80hpts1SSk
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 1 - 2022 [TODO] [SKIPPED]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 1 - 2022 [TODO]
   - https://www.youtube.com/watch?v=yEdoXnEaMrw
     - 00:00:00 Введение: компиляторы и лицензии
     - 00:09:30 LLVM IR
@@ -418,7 +418,7 @@
     - 01:11:50 Тонкости создания if и while
     - 01:21:00 Домашнее задание и литература
 
-- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 2 - 2022 [TODO] [SKIPPED]
+- Konstantin Vladimirov - Базовый курс C++ (MIPT, ILab). Lecture 22. LLVM, часть 2 - 2022 [TODO]
   - https://www.youtube.com/watch?v=rLshTsxgDcw
     - 00:00:00 Свободное ПО
     - 00:03:00 Невалидные итераторы
@@ -560,7 +560,8 @@
 - Tristan Brindle — "Conquering C++ 20 Ranges", CppCon - 2021 [TODO]
   - https://www.youtube.com/watch?v=3MBtLeyJKg0
 
-- Library range-v3 on GitHub: https://github.com/ericniebler/range-v3/ [TODO] [LIBRARY]
+- Library range-v3  [TODO4]
+  - https://github.com/ericniebler/range-v3/
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 01. Строки - 2022 [DONE]
   - https://www.youtube.com/watch?v=9N_wJ7oIHDk
@@ -647,7 +648,7 @@
     - 00:37:50 Виртуальная память
     - 00:47:40 Завершение
 
-- Sergey Slotin - Algorithms for Modern Hardware [TODO] [TOP]
+- Sergey Slotin - Algorithms for Modern Hardware [TODO3]
   - https://en.algorithmica.org/hpc/
   - https://ru.algorithmica.org/cs/
   - https://github.com/sslotin/amh-code/tree/main/cpu-cache
@@ -865,18 +866,18 @@
     - 01:22:00 Deducing this
     - 01:28:08 Литература и завершение
 
-- D. Abrahams - Unifying Generic Functions and Function Objects, C++Next - 2012 [TODO] [PRIORITY_LOW]
+- D. Abrahams - Unifying Generic Functions and Function Objects, C++Next - 2012 [TODO]
   - http://cpp-next.com/archive/2012/09/unifying-generic-functions-and-function-objects/
   - Древняя статья по внедренюю лямбд в С++. Можно не читать.
 
-- Stephan T. Lavavej - functional: What's New, And Proper Usage, CppCon - 2015 [TODO] [PRIORITY_MEDIUM]
+- Stephan T. Lavavej - functional: What's New, And Proper Usage, CppCon - 2015 [TODO5]
   - https://www.youtube.com/watch?v=zt7ThwVfap0
   - Хорошее видео немного выше своего времени.
 
-- Arthur O'Dwyer - Back to Basics: Type Erasure, CppCon - 2019 [TODO] [PRIORITY_HIGH]
+- Arthur O'Dwyer - Back to Basics: Type Erasure, CppCon - 2019 [TODO3]
   - https://www.youtube.com/watch?v=tbUCHifyT24
 
-- Arthur O'Dwyer - Back to Basics: Lambdas from Scratch, CppCon - 2019 [TODO] [PRIORITY_HIGH]
+- Arthur O'Dwyer - Back to Basics: Lambdas from Scratch, CppCon - 2019 [TODO3]
   - https://www.youtube.com/watch?v=3jCOwajNch0
 
 - Ben Deane - Deducing this Patterns, CppCon - 2021 [TODO]
@@ -885,8 +886,9 @@
 - Sy Brand - C++23’s Deducing this: what it is, why it is, how to use it - 2022 [TODO]
   - https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/
 
-- Timur Doumler - C++ Lambda Idioms, CppCon - 2022 [TODO] [FUNNY] [PRIORITY_MEDIUM]
+- Timur Doumler - C++ Lambda Idioms, CppCon - 2022 [TODO3]
   - https://www.youtube.com/watch?v=xBAduq0RGes
+  - Забавный, смешной и полезный доклад.
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 14. Диапазоны, часть 1 - 2022  [TODO_NOTES]
   - https://www.youtube.com/watch?v=sfweY8osTEs
@@ -1138,9 +1140,47 @@
 - Антон Полухин - C++ на практике, C++ Siberia - 2019 [DONE]
   - https://www.youtube.com/watch?v=g2iyNH2Gh1k
 
-- Антон Полухин - Разработка приложений на С++ с использованием Boost - 2020 [TODO]
+- Антон Полухин - Разработка приложений на С++ с использованием Boost - 2020 [TODO1]
   - https://www.labirint.ru/books/761225/
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 22. Параллелизм - 2023  [TODO]
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 22. Параллелизм - 2023  [DONE]
+  - https://www.youtube.com/watch?v=nvjQTt2RM8A
+    - 00:00:00 Параллелизм: алгоритмы
+    - 00:12:20 Свой параллельный reduce
+    - 00:23:40 Явная асинхронность
+    - 00:39:20 Основы GPGPU
+    - 00:49:15 Королевская задача
+    - 00:59:20 Рабочие группы и инверсия параллелизма
+    - 01:10:42 Попытка помирить оба мира
+    - 01:22:55 Обзор литературы
+
+- Rainer Grimm - Concurrency with Modern C++ - 2022.pdf [TODO1]
+  - https://www.amazon.com/Concurrency-Modern-professional-programmer-concurrency/dp/B0CT41Q1FF
+
+- Rainer Grimm - C++20 Get the Details - 2023.pdf [TODO1]
+  - https://www.amazon.com/C-20-Details-Rainer-Grimm/dp/B09328NKXK
+
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [IN_PROGRESS]
+  - https://www.youtube.com/watch?v=mDajl0pIUjQ
+    - 00:00:00 Сопрограммы и их разновидности
+    - 00:11:05 Составные части сопрограммы
+    - 00:19:10 std::generator
+    - 00:22:24 Hello coroutine world
+    - 00:34:30 Простой генератор
+    - 00:45:40 Небольшой баг для гурманов
+    - 00:50:40 Range based использование
+    - 00:54:35 Объекты ожидания
+    - 01:00:30 Подписка на результат
+    - 01:15:29 Преобразования объектов ожидания
+
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 2 - 2023  [TODO]
+  - https://www.youtube.com/watch?v=WZhxMwKaXmw
+    - 00:00:00 Вспоминаем пройденное
+    - 00:08:50 Варианты симметрии в корутинах
+    - 00:13:30 Конечные автоматы
+    - 00:25:35 Co-optional
+    - 00:33:15 Многопоточная подписка
+    - 00:45:25 Главная тайна корутин
+    - 00:51:20 Будущие МакНилиса
+    - 00:57:15 Комбинации асинхронных вычислений
+    - 01:04:40 Литература и напуственные слова

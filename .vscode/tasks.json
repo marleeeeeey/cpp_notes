@@ -132,7 +132,7 @@
     },
     {
       "label": "095. Calc Links Progress to Mermaid Pie Chart",
-      "command": "python ./scripts/mermaid_pie_chart_generation.py && ./PROGRESS.md",
+      "command": "python ./scripts/mermaid_pie_chart_generation.py",
       "type": "shell",
       "options": {
         "statusbar": {

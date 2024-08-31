@@ -218,6 +218,17 @@
   - [`std::packaged_task` + `std::thread` = `std::async`](#stdpackaged_task--stdthread--stdasync)
   - [Синхронизация на GPU](#синхронизация-на-gpu)
   - [`std::execution` (C++26) - новый способ управления параллелизмом](#stdexecution-c26---новый-способ-управления-параллелизмом)
+- [19. Сопрограммы (coroutines, fibers)](#19-сопрограммы-coroutines-fibers)
+  - [Интерфейс функции и сопрограммы: SUSPEND, ACTIVATE, TERMINATE, YIELD](#интерфейс-функции-и-сопрограммы-suspend-activate-terminate-yield)
+  - [Классификация корутин (мы будем рассматривать асимметричные встроенные корутины)](#классификация-корутин-мы-будем-рассматривать-асимметричные-встроенные-корутины)
+  - [Сопрограммы в C++20 (пример)](#сопрограммы-в-c20-пример)
+  - [Составные части корутины](#составные-части-корутины)
+  - [`co_await` - точка магии](#co_await---точка-магии)
+  - [Жизнь корутины](#жизнь-корутины)
+  - [`std::generator` C++23: range-based generator](#stdgenerator-c23-range-based-generator)
+  - [1. Делаем свою корутину](#1-делаем-свою-корутину)
+  - [2. Добавляем `co_yield` к нашей корутине](#2-добавляем-co_yield-к-нашей-корутине)
+  - [3. добавляем range-based for к нашей корутине](#3-добавляем-range-based-for-к-нашей-корутине)
 
 ## 01. Strings
 
@@ -4912,4 +4923,149 @@ ex::sender auto sender = ex::via_stream(sched, stream) |
     ex::for_each([](int x) { std::cout << x << std::endl; });
 
 tt::sync_wait(sender | ex::then([]() { std::cout << "done\n"; }));
+```
+
+## 19. Сопрограммы (coroutines, fibers)
+
+### Интерфейс функции и сопрограммы: SUSPEND, ACTIVATE, TERMINATE, YIELD
+
+- `caller` - это вызывающая функция.
+- `callee` - это вызываемая функция.
+
+**Атомарные операции**
+
+- `SUSPEND` - передача управления.
+- `ACTIVATE` - выделение стека.
+- `TERMINATE` - убираем стек.
+- `YIELD` - передача управления.
+
+**Интерфейс функции**
+
+- Вызвать = SUSPEND + ACTIVATE (со стороны caller)
+- Вернуться = TERMINATE + YIELD (со стороны callee)
+
+**Интерфейс сопрограммы**
+
+- Вызвать = SUSPEND + ACTIVATE (со стороны caller)
+- Вернуться = TERMINATE + YIELD (со стороны callee)
+- Приостановить = SUSPEND + YIELD (со стороны **callee**)
+- Возобновить = SUSPEND + YIELD (со стороны **caller**)
+
+### Классификация корутин (мы будем рассматривать асимметричные встроенные корутины)
+
+- **Симметричные** против **асимметричных** - должна ли приостановка корутины переключать контекст на другую корутину?
+- **Стековые** против **встроенных** - должна ли корутина сохранять весь свой стек или только небольшой фрейм?
+- Мы будем рассматривать асимметричные встроенные корутины (как в python) и в C++20 попали именно они.
+- Ирония в том, что `boost::context`, `boost::fiber`, `boost::coroutine` это всё стековые корутины.
+
+### Сопрограммы в C++20 (пример)
+
+```cpp
+generator natural_nums() {          // такая функция называется генератор
+    int num = 0;
+    for(;;) {
+        co_yield num;               // приостановить и вернуть значение
+        num += 1;
+    }
+}
+
+auto nums = natural_nums();         // объект возобновляемой функции
+
+nums.move_next();                   // возобновить
+auto y = nums.current_value();      // y = 0
+
+nums.move_next();                   // ещё разок возобновить
+auto z = nums.current_value();      // z = 1
+```
+
+### Составные части корутины
+
+- Корутина имеет невидимый **объект обещания (promise)** и **возвращаемый объект (retobj)** получаемый через обращение к promise, нужный для того, чтобы управлять возобновлением и завершением корутины.
+- Корутина грамматически отличается от функции наличием в её теле одного из трёх ко-операторов: `co_await`, `co_yield`, `co_return`.
+  - Наличие одного из этих операторов делает функцию корутиной и компилятор генерирует для неё специальный код.
+
+```cpp
+generator natural_nums() {
+    // компилятор сгенерирует:
+    typename generator::promise_type promise;
+    generator retobj = promise.get_return_object();
+    // тело корутины
+}
+```
+
+### `co_await` - точка магии
+
+- Два из трёх ко-операторов выражаются через третий (ниже псевдотокен end означает завершение корутины)
+
+```cpp
+co_await <expr>     // приостаналивает выполнение и отдаёт управление вызывающей функции при этом expr позволяет управлять процессом
+
+co_yield <expr>     // это co_await promise.yield_value(<expr>)
+co_return           // это co_await promise.return_void() end
+co_return <expr>    // это co_await promise.return_value(<expr>) end
+```
+
+### Жизнь корутины
+
+```cpp
+generator natural_nums() { /* тело корутины */ }
+
+// Рассмотрим какой код по настоящему сгенерирует компилятор
+generator natural_nums() {
+    promise_type promise;
+    generator retobj = promise.get_return_object();     // get_return_object определяется пользователем
+    co_await promise.initial_suspend();                 // initial_suspend определяется пользователем
+    try { /* тело корутины */ }
+    catch(...) { promise.unhandled_exception(); }       // unhandled_exception определяется пользователем - последний шанс обработать исключение
+    final_suspend:
+    co_await promise.final_suspend();                   // final_suspend определяется пользователем
+    end                                                 // волшебство (псевдокод)
+
+                                                        // yeld_value, return_void/return_value определяются пользователем
+}
+```
+
+### `std::generator` C++23: range-based generator
+
+- https://en.cppreference.com/w/cpp/coroutine/generator
+- [code/tilir_masters/19_10_std_generator.cpp](code/tilir_masters/19_10_std_generator.cpp)
+
+```cpp
+import std;
+std::generator<int> natural_nums() {            // возвращает Range
+    int num = 0;
+    for(;;) {
+        co_yield num;
+        num += 1;
+    }
+}
+....
+auto nums = natural_nums() | views::take(14);   // При итерации по Range вызывается генератор
+```
+
+### 1. Делаем свою корутину
+
+- https://godbolt.org/z/TnPzs19xj
+- [code/tilir_masters/19_12_naive_coroutine.cpp](code/tilir_masters/19_12_naive_coroutine.cpp)
+
+### 2. Добавляем `co_yield` к нашей корутине
+
+- https://godbolt.org/z/hdvc88rEK - добаление `co_yield` к нашей корутине.
+- [code/tilir_masters/19_14_naive_coroutine2.cpp](code/tilir_masters/19_14_naive_coroutine2.cpp)
+
+### 3. добавляем range-based for к нашей корутине
+
+- https://godbolt.org/z/3vEP5nE3T - добавляем range-based for к нашей корутине.
+- [code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp](code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp)
+
+```cpp
+// Если добавить к генератору begin и end, его можно использовать для rangebased итерации
+for(auto num : sequence(5, 20, 3)) { что-то делаем }
+
+// Здесь генератор sequence(start, fin, step) это что-то совсем простое, все трюки скрыты в его promise type
+template <typename T>
+range_gen<T> sequence(int start, int fin, int step) {
+    for(int num = start; num < fin; num += step)
+    co_yield num;
+}
 ```

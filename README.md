@@ -54,6 +54,12 @@ In the [code folder](/code), there are examples of my programs illustrating the 
 
 _* Optional tools are used for better integration with VSCode and debugging._
 
+#### Clone the repository
+
+```bash
+git clone --recurse-submodules https://github.com/marleeeeeey/cpp_notes.git
+```
+
 #### Build examples with VSCode (preferred)
 
 CMake build preferred before manual build because it generates `compile_commands.json` for better integration with VSCode.

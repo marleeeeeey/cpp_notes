@@ -7,3 +7,6 @@
 [submodule "thirdparty/benchmark"]
 	path = thirdparty/benchmark
 	url = https://github.com/google/benchmark.git
+[submodule "submodules/anthonywilliams_code"]
+	path = submodules/anthonywilliams_code
+	url = https://github.com/marleeeeeey/anthonywilliams_code.git

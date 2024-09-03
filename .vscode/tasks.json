@@ -30,7 +30,7 @@
       "options": {
         "statusbar": {
           "hide": false,
-          "label": "SetCurrentFileAsSourse"
+          "label": "SetCurrent"
         }
       },
     },
@@ -81,6 +81,21 @@
         "statusbar": {
           "hide": false,
           "label": "Build and Run"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "040. + Build and Run Current",
+      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "dependsOn": [
+        "010. Set Current File As Sourse",
+        "030. + Build"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "BaR Current"
         }
       },
       "type": "shell"

@@ -11,4 +11,5 @@ CMakeSettings.json
 leak_report.xml
 DEBUG.md
 **/*.drawio.bkp
+**/.$*.drawio.dtmp
 **/.vagrant/

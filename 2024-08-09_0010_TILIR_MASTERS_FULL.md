@@ -213,16 +213,17 @@
   - [Представте, если вы хотите подождать чего-то, что произойдет в другом потоке - барьеры](#представте-если-вы-хотите-подождать-чего-то-что-произойдет-в-другом-потоке---барьеры)
   - [`std::latch` - барьеры в C++20](#stdlatch---барьеры-в-c20)
   - [Мы хотим перейти от очереди интов, к очереди задач (функторов, разных по сигнатуре).](#мы-хотим-перейти-от-очереди-интов-к-очереди-задач-функторов-разных-по-сигнатуре)
-- [17. Atomics (TODO - make notes)](#17-atomics-todo---make-notes)
+- [17. Atomics \[TODO\_NOTES\]](#17-atomics-todo_notes)
 - [18. Parallelism](#18-parallelism)
   - [`std::packaged_task` + `std::thread` = `std::async`](#stdpackaged_task--stdthread--stdasync)
   - [Синхронизация на GPU](#синхронизация-на-gpu)
   - [`std::execution` (C++26) - новый способ управления параллелизмом](#stdexecution-c26---новый-способ-управления-параллелизмом)
-- [19. Сопрограммы (coroutines, fibers)](#19-сопрограммы-coroutines-fibers)
+- [19. Сопрограммы (coroutines, fibers) \[TODO\_NOTES\]](#19-сопрограммы-coroutines-fibers-todo_notes)
   - [Интерфейс функции и сопрограммы: SUSPEND, ACTIVATE, TERMINATE, YIELD](#интерфейс-функции-и-сопрограммы-suspend-activate-terminate-yield)
   - [Классификация корутин (мы будем рассматривать асимметричные встроенные корутины)](#классификация-корутин-мы-будем-рассматривать-асимметричные-встроенные-корутины)
   - [Сопрограммы в C++20 (пример)](#сопрограммы-в-c20-пример)
   - [Составные части корутины](#составные-части-корутины)
+  - [Диаграмма корутины](#диаграмма-корутины)
   - [`co_await` - точка магии](#co_await---точка-магии)
   - [Жизнь корутины](#жизнь-корутины)
   - [`std::generator` C++23: range-based generator](#stdgenerator-c23-range-based-generator)
@@ -4874,7 +4875,7 @@ auto create_task(F f, Args&&... args)
 }
 ```
 
-## 17. Atomics (TODO - make notes)
+## 17. Atomics [TODO_NOTES]
 
 ## 18. Parallelism
 
@@ -4925,7 +4926,7 @@ ex::sender auto sender = ex::via_stream(sched, stream) |
 tt::sync_wait(sender | ex::then([]() { std::cout << "done\n"; }));
 ```
 
-## 19. Сопрограммы (coroutines, fibers)
+## 19. Сопрограммы (coroutines, fibers) [TODO_NOTES]
 
 ### Интерфейс функции и сопрограммы: SUSPEND, ACTIVATE, TERMINATE, YIELD
 
@@ -4993,6 +4994,14 @@ generator natural_nums() {
 }
 ```
 
+### Диаграмма корутины
+
+- [diags/coroutines.drawio](diags/coroutines.drawio)
+
+![coroutines001](screenshots/coroutines001.png)
+
+![coroutines002](screenshots/coroutines002.png)
+
 ### `co_await` - точка магии
 
 - Два из трёх ко-операторов выражаются через третий (ниже псевдотокен end означает завершение корутины)
@@ -5050,12 +5059,12 @@ auto nums = natural_nums() | views::take(14);   // При итерации по 
 
 ### 2. Добавляем `co_yield` к нашей корутине
 
-- https://godbolt.org/z/hdvc88rEK - добаление `co_yield` к нашей корутине.
+- https://godbolt.org/z/hdvc88rEK
 - [code/tilir_masters/19_14_naive_coroutine2.cpp](code/tilir_masters/19_14_naive_coroutine2.cpp)
 
 ### 3. добавляем range-based for к нашей корутине
 
-- https://godbolt.org/z/3vEP5nE3T - добавляем range-based for к нашей корутине.
+- https://godbolt.org/z/3vEP5nE3T
 - [code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp](code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp)
 
 ```cpp

@@ -1,1 +1,1 @@
-C:/dev/cpp_notes/code/torjo_boost_asio/examples/7/ssl_client_connect_to_yahoo.cpp
+C:/dev/cpp_notes/code/tilir_masters/02_10_nth_power.cpp

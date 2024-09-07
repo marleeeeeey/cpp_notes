@@ -2,23 +2,8 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "001. Options: -DLINK_GOOGLE_TEST=OFF",
-      "command": "python ./scripts/vscode_tasks_generator.py --test",
-      "type": "shell",
-    },
-    {
-      "label": "001. Options: -DLINK_GOOGLE_BENCHMARK=OFF",
-      "command": "python ./scripts/vscode_tasks_generator.py --benchmark",
-      "type": "shell",
-    },
-    {
       "label": "001. Options: -DCMAKE_BUILD_TYPE=Debug",
       "command": "python ./scripts/vscode_tasks_generator.py --config",
-      "type": "shell",
-    },
-    {
-      "label": "001. Options: -DLINK_BOOST=ON",
-      "command": "python ./scripts/vscode_tasks_generator.py --boost",
       "type": "shell",
     },
     {
@@ -37,19 +22,39 @@
       "type": "shell",
     },
     {
-      "label": "001. Options: -DLINK_OPENSSL=ON",
+      "label": "002. Toggle Libraries: -DLINK_BOOST=OFF",
+      "command": "python ./scripts/vscode_tasks_generator.py --boost",
+      "type": "shell",
+    },
+    {
+      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=ON",
+      "command": "python ./scripts/vscode_tasks_generator.py --test",
+      "type": "shell",
+    },
+    {
+      "label": "002. Toggle Libraries: -DLINK_GOOGLE_BENCHMARK=OFF",
+      "command": "python ./scripts/vscode_tasks_generator.py --benchmark",
+      "type": "shell",
+    },
+    {
+      "label": "002. Toggle Libraries: -DLINK_OPENSSL=OFF",
       "command": "python ./scripts/vscode_tasks_generator.py --openssl",
       "type": "shell",
     },
     {
-        "label": "006. Windows only: install local vcpkg",
-        "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-Windows",
-        "type": "shell"
+      "label": "002. Toggle Libraries: -DLINK_LIBPNG=OFF",
+      "command": "python ./scripts/vscode_tasks_generator.py --libpng",
+      "type": "shell",
     },
     {
-        "label": "008. Git submodule update",
-        "command": "git submodule update --init --recursive",
-        "type": "shell"
+      "label": "020. Configure: 021. Windows only: install local vcpkg",
+      "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-Windows",
+      "type": "shell"
+    },
+    {
+      "label": "020. Configure: 022. Git submodule update",
+      "command": "git submodule update --init --recursive",
+      "type": "shell"
     },
     {
       "label": "010. Set Current File As Sourse",
@@ -63,9 +68,9 @@
       },
     },
     {
-      "label": "020. + Configure",
+      "label": "020. Configure: 023. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=ON && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=OFF -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -76,10 +81,10 @@
       "type": "shell"
     },
     {
-      "label": "030. + Build",
+      "label": "040. Build and Run: 040. Build",
       "command": " cmake --build build/debug -- -k 0 ",
       "dependsOn": [
-        "020. + Configure"
+        "020. Configure: 023. CMake Configure"
       ],
       "options": {
         "statusbar": {
@@ -90,10 +95,10 @@
       "type": "shell"
     },
     {
-      "label": "040. + Build and Run",
+      "label": "040. Build and Run: 041. Build and Run",
       "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
       "dependsOn": [
-        "030. + Build"
+        "040. Build and Run: 040. Build"
       ],
       "options": {
         "statusbar": {
@@ -104,11 +109,11 @@
       "type": "shell"
     },
     {
-      "label": "040. + Build and Run Current",
+      "label": "040. Build and Run: 042. Build and Run Current",
       "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
       "dependsOn": [
         "010. Set Current File As Sourse",
-        "030. + Build"
+        "040. Build and Run: 040. Build"
       ],
       "options": {
         "statusbar": {
@@ -119,11 +124,11 @@
       "type": "shell"
     },
     {
-      "label": "041. + Build and Run Current 1",
+      "label": "040. Build and Run: 043. Build and Run Current 1",
       "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example.exe ${workspaceFolder}/build/debug/1_cpp_file_example.exe && ${workspaceFolder}/build/debug/1_cpp_file_example.exe",
       "dependsOn": [
         "010. Set Current File As Sourse",
-        "030. + Build"
+        "040. Build and Run: 040. Build"
       ],
       "options": {
         "statusbar": {
@@ -134,11 +139,11 @@
       "type": "shell"
     },
     {
-      "label": "041. + Build and Run Current 2",
+      "label": "040. Build and Run: 044. Build and Run Current 2",
       "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example.exe ${workspaceFolder}/build/debug/2_cpp_file_example.exe && ${workspaceFolder}/build/debug/2_cpp_file_example.exe",
       "dependsOn": [
         "010. Set Current File As Sourse",
-        "030. + Build"
+        "040. Build and Run: 040. Build"
       ],
       "options": {
         "statusbar": {
@@ -149,10 +154,10 @@
       "type": "shell"
     },
     {
-      "label": "050. + Build and Run with Deleaker",
+      "label": "040. Build and Run: 045. Build and Run with Deleaker",
       "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/debug/cpp_file_example.exe /someOption && python ${workspaceFolder}/scripts/parse_deleaker_report.py --no-verbose",
       "dependsOn": [
-        "030. + Build"
+        "040. Build and Run: 040. Build"
       ],
       "options": {
         "statusbar": {
@@ -163,7 +168,7 @@
       "type": "shell"
     },
     {
-      "label": "040. + Run Latest",
+      "label": "040. Build and Run: 046. Run Latest",
       "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
       "options": {
         "statusbar": {
@@ -174,7 +179,7 @@
       "type": "shell"
     },
     {
-      "label": "040. + Run Latest In Loop",
+      "label": "040. Build and Run: 047. Run Latest In Loop",
       "command": "python ./scripts/infinite_runner.py ${workspaceFolder}/build/debug/cpp_file_example.exe",
       "options": {
         "statusbar": {

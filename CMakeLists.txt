@@ -6,6 +6,7 @@ option(LINK_GOOGLE_TEST "Link Google Test" ON)
 option(LINK_GOOGLE_BENCHMARK "Link Google Benchmark" OFF)
 option(LINK_BOOST "Link Boost Libraries" OFF)
 option(LINK_OPENSSL "Link OpenSSL" OFF)
+option(LINK_LIBPNG "Link libpng" OFF)
 
 # #################### Setup compiler options #######################
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,6 +48,12 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-implicit-int-float-conversion>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-writable-strings>
     $<$<CXX_COMPILER_ID:Clang>:-Wno-implicit-fallthrough>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-implicit-int-conversion>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-parentheses>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-vexing-parse>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-result>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-float-conversion>
 )
 
 if(LINK_GOOGLE_TEST)
@@ -70,12 +77,21 @@ if(LINK_BOOST)
         cmake_policy(SET CMP0167 NEW)
     endif()
 
-    find_package(Boost REQUIRED COMPONENTS program_options asio headers thread)
-    target_link_libraries(cpp_file_example PRIVATE Boost::program_options Boost::asio Boost::headers Boost::thread)
+    find_package(Boost REQUIRED COMPONENTS program_options asio headers thread
+        timer filesystem system random unit_test_framework)
+    target_link_libraries(cpp_file_example PRIVATE
+        Boost::program_options Boost::asio Boost::headers Boost::thread
+        Boost::timer Boost::filesystem Boost::system Boost::random Boost::unit_test_framework)
 endif()
 
 if(LINK_OPENSSL)
     # #################### Adding OpenSSL #######################
     find_package(OpenSSL REQUIRED)
     target_link_libraries(cpp_file_example PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+endif()
+
+if(LINK_LIBPNG)
+    # #################### Adding libpng #######################
+    find_package(PNG REQUIRED)
+    target_link_libraries(cpp_file_example PRIVATE PNG::PNG)
 endif()

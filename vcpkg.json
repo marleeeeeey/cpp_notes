@@ -4,6 +4,7 @@
   "dependencies": [
     "boost",
     "openssl",
+    "libpng",
     "gtest"
   ]
 }

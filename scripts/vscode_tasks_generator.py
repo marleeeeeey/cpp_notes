@@ -36,6 +36,7 @@ if __name__ == "__main__":
     parser.add_argument("--boost", action="store_true", default=False, help="Toogle Boost Linking")
     parser.add_argument("--toggle_vcpkg", action="store_true", default=False, help="Toogle Vcpkg As Dependency Manager")
     parser.add_argument("--openssl", action="store_true", default=False, help="Toogle OpenSSL Linking")
+    parser.add_argument("--libpng", action="store_true", default=False, help="Toogle LibPNG Linking")
     args = parser.parse_args()
 
     if args.test:
@@ -66,3 +67,6 @@ if __name__ == "__main__":
 
     if args.openssl:
         toggle_text_in_vscode_task_content(["-DLINK_OPENSSL=ON", "-DLINK_OPENSSL=OFF"])
+
+    if args.libpng:
+        toggle_text_in_vscode_task_content(["-DLINK_LIBPNG=ON", "-DLINK_LIBPNG=OFF"])

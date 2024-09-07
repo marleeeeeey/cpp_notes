@@ -13,3 +13,6 @@
 [submodule "submodules/apolukhin__boost_code"]
 	path = submodules/apolukhin__boost_code
 	url = https://github.com/marleeeeeey/apolukhin__boost_code.git
+[submodule "submodules/apolukhin_boost_code"]
+	path = submodules/apolukhin_boost_code
+	url = https://github.com/marleeeeeey/apolukhin_boost_code.git

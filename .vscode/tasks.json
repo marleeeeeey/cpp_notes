@@ -47,12 +47,17 @@
       "type": "shell",
     },
     {
-      "label": "020. Configure: 021. Windows only: install local vcpkg",
+      "label": "020. Configure: 021. Windows: install local vcpkg",
       "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-Windows",
       "type": "shell"
     },
     {
-      "label": "020. Configure: 022. Git submodule update",
+      "label": "020. Configure: 022. Linux: install local vcpkg",
+      "command": "git clone https://github.com/microsoft/vcpkg && ./vcpkg/bootstrap-vcpkg.sh && ./vcpkg/vcpkg install --triplet=x64-linux",
+      "type": "shell"
+    },
+    {
+      "label": "020. Configure: 023. Git submodule update",
       "command": "git submodule update --init --recursive",
       "type": "shell"
     },

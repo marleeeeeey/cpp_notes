@@ -37,6 +37,11 @@
       "type": "shell",
     },
     {
+      "label": "001. Options: -DLINK_OPENSSL=ON",
+      "command": "python ./scripts/vscode_tasks_generator.py --openssl",
+      "type": "shell",
+    },
+    {
         "label": "006. Windows only: install local vcpkg",
         "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-Windows",
         "type": "shell"
@@ -60,7 +65,7 @@
     {
       "label": "020. + Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=ON && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -109,6 +114,36 @@
         "statusbar": {
           "hide": false,
           "label": "BaR Current"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "041. + Build and Run Current 1",
+      "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example.exe ${workspaceFolder}/build/debug/1_cpp_file_example.exe && ${workspaceFolder}/build/debug/1_cpp_file_example.exe",
+      "dependsOn": [
+        "010. Set Current File As Sourse",
+        "030. + Build"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "BaR C1"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "041. + Build and Run Current 2",
+      "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example.exe ${workspaceFolder}/build/debug/2_cpp_file_example.exe && ${workspaceFolder}/build/debug/2_cpp_file_example.exe",
+      "dependsOn": [
+        "010. Set Current File As Sourse",
+        "030. + Build"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "BaR C2"
         }
       },
       "type": "shell"

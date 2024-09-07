@@ -35,6 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("--deleaker_verbose", action="store_true", default=False, help="Toogle Deleaker Verbose")
     parser.add_argument("--boost", action="store_true", default=False, help="Toogle Boost Linking")
     parser.add_argument("--toggle_vcpkg", action="store_true", default=False, help="Toogle Vcpkg As Dependency Manager")
+    parser.add_argument("--openssl", action="store_true", default=False, help="Toogle OpenSSL Linking")
     args = parser.parse_args()
 
     if args.test:
@@ -62,3 +63,6 @@ if __name__ == "__main__":
 
     if args.toggle_vcpkg:
         toggle_text_in_vscode_task_content(["--preset use_vcpkg", "--preset use_native"])
+
+    if args.openssl:
+        toggle_text_in_vscode_task_content(["-DLINK_OPENSSL=ON", "-DLINK_OPENSSL=OFF"])

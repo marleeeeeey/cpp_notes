@@ -1,13 +1,12 @@
-#ifdef WIN32
-#define _WIN32_WINNT 0x0501
-#include <stdio.h>
-#endif
-
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#include <iostream>
+#include <thread>
+
 using namespace boost::asio;
 io_service service;
 
@@ -19,7 +18,12 @@ class talk_to_svr : public boost::enable_shared_from_this<talk_to_svr>, boost::n
 {
     typedef talk_to_svr self_type;
     talk_to_svr(const std::string& message) : sock_(service), started_(true), message_(message) {}
-    void start(ip::tcp::endpoint ep) { sock_.async_connect(ep, MEM_FN1(on_connect, _1)); }
+    void start(ip::tcp::endpoint ep)
+    {
+        sock_.async_connect(ep, MEM_FN1(on_connect, _1));
+        // SAME:
+        // sock_.async_connect(ep, [self = shared_from_this()](const error_code& err) { self->on_connect(err); }); //
+    }
 public:
     typedef boost::system::error_code error_code;
     typedef boost::shared_ptr<talk_to_svr> ptr;
@@ -47,6 +51,7 @@ private:
         else
             stop();
     }
+
     void on_read(const error_code& err, size_t bytes)
     {
         if (!err)
@@ -58,6 +63,7 @@ private:
     }
 
     void on_write(const error_code& err, size_t bytes) { do_read(); }
+
     void do_read()
     {
         async_read(sock_, buffer(read_buffer_), MEM_FN2(read_complete, _1, _2), MEM_FN2(on_read, _1, _2));
@@ -101,3 +107,9 @@ int main(int argc, char* argv[])
     }
     service.run();
 }
+
+/*
+server echoed our John says hi: OK
+server echoed our so does James: OK
+server echoed our Lucy just got home: OK
+*/

@@ -1,10 +1,8 @@
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "001. Options: -DLINK_GOOGLE_TEST=ON",
+      "label": "001. Options: -DLINK_GOOGLE_TEST=OFF",
       "command": "python ./scripts/vscode_tasks_generator.py --test",
       "type": "shell",
     },
@@ -19,7 +17,32 @@
       "type": "shell",
     },
     {
-        "label": "007. Git submodule update",
+      "label": "001. Options: -DLINK_BOOST=ON",
+      "command": "python ./scripts/vscode_tasks_generator.py --boost",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: -DCMAKE_CXX_STANDARD=23",
+      "command": "python ./scripts/vscode_tasks_generator.py --standard",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: parse_deleaker_report.py --no-verbose",
+      "command": "python ./scripts/vscode_tasks_generator.py --deleaker_verbose",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: cmake --preset use_vcpkg",
+      "command": "python ./scripts/vscode_tasks_generator.py --toggle_vcpkg",
+      "type": "shell",
+    },
+    {
+        "label": "006. Windows only: install local vcpkg",
+        "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-Windows",
+        "type": "shell"
+    },
+    {
+        "label": "008. Git submodule update",
         "command": "git submodule update --init --recursive",
         "type": "shell"
     },
@@ -35,19 +58,9 @@
       },
     },
     {
-      "label": "001. Options: -DCMAKE_CXX_STANDARD=23",
-      "command": "python ./scripts/vscode_tasks_generator.py --standard",
-      "type": "shell",
-    },
-    {
-      "label": "001. Options: parse_deleaker_report.py --no-verbose",
-      "command": "python ./scripts/vscode_tasks_generator.py --deleaker_verbose",
-      "type": "shell",
-    },
-    {
       "label": "020. + Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-O2 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF&& cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {

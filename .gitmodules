@@ -10,3 +10,6 @@
 [submodule "submodules/anthonywilliams_code"]
 	path = submodules/anthonywilliams_code
 	url = https://github.com/marleeeeeey/anthonywilliams_code.git
+[submodule "submodules/apolukhin__boost_code"]
+	path = submodules/apolukhin__boost_code
+	url = https://github.com/marleeeeeey/apolukhin__boost_code.git

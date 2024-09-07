@@ -1,0 +1,8 @@
+{
+  "name": "vcpkg-json",
+  "version-string": "1.0",
+  "dependencies": [
+    "boost",
+    "gtest"
+  ]
+}

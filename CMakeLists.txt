@@ -4,6 +4,7 @@ project(cpp_file_example VERSION 1.0)
 # ######################### User options ############################
 option(LINK_GOOGLE_TEST "Link Google Test" ON)
 option(LINK_GOOGLE_BENCHMARK "Link Google Benchmark" OFF)
+option(LINK_BOOST "Link Boost Libraries" OFF)
 
 # #################### Setup compiler options #######################
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,16 +48,9 @@ target_compile_options(cpp_file_example PRIVATE
 
 if(LINK_GOOGLE_TEST)
     # #################### Adding Google Test #######################
-    # https://github.com/google/googletest
-    include(FetchContent)
-    FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip)
-
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
-
-    target_link_libraries(cpp_file_example gtest_main)
-    add_test(NAME example_test COMMAND cpp_file_example)
+    find_package(GTest CONFIG REQUIRED)
+    target_link_libraries(cpp_file_example PRIVATE GTest::gtest GTest::gtest_main)
+    add_test(NAME cpp_file_example_test COMMAND cpp_file_example)
 endif()
 
 if(LINK_GOOGLE_BENCHMARK)
@@ -64,4 +58,15 @@ if(LINK_GOOGLE_BENCHMARK)
     # https://github.com/google/benchmark
     add_subdirectory(thirdparty/benchmark)
     target_link_libraries(cpp_file_example benchmark::benchmark)
+endif()
+
+if(LINK_BOOST)
+    # #################### Adding Boost Libraries #######################
+    # https://cmake.org/cmake/help/latest/module/FindBoost.html
+    if(POLICY CMP0167)
+        cmake_policy(SET CMP0167 NEW)
+    endif()
+
+    find_package(Boost REQUIRED COMPONENTS program_options)
+    target_link_libraries(cpp_file_example PRIVATE Boost::program_options)
 endif()

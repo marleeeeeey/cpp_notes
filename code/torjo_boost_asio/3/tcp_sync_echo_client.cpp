@@ -7,6 +7,7 @@
 
 using namespace boost::asio;
 using boost::system::error_code;
+
 io_service service;
 
 size_t read_complete(char* buf, const error_code& err, size_t bytes)
@@ -19,6 +20,7 @@ size_t read_complete(char* buf, const error_code& err, size_t bytes)
 }
 
 ip::tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 8001);
+
 void sync_echo(std::string msg)
 {
     msg += "\n";

@@ -1044,7 +1044,7 @@
 - Geoffrey Romer - What do you mean "thread-safe"?, CppCon - 2018 [TODO]
   - https://www.youtube.com/watch?v=s5PCh_FaMfM
 
-- Anthony Williams - C++ Concurrency in Action: Practical Multithreading - 2019 [IN_PROGRESS]
+- Anthony Williams - C++ Concurrency in Action: Practical Multithreading - 2019 [DONE]
   - https://www.amazon.com/C-Concurrency-Action-Practical-Multithreading/dp/1933988770
 
 - Rainer Grimm - Concurrency with Modern C++ - 2019 [TODO]
@@ -1154,13 +1154,13 @@
     - 01:10:42 Попытка помирить оба мира
     - 01:22:55 Обзор литературы
 
-- Rainer Grimm - Concurrency with Modern C++ - 2022.pdf [TODO1]
+- Rainer Grimm - Concurrency with Modern C++ - 2022.pdf [TODO2]
   - https://www.amazon.com/Concurrency-Modern-professional-programmer-concurrency/dp/B0CT41Q1FF
 
-- Rainer Grimm - C++20 Get the Details - 2023.pdf [TODO1]
+- Rainer Grimm - C++20 Get the Details - 2023.pdf [TODO2]
   - https://www.amazon.com/C-20-Details-Rainer-Grimm/dp/B09328NKXK
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [IN_PROGRESS]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [TODO2]
   - https://www.youtube.com/watch?v=mDajl0pIUjQ
     - 00:00:00 Сопрограммы и их разновидности
     - 00:11:05 Составные части сопрограммы
@@ -1173,7 +1173,7 @@
     - 01:00:30 Подписка на результат
     - 01:15:29 Преобразования объектов ожидания
 
-- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 2 - 2023  [TODO]
+- Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 2 - 2023  [TODO2]
   - https://www.youtube.com/watch?v=WZhxMwKaXmw
     - 00:00:00 Вспоминаем пройденное
     - 00:08:50 Варианты симметрии в корутинах
@@ -1184,3 +1184,31 @@
     - 00:51:20 Будущие МакНилиса
     - 00:57:15 Комбинации асинхронных вычислений
     - 01:04:40 Литература и напуственные слова
+
+- Torjo - Boost.Asio C++ Network Programming - 2013.pdf [DONE]
+  - https://www.amazon.com/Boost-Asio-C-Network-Programming-Second/dp/1785283073
+
+- Касперски - Самоучитель игры на WinSock.pdf [DONE]
+
+- Олифер - Компьютерные сети. Принципы, технологии, протоколы (6 издание) - 2020.pdf [TODO]
+
+- Glazer - Multiplayer Game Programming (Architecting Networked Games) - 2016.pdf [DONE]
+  - https://www.amazon.com/Multiplayer-Game-Programming-Architecting-Networked/dp/0134034309
+
+- Константин Владимиров - Курс лекций по С++ - 2021.pdf [TODO1]
+
+- Robert C. Martin - Clean Code - 2019.pdf [TODO2]
+  - https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882
+
+- Robert C. Martin - Clean Architecture - 2018.pdf [IN_PROGRESS]
+  - https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure-ebook/dp/B075LRM681?ref_=ast_author_dp
+
+- Alexander Shvets - Dive Into Design Patterns - 2019.pdf [TODO2]
+  - https://refactoring.guru/design-patterns/book
+
+- Gregory - Game Engine Architecture - 2018.pdf [TODO2]
+  - https://www.amazon.com/Game-Engine-Architecture-Third-Jason/dp/1138035459
+
+- Куксон - Разработка игр на Unreal Engine за 24 часа - 2019.pdf [TODO2]
+
+- Роджерсон - Основы COM - 2000.pdf [TODO3]

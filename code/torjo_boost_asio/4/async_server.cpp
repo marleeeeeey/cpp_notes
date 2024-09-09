@@ -107,9 +107,6 @@ private:
         do_write("clients " + msg + "\n");
     }
 
-    void do_ping() { do_write("ping\n"); }
-    void do_ask_clients() { do_write("ask_clients\n"); }
-
     void on_check_ping()
     {
         boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();

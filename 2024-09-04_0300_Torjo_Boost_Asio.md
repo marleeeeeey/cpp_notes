@@ -77,9 +77,7 @@ Boost Asio – это кроссплатформенная библиотека,
 
 ![boost_asio_async_client](screenshots/boost_asio_async_client.png)
 
-![boost_asio_async_server.png](screenshots/boost_asio_async_server.png)
-
-![boost_asio_async_server_orig](screenshots/boost_asio_async_server_orig.png)
+![boost_asio_async_server](screenshots/boost_asio_async_server.png)
 
 - [code/torjo_boost_asio/4/async_client.cpp](code/torjo_boost_asio/4/async_client.cpp)
 - [code/torjo_boost_asio/4/async_server.cpp](code/torjo_boost_asio/4/async_server.cpp)

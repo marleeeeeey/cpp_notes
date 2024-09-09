@@ -23,9 +23,32 @@ Boost Asio – это кроссплатформенная библиотека,
 
 В главе 2 рассматриваются основные классы и функции пространства имен Boost Asio. Классы `io_service` и `streambuf` используются для работы с синхронными и асинхронными функциями, такими как `read`, `read_add`, `read_until`, и их асинхронные версии. Пространство имен `boost::asio::ip` включает классы `address`, `endpoint`, `tcp`, и `udp`. Основные функции для подключения – это `connect` и `async_connect`, где `endpoint` представляет собой комбинацию адреса и порта.
 
+![boost_asio_fundamentals_01](screenshots/boost_asio_fundamentals_01.png)
+
 Сокеты могут быть типов `tcp`, `udp`, и `icmp` и поддерживают функции для работы с подключениями, такие как `assign`, `open`, `bind`, `connect`, `async_connect`, `close`, `shutdown`, и `cancel`. Для чтения и записи данных используются функции `async_receive`, `async_read_some`, `async_receive_from`, `async_send`, и `async_write`. Управление сокетами осуществляется с помощью функций `set_option` и `get_option`.
 
+![boost_asio_fundamentals_02](screenshots/boost_asio_fundamentals_02.png)
+
+![boost_asio_fundamentals_03](screenshots/boost_asio_fundamentals_03.png)
+
 Для работы с сокетами необходим буфер, который хранит данные, и важно следить за временем жизни буфера при выполнении асинхронных операций. Часто используется паттерн `shared_from_this` для передачи указателя на объект в асинхронные функции. Буферы могут оборачивать указатели, строки, массивы и другие структуры данных. `async_connect` и `async_read` вызывают обработчики по завершении операций.
+
+```cpp
+struct shared_buffer {
+    boost::shared_array<char> buff;
+    int size;
+    shared_buffer(size_t size) : buff(new char[size]), size(size) {}
+    mutable_buffers_1 asio_buff() const { return buffer(buff.get(), size); }
+};
+
+// when on_read goes out of scope, the boost::bind object is released,
+// and that will release the shared_buffer as well
+void on_read(shared_buffer, const boost::system::error_code & err, std::size_t read_bytes) {}
+// ...
+
+shared_buffer buff(512);                                                    // <=== shared_buffer
+sock.async_receive(buff.asio_buff(), boost::bind(on_read,buff,_1,_2));      // <=== Продлевает время жизни буффера в callback
+```
 
 Функции `read_until` и `async_read_until` используются для чтения данных до тех пор, пока не выполнены определенные условия. Эти функции позволяют более гибко контролировать завершение операций чтения на основе содержимого данных.
 
@@ -101,6 +124,13 @@ Boost Asio – это кроссплатформенная библиотека,
 ### 06. Boost.Asio - Other Features
 
 Глава 6 описывает особенности `Boost Asio`. В `Boost Asio` существуют два типа буферов для работы с вводом-выводом. Один из них — `boost::asio::streambuf`, который может использоваться в качестве входных данных для `std::iostream`, позволяя реализовывать операции чтения и записи через перегрузку `операторов сдвига`.
+
+```cpp
+streambuf buf;
+std::ostream out(&buf);
+out << "echo" << std::endl;
+write(sock, buf);
+```
 
 Также в `Boost Asio` существуют функции, оканчивающиеся на "until", такие как `read_until`. Эти функции поддерживают не только обычные строки и символы, но также `регулярные выражения` и `предикаты` для гибкости обработки данных.
 

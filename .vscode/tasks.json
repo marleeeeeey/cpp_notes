@@ -27,7 +27,7 @@
       "type": "shell",
     },
     {
-      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=OFF",
+      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=ON",
       "command": "python ./scripts/vscode_tasks_generator.py --test",
       "type": "shell",
     },
@@ -75,7 +75,7 @@
     {
       "label": "020. Configure: 023. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {

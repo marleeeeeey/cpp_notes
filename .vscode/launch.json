@@ -11,7 +11,16 @@
             "program": "${workspaceFolder}/build/Debug/cpp_file_example.exe",
             "args": [],
             "cwd": "${workspaceFolder}/build/Debug",
-            "preLaunchTask": "030. + Build"
-        }
+            "preLaunchTask": "040. Build and Run: 040. Build"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug1",
+            "program": "${workspaceFolder}/build/Debug/1_cpp_file_example.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/build/Debug",
+            "preLaunchTask": "040. Build and Run: 043. Build and Run Current 1"
+        },
     ]
 }

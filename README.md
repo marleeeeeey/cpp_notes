@@ -37,6 +37,10 @@ In the [code folder](/code), there are examples of my programs illustrating the 
   - [My Notes](2024-08-10_0010_POLUKHIN.md)
 - [Sergey Slotin](https://github.com/sslotin)
   - [My Notes](2024-08-12_0010_SERGEY_SLOTIN_FULL.md)
+- [Torjo](https://github.com/jtorjo) - Boost.Asio C++ Network Programming
+  - [My Notes](2024-09-04_0300_Torjo_Boost_Asio.md)
+- [Sonmez](https://simpleprogrammer.com) - Soft Skills: The software developer's life manual
+  - [My Notes](2024-09-09_0046_Sonmez_Soft_Skills.md)
 
 ### How to build the examples
 
@@ -96,7 +100,7 @@ clang -O2 -g code/hello_world.cpp -o build/hello_world.exe
 
 ### Troubleshooting
 
-#### Connect to valgrant box from VSCode
+#### Connect to vagrant box from VSCode
 
 1. `echo "ssh-rsa ..." >> ~/.ssh/authorized_keys` to add your public key to the `vagrant` user.
 1. Install the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) extension.

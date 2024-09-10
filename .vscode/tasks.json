@@ -3,48 +3,73 @@
   "tasks": [
     {
       "label": "001. Options: -DCMAKE_BUILD_TYPE=Debug",
-      "command": "python ./scripts/vscode_tasks_generator.py --config",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --config",
       "type": "shell",
     },
     {
       "label": "001. Options: -DCMAKE_CXX_STANDARD=23",
-      "command": "python ./scripts/vscode_tasks_generator.py --standard",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --standard",
       "type": "shell",
     },
     {
       "label": "001. Options: parse_deleaker_report.py --no-verbose",
-      "command": "python ./scripts/vscode_tasks_generator.py --deleaker_verbose",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --deleaker_verbose",
       "type": "shell",
     },
     {
-      "label": "001. Options: cmake --preset use_vcpkg",
-      "command": "python ./scripts/vscode_tasks_generator.py --toggle_vcpkg",
+      "label": "001. Options: cmake --preset use_native",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --toggle_vcpkg",
       "type": "shell",
     },
     {
-      "label": "002. Toggle Libraries: -DLINK_BOOST=ON",
-      "command": "python ./scripts/vscode_tasks_generator.py --boost",
+      "label": "001. Options: OutputFile=cpp_file_example",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --toggle_output_file",
+      "type": "shell",
+      "dependsOn": [
+        "020. Configure: 024. Remove build directory"
+      ],
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "OF=cpp_file_example"
+        }
+      },
+    },
+    {
+      "label": "002. Toggle Libraries: -DLINK_BOOST=OFF",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --boost",
       "type": "shell",
     },
     {
-      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=ON",
-      "command": "python ./scripts/vscode_tasks_generator.py --test",
+      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=OFF",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --test",
       "type": "shell",
     },
     {
       "label": "002. Toggle Libraries: -DLINK_GOOGLE_BENCHMARK=OFF",
-      "command": "python ./scripts/vscode_tasks_generator.py --benchmark",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --benchmark",
       "type": "shell",
     },
     {
       "label": "002. Toggle Libraries: -DLINK_OPENSSL=OFF",
-      "command": "python ./scripts/vscode_tasks_generator.py --openssl",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --openssl",
       "type": "shell",
     },
     {
       "label": "002. Toggle Libraries: -DLINK_LIBPNG=OFF",
-      "command": "python ./scripts/vscode_tasks_generator.py --libpng",
+      "command": "python3 ./scripts/vscode_tasks_generator.py --libpng",
       "type": "shell",
+    },
+    {
+      "label": "010. Set Current File As Sourse",
+      "command": "cmake -E echo ${file} > file_to_build.txt && python3 ${workspaceFolder}/scripts/replace_slashes.py",
+      "type": "shell",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "SetCurrent"
+        }
+      },
     },
     {
       "label": "020. Configure: 021. Windows: install local vcpkg",
@@ -62,20 +87,14 @@
       "type": "shell"
     },
     {
-      "label": "010. Set Current File As Sourse",
-      "command": "cmake -E echo ${file} > file_to_build.txt && python ${workspaceFolder}/scripts/replace_slashes.py",
-      "type": "shell",
-      "options": {
-        "statusbar": {
-          "hide": false,
-          "label": "SetCurrent"
-        }
-      },
+      "label": "020. Configure: 024. Remove build directory",
+      "command": "cmake -E remove_directory build",
+      "type": "shell"
     },
     {
-      "label": "020. Configure: 023. CMake Configure",
+      "label": "020. Configure: 025. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_native -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=OFF -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -89,7 +108,7 @@
       "label": "040. Build and Run: 040. Build",
       "command": " cmake --build build/debug -- -k 0 ",
       "dependsOn": [
-        "020. Configure: 023. CMake Configure"
+        "020. Configure: 025. CMake Configure"
       ],
       "options": {
         "statusbar": {
@@ -101,7 +120,7 @@
     },
     {
       "label": "040. Build and Run: 041. Build and Run",
-      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "command": "${workspaceFolder}/build/debug/cpp_file_example",
       "dependsOn": [
         "040. Build and Run: 040. Build"
       ],
@@ -115,7 +134,7 @@
     },
     {
       "label": "040. Build and Run: 042. Build and Run Current",
-      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "command": "${workspaceFolder}/build/debug/cpp_file_example",
       "dependsOn": [
         "010. Set Current File As Sourse",
         "040. Build and Run: 040. Build"
@@ -130,7 +149,7 @@
     },
     {
       "label": "040. Build and Run: 043. Build and Run Current 1",
-      "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example.exe ${workspaceFolder}/build/debug/1_cpp_file_example.exe && ${workspaceFolder}/build/debug/1_cpp_file_example.exe",
+      "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example ${workspaceFolder}/build/debug/1_cpp_file_example && ${workspaceFolder}/build/debug/1_cpp_file_example",
       "dependsOn": [
         "010. Set Current File As Sourse",
         "040. Build and Run: 040. Build"
@@ -145,7 +164,7 @@
     },
     {
       "label": "040. Build and Run: 044. Build and Run Current 2",
-      "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example.exe ${workspaceFolder}/build/debug/2_cpp_file_example.exe && ${workspaceFolder}/build/debug/2_cpp_file_example.exe",
+      "command": "cmake -E copy ${workspaceFolder}/build/debug/cpp_file_example ${workspaceFolder}/build/debug/2_cpp_file_example && ${workspaceFolder}/build/debug/2_cpp_file_example",
       "dependsOn": [
         "010. Set Current File As Sourse",
         "040. Build and Run: 040. Build"
@@ -160,7 +179,7 @@
     },
     {
       "label": "040. Build and Run: 045. Build and Run with Deleaker",
-      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/debug/cpp_file_example.exe /someOption && python ${workspaceFolder}/scripts/parse_deleaker_report.py --no-verbose",
+      "command": "DeleakerConsole.exe --export-xml-report-on-exit leak_report.xml --run ${workspaceFolder}/build/debug/cpp_file_example /someOption && python3 ${workspaceFolder}/scripts/parse_deleaker_report.py --no-verbose",
       "dependsOn": [
         "040. Build and Run: 040. Build"
       ],
@@ -174,7 +193,7 @@
     },
     {
       "label": "040. Build and Run: 046. Run Latest",
-      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "command": "${workspaceFolder}/build/debug/cpp_file_example",
       "options": {
         "statusbar": {
           "hide": false,
@@ -185,7 +204,7 @@
     },
     {
       "label": "040. Build and Run: 047. Run Latest In Loop",
-      "command": "python ./scripts/infinite_runner.py ${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "command": "python3 ./scripts/infinite_runner.py ${workspaceFolder}/build/debug/cpp_file_example",
       "options": {
         "statusbar": {
           "hide": false,
@@ -205,7 +224,7 @@
     },
     {
       "label": "095. Calc Links Progress to Mermaid Pie Chart",
-      "command": "python ./scripts/mermaid_pie_chart_generation.py",
+      "command": "python3 ./scripts/mermaid_pie_chart_generation.py",
       "type": "shell",
       "options": {
         "statusbar": {

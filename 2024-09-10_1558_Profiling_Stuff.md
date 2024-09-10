@@ -649,3 +649,8 @@ auto Texture = Load(Filename); // Теперь загрузка происход
 - Locks solve thread safety at the cost of thread efficiency.
 - If your algorithm requires locking to parallelize, consider another approach.
 - Do not underestimate the potential gain of revisiting older code with threading in mind.
+
+## Perf - Perfect Profiling of C/C++ on Linux
+
+- https://dev.to/etcwilde/perf---perfect-profiling-of-cc-on-linux-of
+

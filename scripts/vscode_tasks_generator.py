@@ -37,6 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("--toggle_vcpkg", action="store_true", default=False, help="Toogle Vcpkg As Dependency Manager")
     parser.add_argument("--openssl", action="store_true", default=False, help="Toogle OpenSSL Linking")
     parser.add_argument("--libpng", action="store_true", default=False, help="Toogle LibPNG Linking")
+    parser.add_argument("--toggle_output_file", action="store_true", default=False, help="Toogle Output File")
     args = parser.parse_args()
 
     if args.test:
@@ -70,3 +71,6 @@ if __name__ == "__main__":
 
     if args.libpng:
         toggle_text_in_vscode_task_content(["-DLINK_LIBPNG=ON", "-DLINK_LIBPNG=OFF"])
+
+    if args.toggle_output_file:
+        toggle_text_in_vscode_task_content(["cpp_file_example.exe", "cpp_file_example"])

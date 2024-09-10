@@ -1,11 +1,13 @@
 - [Memory Leak Detection:](#memory-leak-detection)
   - [valgrind - memory leak detection](#valgrind---memory-leak-detection)
-- [David Faure and Timo Buske - KDAB - Profiling and Debugging Tools](#david-faure-and-timo-buske---kdab---profiling-and-debugging-tools)
-  - [Overview of Debugging Tools for C/C++ applications](#overview-of-debugging-tools-for-cc-applications)
-  - [Overview of Profiling Tools for C/C++ applications](#overview-of-profiling-tools-for-cc-applications)
+- [Overview of Debugging and Profiling Tools for C/C++ applications (video links)](#overview-of-debugging-and-profiling-tools-for-cc-applications-video-links)
+  - [Debugging Tools for C/C++ applications](#debugging-tools-for-cc-applications)
+  - [Profiling Tools for C/C++ applications](#profiling-tools-for-cc-applications)
+  - [\> Steps](#-steps)
+  - [\> Tool selection (for steps 2 - 5):](#-tool-selection-for-steps-2---5)
   - [Overview of Graphics Optimization Tools for OpenGL applications](#overview-of-graphics-optimization-tools-for-opengl-applications)
   - [KDAB training course: Debugging and Profiling C/C++ applications on Linux (2500$)](#kdab-training-course-debugging-and-profiling-cc-applications-on-linux-2500)
-- [Mathieu Ropert - The Basics of Profiling, CppCon 2021](#mathieu-ropert---the-basics-of-profiling-cppcon-2021)
+- [Mathieu Ropert - The Basics of Profiling, CppCon - 2021](#mathieu-ropert---the-basics-of-profiling-cppcon---2021)
   - [About this talk](#about-this-talk)
   - [1. Profiling](#1-profiling)
   - [\> Tools for profiling (and process diagram)](#-tools-for-profiling-and-process-diagram)
@@ -55,11 +57,12 @@ valgrind --leak-check=full ./memory_leak # more detailed information
 # ==12345==    by 0x4005A1: main (memory_leak.c:5)                          <=== line number
 ```
 
-## David Faure and Timo Buske - KDAB - Profiling and Debugging Tools
+## Overview of Debugging and Profiling Tools for C/C++ applications (video links)
 
+- David Faure and Timo Buske - KDAB - Profiling and Debugging Tools
 - https://www.youtube.com/watch?v=2cAHLFM6IU0&list=PL6CJYn40gN6hLwcJ2cgLNtsbr6zUMZSEJ
 
-### Overview of Debugging Tools for C/C++ applications
+### Debugging Tools for C/C++ applications
 
 - https://www.kdab.com/c-cpp-debugging-tools/
 
@@ -88,9 +91,9 @@ valgrind --leak-check=full ./memory_leak # more detailed information
   - `thread`: detect data races.
   - `undefined`: check code for undefined behavior.
 
-### Overview of Profiling Tools for C/C++ applications
+### Profiling Tools for C/C++ applications
 
-#### Steps
+### > Steps
 
 - **1. Assessment**: `Which` aspects of performance are most important for my project?
 - **2. Tool Selection**: `How` to measure, which one tool to use?
@@ -98,7 +101,7 @@ valgrind --leak-check=full ./memory_leak # more detailed information
 - **4. Profiling**: Identifying hotspots and performance issues.
 - **5. Updates**: Suggesting code changes and assessing their ourcome. Go back to step 4.
 
-#### Tool selection (for steps 2 - 5):
+### > Tool selection (for steps 2 - 5):
 
 - **Performance and CPU measurments**
   - **Intel VTune**:
@@ -185,7 +188,7 @@ valgrind --leak-check=full ./memory_leak # more detailed information
   - Backtraces
   - Other Notes
 
-## Mathieu Ropert - The Basics of Profiling, CppCon 2021
+## Mathieu Ropert - The Basics of Profiling, CppCon - 2021
 
 - https://www.youtube.com/watch?v=dToaepIXW4s
 - Here's how I found what was slow
@@ -423,6 +426,8 @@ graph TD
 - Add instrumentation support to your program.
 
 ## Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020
+
+- https://www.youtube.com/watch?v=TcuPIVKNSN0
 
 ### About this talk
 

@@ -650,7 +650,7 @@ auto Texture = Load(Filename); // Теперь загрузка происход
 - If your algorithm requires locking to parallelize, consider another approach.
 - Do not underestimate the potential gain of revisiting older code with threading in mind.
 
-## Perf - Perfect Profiling of C/C++ on Linux
+## Perf - Perfect Profiling of C/C++ on Linux on practice
 
 - https://dev.to/etcwilde/perf---perfect-profiling-of-cc-on-linux-of
-
+- Demo of Hotspot: https://www.kdab.com/hotspot-video/

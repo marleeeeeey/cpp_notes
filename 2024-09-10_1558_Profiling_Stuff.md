@@ -4,10 +4,11 @@
   - [Overview of Debugging Tools for C/C++ applications](#overview-of-debugging-tools-for-cc-applications)
   - [Overview of Profiling Tools for C/C++ applications](#overview-of-profiling-tools-for-cc-applications)
   - [Overview of Graphics Optimization Tools for OpenGL applications](#overview-of-graphics-optimization-tools-for-opengl-applications)
-  - [KDAB training course: Debugging and Profiling C/C++ applications on Linux](#kdab-training-course-debugging-and-profiling-cc-applications-on-linux)
+  - [KDAB training course: Debugging and Profiling C/C++ applications on Linux (2500$)](#kdab-training-course-debugging-and-profiling-cc-applications-on-linux-2500)
 - [Mathieu Ropert - The Basics of Profiling, CppCon 2021](#mathieu-ropert---the-basics-of-profiling-cppcon-2021)
   - [About this talk](#about-this-talk)
   - [1. Profiling](#1-profiling)
+  - [\> Tools for profiling (and process diagram)](#-tools-for-profiling-and-process-diagram)
   - [\> Sampling Profiling (Профилирование методом выборки)](#-sampling-profiling-профилирование-методом-выборки)
   - [\> Instrumentation profiling (подход с добавлением хуков в код)](#-instrumentation-profiling-подход-с-добавлением-хуков-в-код)
   - [2. Profiling in Practice](#2-profiling-in-practice)
@@ -147,7 +148,7 @@ valgrind --leak-check=full ./memory_leak # more detailed information
   - AMD: `GPU PerfStudio`, `CodeXL` .
   - ARM: `Mali Graphics Debugger`.
 
-### KDAB training course: Debugging and Profiling C/C++ applications on Linux
+### KDAB training course: Debugging and Profiling C/C++ applications on Linux (2500$)
 
 - https://training.kdab.com/portfolio/debugging-and-profiling-cpp-applications-on-linux/
 
@@ -207,7 +208,7 @@ valgrind --leak-check=full ./memory_leak # more detailed information
 - Modern CPUs are complex and unpredictable.
 - Measure, measure, measure! Don't guess.
 
-#### Tools for profiling
+### > Tools for profiling (and process diagram)
 
 - Tools to help programmers measure and reason about the performance.
 - Profiler helps with measuring but may have observable impact on the program.
@@ -668,7 +669,7 @@ auto Texture = Load(Filename); // Теперь загрузка происход
 ## Sergey Tyulenev - Profiling on practice
 
 - `Sampling Profiling` - это процесс замера времени выполнения функций путем периодический записи стектрейсов с определенной частотой.
-  - Тулы: `perf`, `VTune`.
+  - Тулы: `perf` plus `Hotspot`(visualization), `VTune`.
 - `Instrumentation profiling` - это процесс замера времени выполнения функций путем добавления хуков в код.
   - Записывает стектрейсы в момент, когда вызов доходит до хука.
   - Анализ получается более короткий и мепится на безнес домен.
@@ -680,6 +681,7 @@ auto Texture = Load(Filename); // Теперь загрузка происход
 
 - `perf` - profiling tool for Linux. Use `sampling profiling`.
   - https://dev.to/etcwilde/perf---perfect-profiling-of-cc-on-linux-of
+- `Hotspot` - tool to visualize `perf` output.
   - Demo of Hotspot: https://www.kdab.com/hotspot-video/
 - `VTune` - profiling tool for Intel hardware. Use `sampling profiling`.
 - `Optick` - profiling tool for C++. Use `instrumentation profiling`.

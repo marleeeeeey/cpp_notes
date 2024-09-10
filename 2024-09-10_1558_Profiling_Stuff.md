@@ -1,4 +1,4 @@
-- [Fist sight of Dev Tools](#fist-sight-of-dev-tools)
+- [Memory Leak Detection:](#memory-leak-detection)
   - [valgrind - memory leak detection](#valgrind---memory-leak-detection)
 - [David Faure and Timo Buske - KDAB - Profiling and Debugging Tools](#david-faure-and-timo-buske---kdab---profiling-and-debugging-tools)
   - [Overview of Debugging Tools for C/C++ applications](#overview-of-debugging-tools-for-cc-applications)
@@ -8,18 +8,33 @@
 - [Mathieu Ropert - The Basics of Profiling, CppCon 2021](#mathieu-ropert---the-basics-of-profiling-cppcon-2021)
   - [About this talk](#about-this-talk)
   - [1. Profiling](#1-profiling)
+  - [\> Sampling Profiling (Профилирование методом выборки)](#-sampling-profiling-профилирование-методом-выборки)
+  - [\> Instrumentation profiling (подход с добавлением хуков в код)](#-instrumentation-profiling-подход-с-добавлением-хуков-в-код)
   - [2. Profiling in Practice](#2-profiling-in-practice)
+  - [\> Questions and Answers: `valgrind`, `Optick`, `perf`, `compilation time profiling`, `VTune`](#-questions-and-answers-valgrind-optick-perf-compilation-time-profiling-vtune)
+  - [\> Live Demo of Optick](#-live-demo-of-optick)
   - [3. Profiling analysis](#3-profiling-analysis)
+  - [\> Example of VTune output](#-example-of-vtune-output)
+  - [\> Inefficient Data Structures](#-inefficient-data-structures)
   - [In conclusion](#in-conclusion)
 - [Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020](#mathieu-ropert---making-games-start-fast-a-story-about-concurrency-cppcon---2020)
   - [About this talk](#about-this-talk-1)
   - [1. Show case](#1-show-case)
+  - [\> VTune: Light green color - thread waiting on the mutex](#-vtune-light-green-color---thread-waiting-on-the-mutex)
+  - [\> VTune: Dark red color - thread is in spinlock](#-vtune-dark-red-color---thread-is-in-spinlock)
+  - [\> Почему появляются спинлоки в коде](#-почему-появляются-спинлоки-в-коде)
+  - [\> Когда стоит использовать спин-локи](#-когда-стоит-использовать-спин-локи)
   - [2. Locks](#2-locks)
+  - [\> Различия между CAS, Lock-Free и Спин-локами:](#-различия-между-cas-lock-free-и-спин-локами)
   - [3. Threading Computations](#3-threading-computations)
+  - [\> Redesigning for multithreading](#-redesigning-for-multithreading)
+  - [\> Bottleneck mitigation example with splitting](#-bottleneck-mitigation-example-with-splitting)
   - [4. Going Asynchronous](#4-going-asynchronous)
   - [In conclusion](#in-conclusion-1)
+- [Sergey Tyulenev - Profiling on practice](#sergey-tyulenev---profiling-on-practice)
+  - [Мануалы по тулам для профилирования: `perf`, `VTune`, `Optick`](#мануалы-по-тулам-для-профилирования-perf-vtune-optick)
 
-## Fist sight of Dev Tools
+## Memory Leak Detection:
 
 ### valgrind - memory leak detection
 
@@ -218,7 +233,7 @@ graph TD
 - Visualize execution timeline.
 - Collect and compute metrics.
 
-#### Sampling Profiling (Профилирование методом выборки)
+### > Sampling Profiling (Профилирование методом выборки)
 
 - Attach to program, periodically interrupt and record the stack trace.
 - Sampling frequency is customizable.
@@ -231,7 +246,7 @@ graph TD
 - Works out of the box on any executable.
 - Inline funcions are usually invisible.
 
-#### Instrumentation profiling (подход с добавлением хуков в код)
+### > Instrumentation profiling (подход с добавлением хуков в код)
 
 - Add code hooks to explicitly record metrics.
 - Can provide both: `averages` and `exact breakdown` by execution frame.
@@ -256,13 +271,13 @@ graph TD
 - Sampling alone is cheaper to start with.
 - Consider adding instrumentation as an investment.
 
-#### Questions and Answers
+### > Questions and Answers: `valgrind`, `Optick`, `perf`, `compilation time profiling`, `VTune`
 
 (Author is more focusing on Windows infra and tools then Linux)
 - `valgrind` is a profiler?
   - No, it's a memory checker.
   - `Callgrind` is closer to a profiler.
-- If you unaware of `Optick` how did you do `instrumentation(frame) profiling` in VTune?
+- If you unaware of `Optick` how did you do `instrumentation(frame) profiling` in `VTune`?
   - With great difficulty.
   - VTune supports to annotate frame, but it is slow and very heavy. Visulalization is not very good.
   - I convert the data between VTune and Optick.
@@ -271,7 +286,7 @@ graph TD
 - Any recomentations to profile `compilation time`?
   - Most compilers have a flag to profile compilation time.
 
-#### Live Demo
+### > Live Demo of Optick
 
 - https://youtu.be/dToaepIXW4s?t=1855
 
@@ -327,7 +342,7 @@ graph TD
 - Locks.
 - Syncronization primitives.
 
-#### Example of VTune output
+### > Example of VTune output
 
 ![vtune_summary_screenshot](screenshots/vtune_summary_screenshot.png)
 
@@ -355,7 +370,7 @@ graph TD
 - Check the Big O complexity.
 - Can som computations be cached and reused?
 
-#### Inefficient Data Structures
+### > Inefficient Data Structures
 
 - Example: https://youtu.be/dToaepIXW4s?t=3097
 - Time spent in `find`, `insert` or `operator[]`.
@@ -424,11 +439,11 @@ graph TD
 - Both rely on multithreading.
 - Both on the same hardware.
 
-#### VTune: Light green color - thread waiting on the mutex
+### > VTune: Light green color - thread waiting on the mutex
 
 ![vtune_wating_on_the_mutex_example](screenshots/vtune_wating_on_the_mutex_example.png)
 
-#### VTune: Dark red color - thread is in spinlock
+### > VTune: Dark red color - thread is in spinlock
 
 ![vtune_speanlock_example](screenshots/vtune_speanlock_example.png)
 
@@ -446,7 +461,7 @@ graph TD
 - (Branch misprediction, cache misses.)
 - Spin locks.
 
-##### Почему появляются спинлоки в коде
+### > Почему появляются спинлоки в коде
 
 Спин-локи (spinlocks) — это механизм синхронизации, используемый для блокировки потоков в многопоточной программе. Они называются так потому, что поток, который пытается захватить спин-лок, "крутится" (spins) в цикле ожидания, пока ресурс не будет освобождён. При этом он постоянно проверяет, свободен ли ресурс, и не уходит в режим ожидания (например, не делает контекстный переключатель на другой поток).
 
@@ -456,7 +471,7 @@ graph TD
 
 3. **Простота реализации**: Спин-локи относительно просты в реализации по сравнению с мьютексами и другими блокировками, так как не требуют сложной логики для переключения контекста или взаимодействия с ядром операционной системы.
 
-##### Когда стоит использовать спин-локи
+### > Когда стоит использовать спин-локи
 
 1. **Краткосрочная блокировка**: Спин-локи подходят для ситуаций, когда предполагается, что ресурс будет заблокирован на очень короткое время. Если блокировка может занять больше времени, лучше использовать мьютексы или другие механизмы.
 
@@ -471,7 +486,7 @@ graph TD
 
 ### 2. Locks
 
-#### Различия между CAS, Lock-Free и Спин-локами:
+### > Различия между CAS, Lock-Free и Спин-локами:
 
 1. **CAS** — это атомарная операция, которая проверяет и изменяет значение переменной. Она может использоваться для реализации безблокировочных алгоритмов, но сама по себе не является блокировкой.
 
@@ -536,7 +551,7 @@ PHYSFS_mount("/assets", "C:\\user\\mod\\modXY.zip", 1);     // Overwrites the pr
 - Huge speedup potential if we could spread it on all cores.
 - Direct3D 9 does not default to thread safe.
 
-#### Redesigning for multithreading
+### > Redesigning for multithreading
 
 - Switching to DX11 allows for multithreading texture and model loaded.
 - Loading algorithms needed to be rewritten.
@@ -578,7 +593,7 @@ PdxParallelFor(_Pdx3DTypes, LoadFn);
   - Serial loop to combine results.
 - Lock "smart".
 
-#### Bottleneck mitigation example with splitting
+### > Bottleneck mitigation example with splitting
 
 ```cpp
 int CTextureHandler::AddTexture(const string& Filename)
@@ -650,7 +665,22 @@ auto Texture = Load(Filename); // Теперь загрузка происход
 - If your algorithm requires locking to parallelize, consider another approach.
 - Do not underestimate the potential gain of revisiting older code with threading in mind.
 
-## Perf - Perfect Profiling of C/C++ on Linux on practice
+## Sergey Tyulenev - Profiling on practice
 
-- https://dev.to/etcwilde/perf---perfect-profiling-of-cc-on-linux-of
-- Demo of Hotspot: https://www.kdab.com/hotspot-video/
+- `Sampling Profiling` - это процесс замера времени выполнения функций путем периодический записи стектрейсов с определенной частотой.
+  - Тулы: `perf`, `VTune`.
+- `Instrumentation profiling` - это процесс замера времени выполнения функций путем добавления хуков в код.
+  - Записывает стектрейсы в момент, когда вызов доходит до хука.
+  - Анализ получается более короткий и мепится на безнес домен.
+  - Требует изменения кода и перекомпиляции программы.
+  - Записывает точную информацию, в отличие от `sampling profiling`, который читает стек с какой-то частотой.
+  - Тулы: `Optick`.
+
+### Мануалы по тулам для профилирования: `perf`, `VTune`, `Optick`
+
+- `perf` - profiling tool for Linux. Use `sampling profiling`.
+  - https://dev.to/etcwilde/perf---perfect-profiling-of-cc-on-linux-of
+  - Demo of Hotspot: https://www.kdab.com/hotspot-video/
+- `VTune` - profiling tool for Intel hardware. Use `sampling profiling`.
+- `Optick` - profiling tool for C++. Use `instrumentation profiling`.
+  - https://www.youtube.com/watch?v=p57TV5342fo

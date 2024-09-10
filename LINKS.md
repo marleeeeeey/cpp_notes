@@ -1212,3 +1212,9 @@
 - Куксон - Разработка игр на Unreal Engine за 24 часа - 2019.pdf [TODO2]
 
 - Роджерсон - Основы COM - 2000.pdf [TODO3]
+
+- Mathieu Ropert - The Basics of Profiling, CppCon - 2021 [DONE]
+  - https://www.youtube.com/watch?v=dToaepIXW4s
+
+- Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020 [DONE]
+  - https://www.youtube.com/watch?v=TcuPIVKNSN0

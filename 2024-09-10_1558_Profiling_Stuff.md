@@ -5,12 +5,19 @@
   - [Overview of Profiling Tools for C/C++ applications](#overview-of-profiling-tools-for-cc-applications)
   - [Overview of Graphics Optimization Tools for OpenGL applications](#overview-of-graphics-optimization-tools-for-opengl-applications)
   - [KDAB training course: Debugging and Profiling C/C++ applications on Linux](#kdab-training-course-debugging-and-profiling-cc-applications-on-linux)
-- [Mathieu Ropert - The Basics of Profiling - CppCon 2021](#mathieu-ropert---the-basics-of-profiling---cppcon-2021)
+- [Mathieu Ropert - The Basics of Profiling, CppCon 2021](#mathieu-ropert---the-basics-of-profiling-cppcon-2021)
   - [About this talk](#about-this-talk)
   - [1. Profiling](#1-profiling)
   - [2. Profiling in Practice](#2-profiling-in-practice)
   - [3. Profiling analysis](#3-profiling-analysis)
   - [In conclusion](#in-conclusion)
+- [Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020](#mathieu-ropert---making-games-start-fast-a-story-about-concurrency-cppcon---2020)
+  - [About this talk](#about-this-talk-1)
+  - [1. Show case](#1-show-case)
+  - [2. Locks](#2-locks)
+  - [3. Threading Computations](#3-threading-computations)
+  - [4. Going Asynchronous](#4-going-asynchronous)
+  - [In conclusion](#in-conclusion-1)
 
 ## Fist sight of Dev Tools
 
@@ -162,7 +169,7 @@ valgrind --leak-check=full ./memory_leak # more detailed information
   - Backtraces
   - Other Notes
 
-## Mathieu Ropert - The Basics of Profiling - CppCon 2021
+## Mathieu Ropert - The Basics of Profiling, CppCon 2021
 
 - https://www.youtube.com/watch?v=dToaepIXW4s
 - Here's how I found what was slow
@@ -398,3 +405,247 @@ graph TD
 - Profilers help pinpointing performance bottlenecks.
 - Domain knowledge can speed up the analisys by a lot.
 - Add instrumentation support to your program.
+
+## Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020
+
+### About this talk
+
+- Threads.
+- Locks.
+- ... and how to avoid them.
+- Investigating threading efficiency.
+
+### 1. Show case
+
+#### Some metrics
+
+- He show the demo with boosting the game start time in 2 times.
+- Same amount of work.
+- Both rely on multithreading.
+- Both on the same hardware.
+
+#### VTune: Light green color - thread waiting on the mutex
+
+![vtune_wating_on_the_mutex_example](screenshots/vtune_wating_on_the_mutex_example.png)
+
+#### VTune: Dark red color - thread is in spinlock
+
+![vtune_speanlock_example](screenshots/vtune_speanlock_example.png)
+
+#### Startup Breakdown
+
+- Enumerate asset files.
+- Read localisation.
+- Loading textures, models and audio.
+- Load game rules and databases.
+
+#### High CPU time
+
+- Single-threaded code.
+- (Inefficient algorithms.)
+- (Branch misprediction, cache misses.)
+- Spin locks.
+
+##### Почему появляются спинлоки в коде
+
+Спин-локи (spinlocks) — это механизм синхронизации, используемый для блокировки потоков в многопоточной программе. Они называются так потому, что поток, который пытается захватить спин-лок, "крутится" (spins) в цикле ожидания, пока ресурс не будет освобождён. При этом он постоянно проверяет, свободен ли ресурс, и не уходит в режим ожидания (например, не делает контекстный переключатель на другой поток).
+
+1. **Низкие накладные расходы на блокировку**: В отличие от классических мьютексов, которые могут привести к контекстным переключениям и связанным с ними затратам, спин-локи избегают этого. Если `предполагается, что блокировка будет краткосрочной`, спин-лок может быть более эффективным, так как поток просто ожидает, не уступая управление.
+
+2. **Эффективность на многопроцессорных системах**: В системах с большим количеством ядер или процессоров поток может ожидать освобождения ресурса без прерывания или перемещения на другой процессор. В таких случаях спин-локи могут быть быстрее, чем обычные механизмы блокировки, если ресурс скоро освободится.
+
+3. **Простота реализации**: Спин-локи относительно просты в реализации по сравнению с мьютексами и другими блокировками, так как не требуют сложной логики для переключения контекста или взаимодействия с ядром операционной системы.
+
+##### Когда стоит использовать спин-локи
+
+1. **Краткосрочная блокировка**: Спин-локи подходят для ситуаций, когда предполагается, что ресурс будет заблокирован на очень короткое время. Если блокировка может занять больше времени, лучше использовать мьютексы или другие механизмы.
+
+2. **Операции на низком уровне**: Спин-локи часто используются в низкоуровневых компонентах ОС или в драйверах, где критично минимизировать время, затрачиваемое на блокировки, и накладные расходы на переключение контекста могут быть недопустимы.
+
+#### High Wait Time
+
+- (Disk I/O.)
+- Network calls.
+- Locks.
+- Syncronization primitives.
+
+### 2. Locks
+
+#### Различия между CAS, Lock-Free и Спин-локами:
+
+1. **CAS** — это атомарная операция, которая проверяет и изменяет значение переменной. Она может использоваться для реализации безблокировочных алгоритмов, но сама по себе не является блокировкой.
+
+2. **Lock-Free алгоритмы** основаны на атомарных операциях (таких как CAS) и `гарантируют прогресс хотя бы одного потока`. В отличие от спин-локов, Lock-Free алгоритмы не блокируют потоки полностью, но могут использовать циклы с повторяющимися попытками выполнить операцию.
+
+3. **Спин-локи** заставляют поток ждать в цикле активного опроса до тех пор, пока ресурс не станет доступен, что может тратить процессорное время впустую. Спин-локи могут быть полезны в случаях, когда ожидается очень краткосрочная блокировка ресурса.
+
+Lock-free означает, что `потоки не будут полностью остановлены`, как это происходит с мьютексами, и всегда гарантируется, что хотя бы один поток продвигается. Остальные потоки могут многократно повторять операции, но они `не находятся в состоянии ожидания` (блокировки).
+
+#### Wait Times
+
+- Filesystem access mutex costs 20 times the actual disk I/O time.
+  - блокировка (mutex) при доступе к файловой системе значительно замедляет процесс по сравнению с реальной скоростью ввода-вывода (I/O) на диске. По сути, каждый раз, когда потоки пытаются синхронизировать доступ к файловой системе через mutex, задержка из-за ожидания блокировки оказывается в 20 раз больше, чем время, затраченное на саму операцию чтения или записи с диска.
+- Would potentially be faster single-threaded.
+- Why is it there in the first place?
+  - Потому что нам нужен безопасный доступ к файловой системе.
+
+#### What's a `PhysFS`?
+
+- Open-source multiplatorm VFS library.
+- Mount folders, drivers and archives.
+- Intented for use in video games.
+- Written in C.
+
+```cpp
+PHYSFS_mount("/assets", "C:\\game\\assets", 1);
+PHYSFS_mount("/assets", "C:\\game\\dlcs\\dlc001.zip", 1);   // Overwrites the previous mount
+PHYSFS_mount("/assets", "C:\\user\\mod\\modXY.zip", 1);     // Overwrites the previous mount
+```
+
+#### PhysFS Threading Model
+
+- Designed in the early 2000s.
+- Mostly concerned about thread safety.
+- One global mutex to protect all state.
+- Scales really badly if multiple threads do I/O.
+
+#### PhysFS State
+
+- Mount points/ library settings.
+- Open files list.
+- Per-thread last error code.
+- Per-archive state.
+
+#### Improving PhysFS locking
+
+- Split the global mutex into multiple mutexes.
+- Remove error code mutex entirely and use thread-local storage.
+- Introduce toggle to disable configuration mutex at user request.
+
+#### Thoughts about locks
+
+- Locks may make code thread-safe but they also make it thread inefficient.
+- Keeping a computation lock-free may require refactoring to use another approach.
+- Adding a lock might look fine in profiler because another bottleneck exists upstream.
+
+### 3. Threading Computations
+
+#### Loading graphic assets
+
+- Loading of both 2D and 3D assets was single-threaded.
+- Huge speedup potential if we could spread it on all cores.
+- Direct3D 9 does not default to thread safe.
+
+#### Redesigning for multithreading
+
+- Switching to DX11 allows for multithreading texture and model loaded.
+- Loading algorithms needed to be rewritten.
+- 2D and 3D assets loading needed a different approach.
+
+before:
+
+```cpp
+for (const auto& Entry : _Pdx3DTypes)
+{
+    Entry._Value->InitForDevice(*this);
+}
+```
+
+after:
+
+```cpp
+auto LoadFn = [&](auto pType)
+{
+    pType->InitForDevice(*this);
+};
+
+PdxParallelFor(_Pdx3DTypes, LoadFn);
+```
+
+#### Easy parallel computing
+
+- Moving from serial to parallel doens't have to be hard.
+- Some loops already fulfills all requirements to be replaced by a parallel_for loop.
+  - Iterations do not write to any shared state.
+  - Order of iterations isn't important.
+  - No locks are being used.
+
+#### Sometime you have to use locks then REFACTORING shared state
+
+- Make copies of shared state.
+- Split problematic iterations in 2 loops (`split/combine` or `map/reduce`).
+  - Parallel apply using a private working set.
+  - Serial loop to combine results.
+- Lock "smart".
+
+#### Bottleneck mitigation example with splitting
+
+```cpp
+int CTextureHandler::AddTexture(const string& Filename)
+{
+    scoped_lock Lock(_Mutex);                   // <=== Bottleneck
+    int Idx = _Textures.Find(Filename);
+    return Idx != -1 ? Idx : _Textures.Add(Load(Filename));
+}
+```
+
+- Removing Bottleneck - Split sprite initialization in three phases:
+  - Each sprite declares which textures it needs.
+  - Load all requested textures.
+  - Bind loaded textures to sprites.
+
+```cpp
+{
+    scoped_lock Lock(_Mutex);
+    int Idx = _Textures.Find(Filename);
+    if (Idx != -1) return Idx;
+}
+
+auto Texture = Load(Filename); // Теперь загрузка происходит вне блокировки
+
+{
+    scoped_lock Lock(_Mutex);
+    int Idx = _Textures.Find(Filename);
+    retun Idx != -1
+        ? Idx   // И если другой поток уже загрузил текстуру, то мы просто дропаем текущую
+        : _Textures.Add(move(Texture)); // Это случается редко.
+}
+```
+
+### 4. Going Asynchronous
+
+- On the screenshot we are in spinlock with network call.
+
+![vtune_speanlock_example](screenshots/vtune_speanlock_example.png)
+
+#### Suprise gains
+
+- 5s were spent waiting on the network call.
+- Initiallt put inside a future.
+- ... until refactoting demonstrated that the results were never used.
+
+#### Working Smart
+
+- Data has to be loaded, but does it have to loaded now?
+- Our goal is to display the main menu as fast as possible.
+- We can continue loading in the background.
+
+#### Loading Audio
+
+- Most of the audio load CPU time was spent reading music tracks from zips.
+- Can we optimize unzip() futher?
+- PhysFS still has a lock per archive, so multithreading might be tricky.
+- **How many music tracks do we need to display loading screen and main menu?**
+  - One!
+  - Others will not be needed until the player starts a new game or loads a save.
+- **Solution**:
+  - Load only main theme immediately.
+  - Start a background thread to load the rest.
+  - Wait on it when we are about to drop in game.
+  - Could potentially be applied to other assets.
+
+### In conclusion
+
+- Locks solve thread safety at the cost of thread efficiency.
+- If your algorithm requires locking to parallelize, consider another approach.
+- Do not underestimate the potential gain of revisiting older code with threading in mind.

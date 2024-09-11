@@ -1,3 +1,7 @@
+# Konstantin Vladimirov - "C++ базовый курс, MIPT" - 2021-2022 (Short Notes)
+
+- [Full Notes](2024-07-18_0010_TILIR_BASICS_FULL.md)
+
 ### 01. Scent Cpp
 
 - `class` используется для объединения данных и методов.

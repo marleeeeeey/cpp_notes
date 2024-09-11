@@ -1,3 +1,6 @@
+# Konstantin Vladimirov - "Магистерский курс C++, MIPT" - 2022-2023 (Full Notes)
+
+- [About the course](#about-the-course)
 - [01. Strings](#01-strings)
   - [Стандартные преобразования: lvalue to rvalue, array to pointer, function to function pointer](#стандартные-преобразования-lvalue-to-rvalue-array-to-pointer-function-to-function-pointer)
   - [Побочные эффекты и asm](#побочные-эффекты-и-asm)
@@ -230,6 +233,14 @@
   - [1. Делаем свою корутину](#1-делаем-свою-корутину)
   - [2. Добавляем `co_yield` к нашей корутине](#2-добавляем-co_yield-к-нашей-корутине)
   - [3. добавляем range-based for к нашей корутине](#3-добавляем-range-based-for-к-нашей-корутине)
+
+## About the course
+
+- [Konstantin Vladimirov](https://github.com/tilir)
+- [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgcgf7R88ZQRQqWOdLy4pRW2h)
+- [Original Code Samples](submodules/cpp-masters/)
+- [My Code Samples](/code/tilir_masters/)
+- [MY Mini Notes](2024-08-09_0020_TILIR_MASTERS_MINI.md)
 
 ## 01. Strings
 

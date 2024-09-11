@@ -1,9 +1,12 @@
+# Sergey Slotin - CPU Cache and Memory Latency
+
 - [ABOUT AUTHOR](#about-author)
 - [Pointer Chasing Pattern (шаблон следования по указателям) - измерения латентности доступа к памяти](#pointer-chasing-pattern-шаблон-следования-по-указателям---измерения-латентности-доступа-к-памяти)
 - [Custom page size (пользовательский размер страницы) - управление размером страницы памяти](#custom-page-size-пользовательский-размер-страницы---управление-размером-страницы-памяти)
 
 ### ABOUT AUTHOR
 
+- [Sergey Slotin](https://github.com/sslotin)
 - Публикации:
   - https://ru.algorithmica.org/cs/
   - https://en.algorithmica.org/hpc/

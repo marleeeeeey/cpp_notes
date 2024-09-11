@@ -1,5 +1,6 @@
-# Torjo - Boost.Asio C++ Network Programming
+# John Torjo - Boost.Asio C++ Network Programming
 
+- [About the Author](#about-the-author)
 - [01. Getting started with Boost.Asio](#01-getting-started-with-boostasio)
 - [02. Boost.Asio Fundamentals](#02-boostasio-fundamentals)
 - [03. Echo Server/Clients](#03-echo-serverclients)
@@ -7,6 +8,11 @@
 - [05. Synchronous Versus Asynchronous](#05-synchronous-versus-asynchronous)
 - [06. Boost.Asio - Other Features](#06-boostasio---other-features)
 - [07. Boost.Asio - Advanced Topics](#07-boostasio---advanced-topics)
+
+### About the Author
+
+- [John Torjo](https://github.com/jtorjo)
+- [Book Code Samples](code/torjo_boost_asio/)
 
 ### 01. Getting started with Boost.Asio
 

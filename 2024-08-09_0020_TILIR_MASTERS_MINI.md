@@ -1,3 +1,7 @@
+# Konstantin Vladimirov - "Магистерский курс C++, MIPT" - 2022-2023 (Short Notes)
+
+- [My Full Notes](2024-08-09_0010_TILIR_MASTERS_FULL.md)
+
 ### 01. Строки
 
 - `SSO` (Small String Optimazations) делает так, что `data` ссылается на память на `стеке`, где находится короткая строка.

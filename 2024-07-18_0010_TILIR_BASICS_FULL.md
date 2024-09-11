@@ -1,3 +1,6 @@
+# Konstantin Vladimirov - "C++ базовый курс, MIPT" - 2021-2022 (Full Notes)
+
+- [About the course](#about-the-course)
 - [Basics](#basics)
   - [Массивы и указатели](#массивы-и-указатели)
   - [Манглирование и строгая гарантия по именам](#манглирование-и-строгая-гарантия-по-именам)
@@ -155,6 +158,15 @@
   - [`concept` - новый синтаксис для `requires` (С++20)](#concept---новый-синтаксис-для-requires-с20)
   - [`concept` - поддерживают отношения общее и частное (subsumption)](#concept---поддерживают-отношения-общее-и-частное-subsumption)
   - [`concept` - работает перегрузка по концептам](#concept---работает-перегрузка-по-концептам)
+
+## About the course
+
+- [Konstantin Vladimirov](https://github.com/tilir)
+- [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgciJ1_K_E914nohpiOiHnpsK)
+- [Original Code Samples](submodules/cpp-graduate/)
+- [Slides](https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/)
+- [My Code Samples](/code/tilir_basics/)
+- [Mini Notes](2024-07-18_0020_TILIR_BASICS_MINI.md)
 
 ## Basics
 

@@ -1,3 +1,5 @@
+# Debugging and Profiling C/C++ applications
+
 - [Memory Leak Detection:](#memory-leak-detection)
   - [valgrind - memory leak detection](#valgrind---memory-leak-detection)
 - [Overview of Debugging and Profiling Tools for C/C++ applications (video links)](#overview-of-debugging-and-profiling-tools-for-cc-applications-video-links)

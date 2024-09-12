@@ -1218,3 +1218,9 @@
 
 - Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020 [DONE]
   - https://www.youtube.com/watch?v=TcuPIVKNSN0
+
+- javidx9 - Networking in C++: MMO Client/Server, ASIO & Framework Basics - 2020 [IN_PROGRESS]
+  - https://www.youtube.com/watch?v=2hNdkYInj4g
+  - https://www.youtube.com/watch?v=UbjxGvrDrbw
+  - https://www.youtube.com/watch?v=hHowZ3bWsio
+  - https://www.youtube.com/watch?v=f_1lt9pfaEo

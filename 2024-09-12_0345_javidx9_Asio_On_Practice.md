@@ -7,7 +7,16 @@
   - [`owned_message<T>` - сообщение с данными об отправителе](#owned_messaget---сообщение-с-данными-об-отправителе)
   - [`thread_safe_queue` - класс для безопасной много поточной работы с очередью](#thread_safe_queue---класс-для-безопасной-много-поточной-работы-с-очередью)
   - [Общая структура клиента и сервера](#общая-структура-клиента-и-сервера)
+  - [Архитектура класса `connection<T>`](#архитектура-класса-connectiont)
 - [Networking in C++ Part #2](#networking-in-c-part-2)
+  - [Server responsibilities](#server-responsibilities)
+  - [ASIO context](#asio-context)
+  - [Асинхронные задачи сервера](#асинхронные-задачи-сервера)
+  - [Архитектура интерфейса сервера `server_interface<T>`](#архитектура-интерфейса-сервера-server_interfacet)
+  - [Создание конректного сервера, который использует `server_interface<T>`](#создание-конректного-сервера-который-использует-server_interfacet)
+  - [Архитектура клиентского интерфейса `client_interface<T>`](#архитектура-клиентского-интерфейса-client_interfacet)
+  - [Putty - тулза для тестирования сетевых приложений](#putty---тулза-для-тестирования-сетевых-приложений)
+  - [`connection<T>` - класс, который абстрагирует детали и зависимость от ASIO](#connectiont---класс-который-абстрагирует-детали-и-зависимость-от-asio)
 - [Networking in C++ Part #3](#networking-in-c-part-3)
 - [Networking in C++ Part #4](#networking-in-c-part-4)
 
@@ -126,21 +135,104 @@ protected:
 
 ![javidx9_client_server_architecture](screenshots/javidx9_client_server_architecture.png)
 
+### Архитектура класса `connection<T>`
+
+![javidx9_connection_class_architecture](screenshots/javidx9_connection_class_architecture.png)
+
 ## Networking in C++ Part #2
 
 - https://www.youtube.com/watch?v=UbjxGvrDrbw
+
+### Server responsibilities
+
+- Отвественный за подключение и отключение клиентов.
+- Также имплементирует игровую логику.
+- По задумке автора, игровая логика наследует `server_interface<T>`, и client-side-functionality логика наследует клиент.
+  - Таким решением можно объяснить наличие protected методов. Я с таким не согласен. Я бы лучше использовал композицию.
+
+### ASIO context
 
 - ASIO context - это центральный класс, который управляет всеми асинхронными операциями в ASIO.
   - В него добавляются асинхронные задачи с калбеками.
   - Когда задача завершается, ASIO вызывает калбек.
   - Когда все задачи завершены, ASIO завершает работу, поэтому нужно постоянно кормить его задачами.
 
-- Server
-  - Начинает с acceptor задачи, которая
-    - ждет подключения клиента
-    - создает сокет для клиента
-    - Создает класс `connection` для клиента
-    - Проверяет, что
+### Асинхронные задачи сервера
+
+- (1) Задача `accept connection`
+  - Ждет подключения клиента
+  - Создает сокет для клиента
+  - Создает класс `connection` для клиента.
+  - Сервер может отклонить (reject) подключение и уничтожить connection.
+  - Либо принять (accept) подключение и добавить connection в список активных соединений.
+  - В конце задачи `accept connection`
+    - снова запускается задача `accept connection`. Чтобы сервер **постоянно ждал новых подключений**.
+    - Запускается задача `read header`.
+
+- (2) Задача `read header`
+  - Ждет сообщение от клиента и читает заголовок сообщения.
+  - Запускается на каждом соединении.
+  - Как только пришло достаточное количество байт размера `message_header`, запускается задача `read body`.
+
+- (3) Задача `read body`
+  - Ждет сообщение от клиента и читает тело сообщения.
+  - Добавляет сообщение в очередь входящих сообщений на сервере. Используется класс `owned_message`.
+  - `owned_message` нужно для того, чтобы сервер мог идентифицировать, от какого клиента пришло сообщение.
+
+### Архитектура интерфейса сервера `server_interface<T>`
+
+![javidx9_server_interface](screenshots/javidx9_server_interface.png)
+
+### Создание конректного сервера, который использует `server_interface<T>`
+
+```cpp
+enum class CustomMsgTypes : uint32_t
+{
+    ServerAccept, ServerDeny, ServerPing, MessageAll, ServerMessage,
+};
+
+class CustomServer : public net::server_interface<CustomMsgTypes>
+{
+public:
+    CustomServer(uint16_t port) : net::server_interface<CustomMsgTypes>(port) {}
+    // ... override methods
+}
+
+int main()
+{
+    CustomServer server(60000);
+    server.Start();
+    while (true)
+        server.Update(-1, true);
+}
+```
+
+### Архитектура клиентского интерфейса `client_interface<T>`
+
+![javidx9_client_interface](screenshots/javidx9_client_interface.png)
+
+### Putty - тулза для тестирования сетевых приложений
+
+- [https://www.putty.org/](https://www.putty.org/)
+- Может подключаться к серверу по TCP и отправлять сообщения.
+
+### `connection<T>` - класс, который абстрагирует детали и зависимость от ASIO
+
+```cpp
+void connection<T>::Send(const message<T>& msg)
+{
+    asio::post(
+        m_asioContext,
+        [this, msg]()
+        {
+            bool bWritingMessage = !m_qMessagesOut.empty();     // <=== If the queue has a message in it, then we must
+            m_qMessagesOut.push_back(msg);                      //      assume that it is in the process of asynchronously being written.
+
+            if (!bWritingMessage)                               // <=== If we weren't writing messages before, then
+                WriteHeader();                                  //      we must start the process of writing the message at the front of the queue.
+        });
+}
+```
 
 ## Networking in C++ Part #3
 

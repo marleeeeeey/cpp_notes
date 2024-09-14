@@ -18,6 +18,7 @@
   - [Putty - тулза для тестирования сетевых приложений](#putty---тулза-для-тестирования-сетевых-приложений)
   - [`connection<T>` - класс, который абстрагирует детали и зависимость от ASIO](#connectiont---класс-который-абстрагирует-детали-и-зависимость-от-asio)
 - [Networking in C++ Part #3](#networking-in-c-part-3)
+  - [Handshake validation architecture](#handshake-validation-architecture)
 - [Networking in C++ Part #4](#networking-in-c-part-4)
 
 ## About the course
@@ -237,6 +238,10 @@ void connection<T>::Send(const message<T>& msg)
 ## Networking in C++ Part #3
 
 - https://www.youtube.com/watch?v=hHowZ3bWsio
+
+### Handshake validation architecture
+
+![javidx9_handshake_validation_architecture](screenshots/javidx9_handshake_validation_architecture.png)
 
 ## Networking in C++ Part #4
 

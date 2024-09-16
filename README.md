@@ -30,3 +30,7 @@
 
 - [HolyBlackCat - Game Engine Architector, Guru C++](2024-08-08_0010_HolyBlackCat.md)
 - [Fedr - C++ Quiz Master](2024-08-08_0020_Fedr.md)
+
+## My progress
+
+![PROGRESS_OVER_TIME](PROGRESS_OVER_TIME.png)

@@ -160,6 +160,16 @@
   - `std::shared_lock` вызывает ptherad_rwlock_rdlock и ptherad_rwlock_unlock, которые **входят в kernal space**. Поэтому он дороже.
 `std::recursive_mutex` - АНТИПАТТЕРН - внутри себя ведет счетчик расщелкиваний и защелкиваний.
 
+```mermaid
+graph TD;
+    A[start] -- Data Races --> B[std::mutex, std::lock_guard]
+    B -- API Races --> C[try_pop]
+    C -- Deadlock --> D[std::lock, std::scoped_lock, std::adopt_lock]
+    D -- Init Once --> E[std::call_once, std::flag_once]
+    E -- Thread notification --> F[std::condition_variable, std::unique_lock]
+    F -- Разделение блокировки --> G[std::shared_mutex, std::shared_lock, std::unique_lock, std::recursive_mutex, std::timed_mutex]
+```
+
 ## 16. Многопоточные очеререди (multithreaded queues)
 
 - Ментальная модель `mutex` - это очередь. Три котенка забегают в трубу за лягушкой.
@@ -168,6 +178,17 @@
 - `std::packaged_task`  - это функтор (т.е. его можно исполнить на thread), который уже содержит `std::promise` внутри себя.
 - `std::jthread` (C++20) умеет принимать `std::stop_token` и умеет вызывать `join` в деструкторе.
 - `std::shared_future` - это `std::future`, который можно копировать. Делается из обычного `std::future`. Чем-то похожа на `std::shared_ptr`.
+
+```mermaid
+graph TD;
+    A[start] -- Возврат значения --> B[std::future, std::promise, std::ref]
+    B -- Возврат исключения --> C[std::exception_ptr, std::current_exception, throw_if_nested, rethrow_if_nested]
+    C -- Маршаллинг исключений --> D[std::packaged_task, std::future]
+    D -- Барьеры --> E[std::shared_future, std::barrier, std::latch]
+    E -- Управление потоком снаружи --> F[std::jthread, std::stop_token, std::jthread::request_stop]
+    F -- Очередь любых зачач (type erasure) --> G[std::move_only_function, ... with lambda, std::apply + std::tuple, std::invoke + ?]
+    G -- Объединение task и thread --> H[std::async, std::launch::async, std::launch::deferred]
+```
 
 ## 17. Atomics
 

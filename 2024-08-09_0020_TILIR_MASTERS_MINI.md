@@ -162,12 +162,12 @@
 
 ```mermaid
 graph TD;
-    A[start] -- Data Races --> B[std::mutex, std::lock_guard]
+    A[start] -- Data Races --> B[std::mutex<br>std::lock_guard]
     B -- API Races --> C[try_pop]
-    C -- Deadlock --> D[std::lock, std::scoped_lock, std::adopt_lock]
-    D -- Init Once --> E[std::call_once, std::flag_once]
-    E -- Thread notification --> F[std::condition_variable, std::unique_lock]
-    F -- Разделение блокировки --> G[std::shared_mutex, std::shared_lock, std::unique_lock, std::recursive_mutex, std::timed_mutex]
+    C -- Deadlock --> D[std::lock<br>std::scoped_lock<br>std::adopt_lock]
+    D -- Init Once --> E[std::call_once<br>std::flag_once]
+    E -- Thread notification --> F[std::condition_variable<br>std::unique_lock]
+    F -- Разделение блокировки --> G[std::shared_mutex<br>std::shared_lock<br>std::unique_lock<br>std::recursive_mutex<br>std::timed_mutex]
 ```
 
 ## 16. Многопоточные очеререди (multithreaded queues)
@@ -181,13 +181,13 @@ graph TD;
 
 ```mermaid
 graph TD;
-    A[start] -- Возврат значения --> B[std::future, std::promise, std::ref]
-    B -- Возврат исключения --> C[std::exception_ptr, std::current_exception, throw_if_nested, rethrow_if_nested]
-    C -- Маршаллинг исключений --> D[std::packaged_task, std::future]
-    D -- Барьеры --> E[std::shared_future, std::barrier, std::latch]
-    E -- Управление потоком снаружи --> F[std::jthread, std::stop_token, std::jthread::request_stop]
-    F -- Очередь любых зачач (type erasure) --> G[std::move_only_function, ... with lambda, std::apply + std::tuple, std::invoke + ?]
-    G -- Объединение task и thread --> H[std::async, std::launch::async, std::launch::deferred]
+    A[start] -- Возврат значения --> B[std::future<br>std::promise<br>std::ref]
+    B -- Возврат исключения --> C[std::exception_ptr<br>std::current_exception<br>throw_if_nested<br>rethrow_if_nested]
+    C -- Маршаллинг исключений --> D[std::packaged_task<br>std::future]
+    D -- Барьеры --> E[std::shared_future<br>std::barrier<br>std::latch]
+    E -- Управление потоком снаружи --> F[std::jthread<br>std::stop_token<br>std::jthread::request_stop]
+    F -- Очередь любых зачач (type erasure) --> G[std::move_only_function<br>... with lambda<br>std::apply + std::tuple<br>std::invoke + ?]
+    G -- Объединение task и thread --> H[std::async<br>std::launch::async<br>std::launch::deferred]
 ```
 
 ## 17. Atomics

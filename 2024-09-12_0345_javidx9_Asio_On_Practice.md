@@ -19,7 +19,10 @@
   - [`connection<T>` - класс, который абстрагирует детали и зависимость от ASIO](#connectiont---класс-который-абстрагирует-детали-и-зависимость-от-asio)
 - [Networking in C++ Part #3](#networking-in-c-part-3)
   - [Handshake validation architecture](#handshake-validation-architecture)
-- [Networking in C++ Part #4](#networking-in-c-part-4)
+- [Networking in C++ Part #4 - Game design utilizing the networking framework](#networking-in-c-part-4---game-design-utilizing-the-networking-framework)
+  - [Базовые понятия](#базовые-понятия)
+  - [Variant 1 - When client applications very passive](#variant-1---when-client-applications-very-passive)
+  - [Variant 2 - When client applications very active but server keep load down](#variant-2---when-client-applications-very-active-but-server-keep-load-down)
 
 ## About the course
 
@@ -243,6 +246,42 @@ void connection<T>::Send(const message<T>& msg)
 
 ![javidx9_handshake_validation_architecture](screenshots/javidx9_handshake_validation_architecture.png)
 
-## Networking in C++ Part #4
+## Networking in C++ Part #4 - Game design utilizing the networking framework
 
 - https://www.youtube.com/watch?v=f_1lt9pfaEo
+
+### Базовые понятия
+
+- RX означает Receiver или Receiving — "Приёмник" или "Приём". Это относится к устройству или процессу, который принимает данные.
+- TX означает Transmitter или Transmitting — "Передатчик" или "Передача". Это относится к устройству или процессу, который отправляет данные.
+
+### Variant 1 - When client applications very passive
+
+- No one player has direct control over the game world.
+- Every client very passive.
+- No one player any more important than any other.
+- Props:
+  - Local client very responsive.
+- Cons:
+  - RTT (Round Trip Time) is very high: 50ms + 50ms = 100ms.
+
+```mermaid
+graph TD
+    B[Client] --> A[Server]
+    C[Client] --> A[Server]
+    D[Client] --> A[Server]
+```
+
+```cpp
+while (true)
+{
+    Rx Players Update       - Client will receive command from the server
+    Update Player[Id]       - On client side (position, health, etc.)
+    Get Input               - Local input for my player
+    Update [My Id]          - Local Update my player locally
+    Tx Player[My Id]        - Send my player update to the server
+    Update Whole Wold/Draw  - Update Whole World
+}
+```
+
+### Variant 2 - When client applications very active but server keep load down

@@ -2,19 +2,24 @@ cmake_minimum_required(VERSION 3.15)
 project(cpp_file_example VERSION 1.0)
 
 # ######################### User options ############################
-option(LINK_GOOGLE_TEST "Link Google Test" ON)
+option(LINK_GOOGLE_TEST "Link Google Test" OFF)
 option(LINK_GOOGLE_BENCHMARK "Link Google Benchmark" OFF)
 option(LINK_BOOST "Link Boost Libraries" OFF)
 option(LINK_OPENSSL "Link OpenSSL" OFF)
 option(LINK_LIBPNG "Link libpng" OFF)
+option(PROJECT_BOOST_BEAST_CHAT_MULTI "Project Boost Beast Chat Multi" OFF)
 
 # #################### Setup compiler options #######################
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json.
 
-# Read the sources file into a variable
-set(SOURCES_FILE "${CMAKE_SOURCE_DIR}/file_to_build.txt")
-file(STRINGS ${SOURCES_FILE} cpp_file_example_SOURCES)
+if(PROJECT_BOOST_BEAST_CHAT_MULTI)
+    file(GLOB cpp_file_example_SOURCES code/boost_beast_chat_multi/*.cpp)
+else()
+    # Read the sources file into a variable
+    set(SOURCES_FILE "${CMAKE_SOURCE_DIR}/file_to_build.txt")
+    file(STRINGS ${SOURCES_FILE} cpp_file_example_SOURCES)
+endif()
 
 # Create an executable with the collected source files.
 add_executable(cpp_file_example ${cpp_file_example_SOURCES})

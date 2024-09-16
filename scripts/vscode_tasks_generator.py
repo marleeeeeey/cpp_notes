@@ -38,6 +38,9 @@ if __name__ == "__main__":
     parser.add_argument("--openssl", action="store_true", default=False, help="Toogle OpenSSL Linking")
     parser.add_argument("--libpng", action="store_true", default=False, help="Toogle LibPNG Linking")
     parser.add_argument("--toggle_output_file", action="store_true", default=False, help="Toogle Output File")
+    # Projects:
+    parser.add_argument("--boost_beast_chat_multi", action="store_true", default=False, help="Boost Beast Chat Multi")
+
     args = parser.parse_args()
 
     if args.test:
@@ -64,7 +67,7 @@ if __name__ == "__main__":
         toggle_text_in_vscode_task_content(["-DLINK_BOOST=ON", "-DLINK_BOOST=OFF"])
 
     if args.toggle_vcpkg:
-        toggle_text_in_vscode_task_content(["--preset use_vcpkg", "--preset use_native"])
+        toggle_text_in_vscode_task_content(["--preset use_vcpkg", "--preset use_native", "--preset use_vcpkg_global"])
 
     if args.openssl:
         toggle_text_in_vscode_task_content(["-DLINK_OPENSSL=ON", "-DLINK_OPENSSL=OFF"])
@@ -74,3 +77,8 @@ if __name__ == "__main__":
 
     if args.toggle_output_file:
         toggle_text_in_vscode_task_content(["cpp_file_example.exe", "cpp_file_example"])
+
+    if args.boost_beast_chat_multi:
+        toggle_text_in_vscode_task_content(
+            ["-DPROJECT_BOOST_BEAST_CHAT_MULTI=ON", "-DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF"]
+        )

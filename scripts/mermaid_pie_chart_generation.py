@@ -54,7 +54,12 @@ def dump_chart_to_file(tag_counts, filename="DEBUG.md"):
 
 
 def update_debug_file(md_content):
-    tag_pattern = re.compile(r"\[([\S_]*)\]")
+    tag_pattern = ""
+    use_minimal_tag_pattern = True
+    if use_minimal_tag_pattern:
+        tag_pattern = re.compile(r"\[(TODO|IN_PROGRESS|DONE)")
+    else:
+        tag_pattern = re.compile(r"\[([\S_]*)\]")
     tag_counts = parse_md_file(md_content, tag_pattern)
     dump_chart_to_file(tag_counts, "PROGRESS.md")
 

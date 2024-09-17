@@ -21,6 +21,7 @@
 ### Network Programming
 
 - [John Torjo - Boost.Asio C++ Network Programming](2024-09-04_0300_Torjo_Boost_Asio.md)
+- [Vinnie Falco - Boost.Beast - Chat via WebSockets](2024-09-16_0230_vinnie_falco_boost_beast.md)
 
 ### Soft Skills
 

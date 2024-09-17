@@ -1,5 +1,25 @@
 # Vinnie Falco - Get rich quick! Using Boost.Beast WebSockets and Networking TS, CppCon - 2018.pdf
 
+- [About the speaker](#about-the-speaker)
+- [Theory](#theory)
+  - [Basics](#basics)
+  - [Buffers](#buffers)
+  - [DynamicBuffer](#dynamicbuffer)
+  - [Class DynamicBuffer](#class-dynamicbuffer)
+  - [Asynchronous I/O](#asynchronous-io)
+  - [Examples of handlers](#examples-of-handlers)
+  - [Thread garantees for handlers](#thread-garantees-for-handlers)
+  - [io\_context::run](#io_contextrun)
+- [Practice - chat server](#practice---chat-server)
+  - [Architecture](#architecture)
+  - [Main components](#main-components)
+  - [Main method](#main-method)
+  - [Process signals (SIGINT, SIGTERM) asynchronously](#process-signals-sigint-sigterm-asynchronously)
+  - [On Accept - create http\_session](#on-accept---create-http_session)
+  - [http\_session used to ask for a WebSocket session](#http_session-used-to-ask-for-a-websocket-session)
+
+## About the speaker
+
 - https://www.youtube.com/watch?v=7FQwAjELMek
 
 ## Theory
@@ -129,7 +149,11 @@ ioc.run(); // ...including the current thread!  <===
 
 ## Practice - chat server
 
+### Architecture
+
 ![vinnie_falco_boost_beast_chat_server](screenshots/vinnie_falco_boost_beast_chat_server.png)
+
+- [vinnie_valco_boost_beast.drawio](diags/vinnie_valco_boost_beast.drawio)
 
 ### Main components
 

@@ -27,6 +27,10 @@
 
 - [John Sonmez - Soft Skills: The software developer's life manual](2024-09-09_0046_Sonmez_Soft_Skills.md)
 
+### Software Architecture
+
+- [Robert C. Martin - Clean Architecture](2024-09-21_2314_robert_martin_clean_architecture.md)
+
 ### Need to be refactored (new notes)
 
 - [HolyBlackCat - Game Engine Architector, Guru C++](2024-08-08_0010_HolyBlackCat.md)

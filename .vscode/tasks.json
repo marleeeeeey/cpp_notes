@@ -61,7 +61,7 @@
       "type": "shell",
     },
     {
-      "label": "003. Projects: -DPROJECT_BOOST_BEAST_CHAT_MULTI=ON",
+      "label": "003. Projects: -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF",
       "command": "python ./scripts/vscode_tasks_generator.py --boost_beast_chat_multi",
       "type": "shell",
     },
@@ -99,7 +99,7 @@
     {
       "label": "020. Configure: 025. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg_global -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=ON && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg_global -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {

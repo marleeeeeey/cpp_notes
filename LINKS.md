@@ -1154,10 +1154,10 @@
     - 01:10:42 Попытка помирить оба мира
     - 01:22:55 Обзор литературы
 
-- Rainer Grimm - Concurrency with Modern C++ - 2022.pdf [TODO2]
+- Rainer Grimm - Concurrency with Modern C++ - 2022 [TODO2]
   - https://www.amazon.com/Concurrency-Modern-professional-programmer-concurrency/dp/B0CT41Q1FF
 
-- Rainer Grimm - C++20 Get the Details - 2023.pdf [TODO2]
+- Rainer Grimm - C++20 Get the Details - 2023 [TODO2]
   - https://www.amazon.com/C-20-Details-Rainer-Grimm/dp/B09328NKXK
 
 - Konstantin Vladimirov - Магистерский курс C++ (МФТИ, 2022-2023). Лекция 23. Сопрограммы, часть 1 - 2023  [TODO2]
@@ -1185,38 +1185,38 @@
     - 00:57:15 Комбинации асинхронных вычислений
     - 01:04:40 Литература и напуственные слова
 
-- Torjo - Boost.Asio C++ Network Programming - 2013.pdf [DONE]
+- Torjo - Boost.Asio C++ Network Programming - 2013 [DONE]
   - https://www.amazon.com/Boost-Asio-C-Network-Programming-Second/dp/1785283073
 
-- Касперски - Самоучитель игры на WinSock.pdf [DONE]
+- Касперски - Самоучитель игры на WinSock [DONE]
 
-- Олифер - Компьютерные сети. Принципы, технологии, протоколы (6 издание) - 2020.pdf [TODO]
+- Олифер - Компьютерные сети. Принципы, технологии, протоколы (6 издание) - 2020 [TODO]
 
-- Glazer - Multiplayer Game Programming (Architecting Networked Games) - 2016.pdf [DONE]
+- Glazer - Multiplayer Game Programming (Architecting Networked Games) - 2016 [DONE]
   - https://www.amazon.com/Multiplayer-Game-Programming-Architecting-Networked/dp/0134034309
 
-- Константин Владимиров - Курс лекций по С++ - 2021.pdf [TODO1]
+- Константин Владимиров - Курс лекций по С++ - 2021 [TODO1]
 
-- Robert C. Martin - Clean Code - 2019.pdf [TODO2]
+- Robert C. Martin - Clean Code - 2019 [TODO2]
   - https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882
 
-- Robert C. Martin - Clean Architecture - 2018.pdf [IN_PROGRESS]
+- Robert C. Martin - Clean Architecture - 2018 [DONE]
   - https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure-ebook/dp/B075LRM681?ref_=ast_author_dp
 
-- Alexander Shvets - Dive Into Design Patterns - 2019.pdf [TODO2]
+- Alexander Shvets - Dive Into Design Patterns - 2019 [TODO2]
   - https://refactoring.guru/design-patterns/book
 
-- Gregory - Game Engine Architecture - 2018.pdf [TODO2]
+- Gregory - Game Engine Architecture - 2018 [IN_PROGRESS]
   - https://www.amazon.com/Game-Engine-Architecture-Third-Jason/dp/1138035459
 
-- Куксон - Разработка игр на Unreal Engine за 24 часа - 2019.pdf [TODO2]
+- Куксон - Разработка игр на Unreal Engine за 24 часа - 2019 [TODO2]
 
-- Роджерсон - Основы COM - 2000.pdf [TODO3]
+- Dale Rogerson - Inside Com - 1997 [TODO3]
 
 - Mathieu Ropert - The Basics of Profiling, CppCon - 2021 [DONE]
   - https://www.youtube.com/watch?v=dToaepIXW4s
 
-- John Sonmez - Soft Skills - 2015.pdf [DONE]
+- John Sonmez - Soft Skills - 2015 [DONE]
 
 - Mathieu Ropert - Making Games Start Fast: A Story About Concurrency, CppCon - 2020 [DONE]
   - https://www.youtube.com/watch?v=TcuPIVKNSN0

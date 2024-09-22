@@ -7,6 +7,10 @@
 
 ## Topics
 
+### C++ Basics
+
+- [Jason Gregory - Game Engine Architecture](2024-09-22_0203_gregory_game_engine_arch.md)
+
 ### Advanced C++
 
 - [Konstantin Vladimirov - "C++ базовый курс, MIPT" - 2021-2022](2024-07-18_0010_TILIR_BASICS_FULL.md)

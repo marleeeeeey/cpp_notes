@@ -1,4 +1,4 @@
-# Json Gregory - Game Engine Architecture
+# Jason Gregory - Game Engine Architecture
 
 - [Глава 3. Основы разработки игрового ПО](#глава-3-основы-разработки-игрового-по)
   - [3.1. Обзор C++ и лучшие практики](#31-обзор-c-и-лучшие-практики)

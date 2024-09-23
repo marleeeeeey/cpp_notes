@@ -6,6 +6,12 @@
 #include <cstddef>
 #include <iostream>
 
+/*
+This is a simple chat client that connects to a server and sends a message.
+Inspired by the example from the book "Boost.Asio C++ Network Programming" by John Torjo.
+Run together with code/my/asio_chat_server.cpp
+*/
+
 namespace ba = boost::asio;
 
 struct talk_to_svr;

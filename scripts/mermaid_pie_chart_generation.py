@@ -40,7 +40,7 @@ def dump_chart_to_file(tag_counts, filename="DEBUG.md"):
     current_date = datetime.now().strftime("%Y-%m-%d")
 
     # Content to be added to PROGRESS.md
-    mermaid_section = f"### {current_date}\n\n```mermaid\n{mermaid_chart}```\n\n"
+    mermaid_section = f"\n### {current_date}\n\n```mermaid\n{mermaid_chart}```\n\n"
 
     # Append the new section to PROGRESS.md
     with open(filename, "a") as progress_file:

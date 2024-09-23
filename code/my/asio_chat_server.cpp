@@ -5,6 +5,12 @@
 #include <cassert>
 #include <iostream>
 
+/*
+This is a simple chat server that listens on port 8001 and sends a message to the client.
+Inspired by the example from the book "Boost.Asio C++ Network Programming" by John Torjo.
+Run together with code/my/asio_chat_client.cpp
+*/
+
 namespace ba = boost::asio;
 
 struct talk_to_client;

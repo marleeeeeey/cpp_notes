@@ -1,7 +1,10 @@
 #include <cassert>
 #include <iostream>
 
-// - if class doesn't have default any ctor default one will be generated.
+/*
+Checking if the object is created without a constructor.
+=> If no constructor is defined, the compiler will generate a default constructor.
+*/
 
 class A
 {

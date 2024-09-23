@@ -340,7 +340,7 @@
 - Scott Meyers - "Type Deduction and Why You Care", CppCon - 2014 [TODO]
   - https://www.youtube.com/watch?v=wQxj20X-tIU
 
-- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017 [IN_PROGRESS]
+- Davide Vandevoorde, Nicolai M. Josuttis - "C++ Templates. The Complete Guide, 2nd edition" - 2017 [DONE_main_small_part]
   - https://www.amazon.com/C-Templates-Complete-Guide-2nd/dp/0321714121
   - Книга состоит из двух частей:
     - Первая небольшая часть с основами, которая знакомит со всеми шаблонами.
@@ -880,7 +880,7 @@
 - Arthur O'Dwyer - Back to Basics: Lambdas from Scratch, CppCon - 2019 [TODO3]
   - https://www.youtube.com/watch?v=3jCOwajNch0
 
-- Ben Deane - Deducing this Patterns, CppCon - 2021 [TODO]
+- Ben Deane - Deducing this Patterns, CppCon - 2021 [DONE_20min]
   - https://www.youtube.com/watch?v=jXf--bazhJw
 
 - Sy Brand - C++23’s Deducing this: what it is, why it is, how to use it - 2022 [TODO]
@@ -1206,7 +1206,7 @@
 - Alexander Shvets - Dive Into Design Patterns - 2019 [TODO2]
   - https://refactoring.guru/design-patterns/book
 
-- Gregory - Game Engine Architecture - 2018 [IN_PROGRESS]
+- Gregory - Game Engine Architecture - 2018 [DONE_10perc_of_basics]
   - https://www.amazon.com/Game-Engine-Architecture-Third-Jason/dp/1138035459
 
 - Куксон - Разработка игр на Unreal Engine за 24 часа - 2019 [TODO2]
@@ -1229,3 +1229,9 @@
 
 - Vinnie Falco - Get rich quick! Using Boost.Beast WebSockets and Networking TS, CppCon - 2018 [DONE]
   - https://www.youtube.com/watch?v=7FQwAjELMek
+
+- Jonathan Boccara - The Curiously Recurring Template Pattern (CRTP) - 2017 [DONE]
+  - https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
+
+- Josh Lospinoso - C++ Crash Course. A Fast-Paced Introduction - 2021 [TODO]
+  - Recommended by: copilot.

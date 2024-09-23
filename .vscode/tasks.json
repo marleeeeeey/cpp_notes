@@ -41,7 +41,7 @@
       "type": "shell",
     },
     {
-      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=OFF",
+      "label": "002. Toggle Libraries: -DLINK_GOOGLE_TEST=ON",
       "command": "python ./scripts/vscode_tasks_generator.py --test",
       "type": "shell",
     },
@@ -99,7 +99,7 @@
     {
       "label": "020. Configure: 025. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg_global -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=OFF -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg_global -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -235,6 +235,17 @@
         "statusbar": {
           "hide": false,
           "label": "PieChart"
+        }
+      },
+    },
+    {
+      "label": "096. Regenerate Progress PNG",
+      "command": "python ./scripts/parse_progress_md_to_png_plot.py",
+      "type": "shell",
+      "options": {
+        "statusbar": {
+          "hide": false,
+          "label": "PngProgress"
         }
       },
     },

@@ -11,6 +11,11 @@
 #include <utility>
 #include <vector>
 
+/*
+Implementing a simple vector class with exception safety and copy-and-swap idiom.
+Inspired by the course "C++ MIPT Lectures for masters" by Konsantin Vladimirov.
+*/
+
 // Script options
 #define OBJECTS_COUNTER 1
 #define CLASS_A_VERBOSE 1

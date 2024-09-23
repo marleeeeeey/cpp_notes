@@ -1,1 +1,1 @@
-C:/dev/cpp_notes/code/cppreference/value_catergory.cpp
+C:/dev/cpp_notes/code/my/sum_all_int.cpp

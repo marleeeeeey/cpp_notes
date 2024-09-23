@@ -88,11 +88,10 @@ pie
   "TODO" : 143
 ```
 
-### 2024-09-22
+### 2024-09-23
 
 ```mermaid
 pie
-  "DONE" : 63
-  "IN_PROGRESS" : 2
+  "DONE" : 67
   "TODO" : 142
 ```

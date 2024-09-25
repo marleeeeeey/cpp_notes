@@ -12,6 +12,13 @@
   - [Tools - Code Documentation](#tools---code-documentation)
   - [Tools - Sanitizers](#tools---sanitizers)
   - [Tools - Other](#tools---other)
+- [Либы для работы с сетью из С++](#либы-для-работы-с-сетью-из-с)
+  - [Только синхронные либы](#только-синхронные-либы)
+  - [Асинхронные с поддержкой HTTP/REST API:](#асинхронные-с-поддержкой-httprest-api)
+  - [Асинхронные Вебсокеты:](#асинхронные-вебсокеты)
+  - [Легковесные Асинхронные HTTP-серверы:](#легковесные-асинхронные-http-серверы)
+  - [Асинхронные с поддержкой событийного цикла:](#асинхронные-с-поддержкой-событийного-цикла)
+  - [Асинхронные - с поддержкой HTTP/2:](#асинхронные---с-поддержкой-http2)
 
 ## Notes from leozz37
 
@@ -99,3 +106,42 @@
 
 - [Robot Framework](https://robotframework.org/), Automation Framework (great for functional tests)
 - [Grafana](https://grafana.com/), Metrics Visualization
+
+## Либы для работы с сетью из С++
+
+### Только синхронные либы
+
+- **cpp-httplib**
+
+### Асинхронные с поддержкой HTTP/REST API:
+
+- **libcurl**
+- **POCO**
+- **Boost.Asio** (с поддержкой HTTP через Boost.Beast)
+- **cpprestsdk**
+- **Restinio**
+- **Beast**
+- **cpr**
+- **crow**
+- **Pistache**
+
+### Асинхронные Вебсокеты:
+
+- **libwebsockets**
+- **websocketpp**
+- **uWebSockets**
+
+### Легковесные Асинхронные HTTP-серверы:
+
+- **libmicrohttpd**
+- **libmongoose**
+- **libhttpserver**
+
+### Асинхронные с поддержкой событийного цикла:
+
+- **libevent**
+- **libuv**
+
+### Асинхронные - с поддержкой HTTP/2:
+
+- **libhttp2**

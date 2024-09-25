@@ -10,7 +10,7 @@ AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
 BreakStringLiterals: false
-ColumnLimit: 120
+ColumnLimit: 180
 ConstructorInitializerIndentWidth: 2
 EmptyLineBeforeAccessModifier: Never
 FixNamespaceComments: true

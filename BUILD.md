@@ -7,6 +7,7 @@
   - [Build examples with CMake](#build-examples-with-cmake)
   - [Build examples manually](#build-examples-manually)
 - [Troubleshooting](#troubleshooting)
+  - [Forward `python3` to `python` to make VSCode tasks works on Ubuntu](#forward-python3-to-python-to-make-vscode-tasks-works-on-ubuntu)
   - [Connect to vagrant box from VSCode](#connect-to-vagrant-box-from-vscode)
 
 ## Build
@@ -66,6 +67,12 @@ clang -O2 -g code/hello_world.cpp -o build/hello_world.exe
 ```
 
 ## Troubleshooting
+
+### Forward `python3` to `python` to make VSCode tasks works on Ubuntu
+
+```bash
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+```
 
 ### Connect to vagrant box from VSCode
 

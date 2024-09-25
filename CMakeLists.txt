@@ -62,7 +62,6 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-float-conversion>
 )
 
-
 if(ENABLE_SANITIZERS)
     # ############## Enable sanitizers in GCC/CLANG #################
     target_compile_options(cpp_file_example PRIVATE
@@ -70,7 +69,7 @@ if(ENABLE_SANITIZERS)
         -fsanitize=undefined
         -D_GLIBCXX_DEBUG
     )
-    target_link_options (cpp_file_example PRIVATE
+    target_link_options(cpp_file_example PRIVATE
         -fsanitize=address
         -fsanitize=undefined
     )

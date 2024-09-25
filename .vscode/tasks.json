@@ -2,12 +2,12 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "001. Options: CMake Generator: -G \"Unix Makefiles\"",
+      "label": "001. Options: CMake Generator: -G \"Ninja\"",
       "command": "python ./scripts/vscode_tasks_generator.py --toggle_cmake_generator",
       "type": "shell",
     },
     {
-      "label": "001. Options: -DENABLE_SANITIZERS=ON",
+      "label": "001. Options: -DENABLE_SANITIZERS=OFF",
       "command": "python ./scripts/vscode_tasks_generator.py --toggle_enable_sanitizers",
       "type": "shell",
     },
@@ -27,7 +27,7 @@
       "type": "shell",
     },
     {
-      "label": "001. Options: cmake --preset use_native",
+      "label": "001. Options: cmake --preset use_local_vcpkg",
       "command": "python ./scripts/vscode_tasks_generator.py --toggle_vcpkg",
       "type": "shell",
     },
@@ -95,7 +95,7 @@
     {
       "label": "020. Configure: 025. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_native -G \"Unix Makefiles\" -DENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=OFF -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_local_vcpkg -G \"Ninja\" -DENABLE_SANITIZERS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=OFF -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {

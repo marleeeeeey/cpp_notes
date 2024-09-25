@@ -1,1 +1,1 @@
-/home/sergey/cpp_notes/submodules/my_private_code/interval_map.cpp
+C:/dev/cpp_notes/submodules/my_private_code/interval_map.cpp

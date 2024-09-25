@@ -8,6 +8,7 @@ option(LINK_BOOST "Link Boost Libraries" OFF)
 option(LINK_OPENSSL "Link OpenSSL" OFF)
 option(LINK_LIBPNG "Link libpng" OFF)
 option(PROJECT_BOOST_BEAST_CHAT_MULTI "Project Boost Beast Chat Multi" OFF)
+option(ENABLE_SANITIZERS "Enable sanitizers" OFF)
 
 # #################### Setup compiler options #######################
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -61,6 +62,20 @@ target_compile_options(cpp_file_example PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wno-float-conversion>
 )
 
+
+if(ENABLE_SANITIZERS)
+    # ############## Enable sanitizers in GCC/CLANG #################
+    target_compile_options(cpp_file_example PRIVATE
+        -fsanitize=address
+        -fsanitize=undefined
+        -D_GLIBCXX_DEBUG
+    )
+    target_link_options (cpp_file_example PRIVATE
+        -fsanitize=address
+        -fsanitize=undefined
+    )
+endif()
+
 if(LINK_GOOGLE_TEST)
     # #################### Adding Google Test #######################
     find_package(GTest CONFIG REQUIRED)
@@ -100,3 +115,6 @@ if(LINK_LIBPNG)
     find_package(PNG REQUIRED)
     target_link_libraries(cpp_file_example PRIVATE PNG::PNG)
 endif()
+
+# ###################### Setup output name ##########################
+set_target_properties(cpp_file_example PROPERTIES SUFFIX ".exe")

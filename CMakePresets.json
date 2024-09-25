@@ -2,15 +2,15 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "use_vcpkg",
-            "displayName": "use_vcpkg",
+            "name": "use_local_vcpkg",
+            "displayName": "use_local_vcpkg",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "/vcpkg/scripts/buildsystems/vcpkg.cmake"
             }
         },
         {
-            "name": "use_vcpkg_global",
-            "displayName": "use_vcpkg_global",
+            "name": "use_global_vcpkg",
+            "displayName": "use_global_vcpkg",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "C:/dev/my_vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake"
             }

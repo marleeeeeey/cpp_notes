@@ -1,1 +1,1 @@
-C:/dev/cpp_notes/code/my/sum_all_int.cpp
+/home/sergey/cpp_notes/submodules/my_private_code/interval_map.cpp

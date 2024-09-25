@@ -2,6 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "001. Options: CMake Generator: -G \"Unix Makefiles\"",
+      "command": "python ./scripts/vscode_tasks_generator.py --toggle_cmake_generator",
+      "type": "shell",
+    },
+    {
+      "label": "001. Options: -DENABLE_SANITIZERS=ON",
+      "command": "python ./scripts/vscode_tasks_generator.py --toggle_enable_sanitizers",
+      "type": "shell",
+    },
+    {
       "label": "001. Options: -DCMAKE_BUILD_TYPE=Debug",
       "command": "python ./scripts/vscode_tasks_generator.py --config",
       "type": "shell",
@@ -17,26 +27,12 @@
       "type": "shell",
     },
     {
-      "label": "001. Options: cmake --preset use_vcpkg_global",
+      "label": "001. Options: cmake --preset use_native",
       "command": "python ./scripts/vscode_tasks_generator.py --toggle_vcpkg",
       "type": "shell",
     },
     {
-      "label": "001. Options: OutputFile=cpp_file_example.exe",
-      "command": "python ./scripts/vscode_tasks_generator.py --toggle_output_file",
-      "type": "shell",
-      "dependsOn": [
-        "020. Configure: 024. Remove build directory"
-      ],
-      "options": {
-        "statusbar": {
-          "hide": false,
-          "label": "OF=cpp_file_example.exe"
-        }
-      },
-    },
-    {
-      "label": "002. Toggle Libraries: -DLINK_BOOST=ON",
+      "label": "002. Toggle Libraries: -DLINK_BOOST=OFF",
       "command": "python ./scripts/vscode_tasks_generator.py --boost",
       "type": "shell",
     },
@@ -99,7 +95,7 @@
     {
       "label": "020. Configure: 025. CMake Configure",
       "command": [
-        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_vcpkg_global -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=ON -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
+        "cmake -E cat file_to_build.txt && cmake -S . -B build/debug --preset use_native -G \"Unix Makefiles\" -DENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLINK_GOOGLE_TEST=ON -DLINK_GOOGLE_BENCHMARK=OFF -DLINK_BOOST=OFF -DLINK_OPENSSL=OFF -DLINK_LIBPNG=OFF -DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF && cmake -E copy build/debug/compile_commands.json build/compile_commands.json"
       ],
       "options": {
         "statusbar": {
@@ -111,7 +107,7 @@
     },
     {
       "label": "040. Build and Run: 040. Build",
-      "command": " cmake --build build/debug -- -k 0 ",
+      "command": "cmake --build build/debug",
       "dependsOn": [
         "020. Configure: 025. CMake Configure"
       ],
@@ -127,7 +123,8 @@
       "label": "040. Build and Run: 041. Build and Run",
       "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
       "dependsOn": [
-        "040. Build and Run: 040. Build"
+        "040. Build and Run: 040. Build",
+        "040. Build and Run: 040. Run"
       ],
       "options": {
         "statusbar": {
@@ -139,10 +136,11 @@
     },
     {
       "label": "040. Build and Run: 042. Build and Run Current",
-      "command": "${workspaceFolder}/build/debug/cpp_file_example.exe",
+      "command": "",
       "dependsOn": [
         "010. Set Current File As Sourse",
-        "040. Build and Run: 040. Build"
+        "040. Build and Run: 040. Build",
+        "040. Build and Run: 040. Run"
       ],
       "options": {
         "statusbar": {

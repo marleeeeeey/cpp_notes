@@ -20,6 +20,7 @@ def toggle_text_in_vscode_task_content(carousel: list):
     for i in range(len(carousel) - 1):
         if carousel[i] in content:
             content = content.replace(carousel[i], carousel[i + 1])  # replace a with b
+            print(f"Replaced {carousel[i]} with {carousel[i + 1]}")
             break  # only one replacement
 
     with open(VSCODE_FILE_PATH, "w") as file:
@@ -37,7 +38,8 @@ if __name__ == "__main__":
     parser.add_argument("--toggle_vcpkg", action="store_true", default=False, help="Toogle Vcpkg As Dependency Manager")
     parser.add_argument("--openssl", action="store_true", default=False, help="Toogle OpenSSL Linking")
     parser.add_argument("--libpng", action="store_true", default=False, help="Toogle LibPNG Linking")
-    parser.add_argument("--toggle_output_file", action="store_true", default=False, help="Toogle Output File")
+    parser.add_argument("--toggle_cmake_generator", action="store_true", default=False, help="Toogle CMake Generator")
+    parser.add_argument("--toggle_enable_sanitizers", action="store_true", default=False, help="Toogle Enable Sanitizers")
     # Projects:
     parser.add_argument("--boost_beast_chat_multi", action="store_true", default=False, help="Boost Beast Chat Multi")
 
@@ -67,7 +69,7 @@ if __name__ == "__main__":
         toggle_text_in_vscode_task_content(["-DLINK_BOOST=ON", "-DLINK_BOOST=OFF"])
 
     if args.toggle_vcpkg:
-        toggle_text_in_vscode_task_content(["--preset use_vcpkg", "--preset use_native", "--preset use_vcpkg_global"])
+        toggle_text_in_vscode_task_content(["--preset use_global_vcpkg", "--preset use_native", "--preset use_local_vcpkg"])
 
     if args.openssl:
         toggle_text_in_vscode_task_content(["-DLINK_OPENSSL=ON", "-DLINK_OPENSSL=OFF"])
@@ -75,10 +77,18 @@ if __name__ == "__main__":
     if args.libpng:
         toggle_text_in_vscode_task_content(["-DLINK_LIBPNG=ON", "-DLINK_LIBPNG=OFF"])
 
-    if args.toggle_output_file:
-        toggle_text_in_vscode_task_content(["cpp_file_example.exe", "cpp_file_example"])
-
     if args.boost_beast_chat_multi:
         toggle_text_in_vscode_task_content(
             ["-DPROJECT_BOOST_BEAST_CHAT_MULTI=ON", "-DPROJECT_BOOST_BEAST_CHAT_MULTI=OFF"]
         )
+
+    if args.toggle_cmake_generator:
+        toggle_text_in_vscode_task_content(
+            ['-G \\"Ninja\\"', '-G \\"Unix Makefiles\\"']
+        )
+
+    if args.toggle_enable_sanitizers:
+        toggle_text_in_vscode_task_content(
+            ["-DENABLE_SANITIZERS=ON", "-DENABLE_SANITIZERS=OFF"]
+        )
+

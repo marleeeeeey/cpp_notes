@@ -1195,8 +1195,6 @@
 - Glazer - Multiplayer Game Programming (Architecting Networked Games) - 2016 [DONE]
   - https://www.amazon.com/Multiplayer-Game-Programming-Architecting-Networked/dp/0134034309
 
-- Константин Владимиров - Курс лекций по С++ - 2021 [TODO1]
-
 - Robert C. Martin - Clean Code - 2019 [TODO2]
   - https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882
 
@@ -1235,3 +1233,6 @@
 
 - Josh Lospinoso - C++ Crash Course. A Fast-Paced Introduction - 2021 [TODO]
   - Recommended by: copilot.
+
+- Jonathan Boccara - 105 STL Algorithms in Less Than an Hour, ACCU - 2018 [DONE]
+  - https://www.youtube.com/watch?v=bXkWuUe9V2I

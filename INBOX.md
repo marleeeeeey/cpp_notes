@@ -19,6 +19,7 @@
   - [Легковесные Асинхронные HTTP-серверы:](#легковесные-асинхронные-http-серверы)
   - [Асинхронные с поддержкой событийного цикла:](#асинхронные-с-поддержкой-событийного-цикла)
   - [Асинхронные - с поддержкой HTTP/2:](#асинхронные---с-поддержкой-http2)
+- [Modern Dependency Walker](#modern-dependency-walker)
 
 ## Notes from leozz37
 
@@ -145,3 +146,8 @@
 ### Асинхронные - с поддержкой HTTP/2:
 
 - **libhttp2**
+
+## Modern Dependency Walker
+
+- https://github.com/lucasg/Dependencies
+- Создать новый раздел в README.md под названием Debugging Tools

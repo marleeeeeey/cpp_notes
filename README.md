@@ -7,6 +7,10 @@
 
 ## Topics
 
+### Keep learning efficiently
+
+- [Sergey Tyulenev - My way of learning technologies](2024-09-27_1540_sergey_tyulenev_my_way_of_learning_technologies.md)
+
 ### CppCon and other conferences - good talks
 
 - [CppCon and other conferences - good talks](2024-09-23_0319_cppcon_good_talks.md)
@@ -25,6 +29,11 @@
 - [HolyBlackCat - Game Engine Architector, Guru C++](2024-08-08_0010_HolyBlackCat.md)
 - [Antony Polukhin - Guru C++](2024-08-10_0010_POLUKHIN.md)
 - [Sergey Slotin - CPU Cache and Memory Latency](2024-08-12_0010_SERGEY_SLOTIN_FULL.md)
+
+### Linux
+
+- [Sergey Tyulenev - Linux in Action](2024-09-27_1532_linux_in_action.md)
+- [William Shotts - The Linux Command Line](2024-09-27_1537_shotts_linux_command_line.md)
 
 ### Profiling and Optimization
 

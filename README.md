@@ -11,6 +11,7 @@
 
 - [CppCon and other conferences - good talks](2024-09-23_0319_cppcon_good_talks.md)
   - Ben Deane - Deducing this Patterns, CppCon - 2021
+  - Jonathan Boccara - 105 STL Algorithms in Less Than an Hour, ACCU - 2018
 
 ### C++ Basics
 

@@ -11,6 +11,9 @@
 - [Module 6: Shell Scripting](#module-6-shell-scripting)
   - [What is Linux Kernel](#what-is-linux-kernel)
   - [What is Shell Scripting](#what-is-shell-scripting)
+    - [Free practice](#free-practice)
+  - [`alias` - create a shortcut for a command](#alias---create-a-shortcut-for-a-command)
+  - [`history` - show the history of commands](#history---show-the-history-of-commands)
 
 ## Module 1: Introduction to Linux
 
@@ -58,10 +61,9 @@ Ctrl+a q                    # unfreeze the terminal
 tmux                                    # start a new session
 tmux new -s session_name                # start a new session with a name
 tmux kill-session -t session_name       # kill a session
-
-Ctrl+b d                    # detach from the session
-tmux ls                     # list all sessions
-tmux a                      # reattach to previous session
+tmux a                                  # reattach to previous session
+tmux ls                                 # list all sessions
+Ctrl+b d                                # detach from the session
 
 Ctrl+b c                    # create a new window (tab - not a split)
 Ctrl+b ,                    # rename the current window
@@ -97,4 +99,34 @@ Ctrl+b "                    # split the window horizontally
 
 ```bash
 a=`hostname` # execute the command and store the output in a variable
+```
+
+#### Free practice
+
+```bash
+# awk - scan every line of a file and perform an action
+date | awk '{printf "DayOfWee:%s Month:%s\n", $1, $2}'
+
+# Correct syntax of the for-loop in one line.
+# Note the semicolon between do and echo is not needed.
+for i in 1 2 3 4; do echo "Hello $i"; done
+
+# exit status of the last command. 0 means success.
+$?  # For this example, it will be 0 because the last command echo Hello 4 was successful.
+```
+
+### `alias` - create a shortcut for a command
+
+```bash
+alias ll='ls -l'  # create an alias for the current session
+/home/user/.bashrc # file to store aliases for the current user
+/etc/bash.bashrc  # file to store aliases for all users
+```
+
+### `history` - show the history of commands
+
+```bash
+~/.bash_history  # file to store the history of commands
+history          # show the history of commands
+!123             # execute the command with the number 123 from the history
 ```

@@ -14,6 +14,13 @@
     - [Free practice](#free-practice)
   - [`alias` - create a shortcut for a command](#alias---create-a-shortcut-for-a-command)
   - [`history` - show the history of commands](#history---show-the-history-of-commands)
+- [Module 7: Networking, Services, and System Updates](#module-7-networking-services-and-system-updates)
+  - [Network Files and Configuration](#network-files-and-configuration)
+  - [Network Commands](#network-commands)
+  - [NIC - Network Interface Card](#nic---network-interface-card)
+    - [Free practice](#free-practice-1)
+  - [NIC bonding](#nic-bonding)
+  - [Network utilities](#network-utilities)
 
 ## Module 1: Introduction to Linux
 
@@ -129,4 +136,58 @@ alias ll='ls -l'  # create an alias for the current session
 ~/.bash_history  # file to store the history of commands
 history          # show the history of commands
 !123             # execute the command with the number 123 from the history
+```
+
+## Module 7: Networking, Services, and System Updates
+
+### Network Files and Configuration
+
+```bash
+/etc/hosts          # file to store the IP addresses of the hosts. Tiny DNS.
+/etc/hostname       # file to store the hostname of the system
+/etc/resolv.conf    # file to store the gateway and DNS server
+```
+
+### Network Commands
+
+```bash
+ping                # check availability of a host
+ip a                # show the interfaces and their IP addresses
+ip link set dev <interface> up    # enable the interface
+ip link set dev <interface> down  # disable the interface
+ss -tuln            # show the listening ports
+tcpdump             # capture the network packets
+```
+
+### NIC - Network Interface Card
+
+```bash
+ethtool <interface>                         # show the status of the NIC
+```
+
+#### Free practice
+
+```bash
+tail -f app.log | grep -E "error|warning"   # show the errors and warnings in the log file
+tail -f /var/log/syslog | grep "network"    # show the network-related logs
+tail -f file1 file2 file3                   # show the logs of multiple files
+```
+
+### NIC bonding
+
+NIC Bonding — это полезная технология для создания одного виртуального сетевого интерфейса на основе нескольких физических, что позволяет улучшить надёжность, производительность, и отказоустойчивость сети.
+
+```bash
+modprobe bonding            # load the bonding module
+modinfo bonding             # show the information about the bonding module
+systemctl restart network   # restart the network service
+```
+
+### Network utilities
+
+```bash
+apt install network-manager
+nmcli                   # Network Manager Command Line Interface
+nmtui                   # Network Manager Text User Interface
+nm-connection-editor    # Network Manager GUI
 ```

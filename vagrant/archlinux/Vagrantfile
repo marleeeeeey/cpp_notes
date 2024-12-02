@@ -70,9 +70,9 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-    sudo pacman -Syu --noconfirm  base-devel git curl zip unzip tar ninja clang cmake make gdb perf boost nano
-    git clone --recurse-submodules https://github.com/marleeeeeey/cpp_notes.git /home/vagrant/cpp_notes
-    sudo chown -R vagrant:vagrant /home/vagrant/cpp_notes
-    SHELL
+#  config.vm.provision "shell", inline: <<-SHELL
+#    sudo pacman -Syu --noconfirm  base-devel git curl zip unzip tar ninja clang cmake make gdb perf boost nano
+#    git clone --recurse-submodules https://github.com/marleeeeeey/cpp_notes.git /home/vagrant/cpp_notes
+#    sudo chown -R vagrant:vagrant /home/vagrant/cpp_notes
+#    SHELL
 end

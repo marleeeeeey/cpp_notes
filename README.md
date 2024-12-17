@@ -56,11 +56,6 @@
 
 - [Robert C. Martin - Clean Architecture](notes/2024-09-21_2314_robert_martin_clean_architecture.md)
 
-## Non-Tech Topics
-
-- [Sergey Tyulenev - Postprocessing photos](notes/2024-12-02_1952_notes_about_photo.md)
-- [Sergey Tyulenev - Learning Drums](notes/2024-12-16_2032_drums.md)
-
 ## Refactor ME
 
 - [Fedr - C++ Quiz Master](notes/2024-08-08_0020_Fedr.md)

@@ -1,5 +1,22 @@
 # C++ notes
 
+- [About the repository](#about-the-repository)
+- [Topics](#topics)
+  - [Keep learning efficiently](#keep-learning-efficiently)
+  - [CppCon and other conferences - good talks](#cppcon-and-other-conferences---good-talks)
+  - [C++ Basics](#c-basics)
+  - [C++ Advanced](#c-advanced)
+  - [Linux](#linux)
+  - [Profiling and Optimization](#profiling-and-optimization)
+  - [Network Programming](#network-programming)
+  - [C++ for Web](#c-for-web)
+  - [Soft Skills](#soft-skills)
+  - [Software Architecture](#software-architecture)
+  - [Need to be refactored (new notes)](#need-to-be-refactored-new-notes)
+- [My progress](#my-progress)
+
+## About the repository
+
 - This repository includes my notes about C++, taken after watching presentations from CppCon and other conferences, as well as reading books.
 - The complete list of references is available in this file [LINKS.md](/LINKS.md).
 - In the [code](/code) and [submodules](/submodules) folders, there are examples of my programs illustrating the intricacies of the C++ language.
@@ -21,7 +38,7 @@
 
 - [Jason Gregory - Game Engine Architecture](2024-09-22_0203_gregory_game_engine_arch.md)
 
-### Advanced C++
+### C++ Advanced
 
 - [Fluent {C++} - Jonathan Boccara's blog](2024-09-23_0209_fluent_cpp_blog_notes.md)
 - [Konstantin Vladimirov - "C++ базовый курс, MIPT" - 2021-2022](2024-07-18_0010_TILIR_BASICS_FULL.md)

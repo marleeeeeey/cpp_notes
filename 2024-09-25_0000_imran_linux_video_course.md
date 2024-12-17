@@ -187,7 +187,7 @@ systemctl restart network   # restart the network service
 
 ```bash
 apt install network-manager
-nmcli                   # Network Manager Command Line Interface
-nmtui                   # Network Manager Text User Interface
-nm-connection-editor    # Network Manager GUI
+nmcli                           # Network Manager Command Line Interface
+nmtui                           # Network Manager Text User Interface
+nm-connection-editor            # Network Manager GUI
 ```

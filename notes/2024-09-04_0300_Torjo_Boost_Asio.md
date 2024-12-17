@@ -12,7 +12,7 @@
 ### About the Author
 
 - [John Torjo](https://github.com/jtorjo)
-- [Book Code Samples](code/torjo_boost_asio/)
+- [Book Code Samples](../code/torjo_boost_asio/)
 
 ### 01. Getting started with Boost.Asio
 
@@ -64,18 +64,18 @@ sock.async_receive(buff.asio_buff(), boost::bind(on_read,buff,_1,_2));      // <
 
 В случае синхронного клиента вызов `io_service::run()` не требуется.
 
-- [code/torjo_boost_asio/3/tcp_sync_echo_client.cpp](code/torjo_boost_asio/3/tcp_sync_echo_client.cpp)
-- [code/torjo_boost_asio/3/tcp_sync_echo_server.cpp](code/torjo_boost_asio/3/tcp_sync_echo_server.cpp)
+- [code/torjo_boost_asio/3/tcp_sync_echo_client.cpp](../code/torjo_boost_asio/3/tcp_sync_echo_client.cpp)
+- [code/torjo_boost_asio/3/tcp_sync_echo_server.cpp](../code/torjo_boost_asio/3/tcp_sync_echo_server.cpp)
 
 Клиентская часть в асинхронном программировании проще, чем серверная, поскольку сервер должен обрабатывать несколько клиентов одновременно. В TCP асинхронном клиенте каждая асинхронная операция запускает новую, что позволяет поддерживать работу `io_service::run()`. Для продления времени жизни объектов между цепочками вызовов используется `enable_shared_from_this` и `shared_from_this()`.
 
-- [code/torjo_boost_asio/3/tcp_async_echo_client.cpp](code/torjo_boost_asio/3/tcp_async_echo_client.cpp)
-- [code/torjo_boost_asio/3/tcp_async_echo_server.cpp](code/torjo_boost_asio/3/tcp_async_echo_server.cpp)
+- [code/torjo_boost_asio/3/tcp_async_echo_client.cpp](../code/torjo_boost_asio/3/tcp_async_echo_client.cpp)
+- [code/torjo_boost_asio/3/tcp_async_echo_server.cpp](../code/torjo_boost_asio/3/tcp_async_echo_server.cpp)
 
 При работе с UDP, сервер, получив сообщение, просто выводит его на экран, не закрывая сокет.
 
-- [code/torjo_boost_asio/3/udp_sync_echo_client.cpp](code/torjo_boost_asio/3/udp_sync_echo_client.cpp)
-- [code/torjo_boost_asio/3/udp_sync_echo_server.cpp](code/torjo_boost_asio/3/udp_sync_echo_server.cpp)
+- [code/torjo_boost_asio/3/udp_sync_echo_client.cpp](../code/torjo_boost_asio/3/udp_sync_echo_client.cpp)
+- [code/torjo_boost_asio/3/udp_sync_echo_server.cpp](../code/torjo_boost_asio/3/udp_sync_echo_server.cpp)
 
 ### 04. Client and Server
 
@@ -99,8 +99,8 @@ sock.async_receive(buff.asio_buff(), boost::bind(on_read,buff,_1,_2));      // <
 Для синхронного клиента сетевая часть должна выполняться в отдельном потоке, так как сетевые вызовы блокируют выполнение программы.
 Синхронный сервер требует двух потоков: один для прослушивания новых клиентов и другой для обработки уже подключенных.
 
-- [code/torjo_boost_asio/4/sync_client.cpp](code/torjo_boost_asio/4/sync_client.cpp)
-- [code/torjo_boost_asio/4/sync_server.cpp](code/torjo_boost_asio/4/sync_server.cpp)
+- [code/torjo_boost_asio/4/sync_client.cpp](../code/torjo_boost_asio/4/sync_client.cpp)
+- [code/torjo_boost_asio/4/sync_server.cpp](../code/torjo_boost_asio/4/sync_server.cpp)
 
 #### Asynchronous Client and Server
 
@@ -108,8 +108,8 @@ sock.async_receive(buff.asio_buff(), boost::bind(on_read,buff,_1,_2));      // <
 
 ![boost_asio_async_server](screenshots/boost_asio_async_server.png)
 
-- [code/torjo_boost_asio/4/async_client.cpp](code/torjo_boost_asio/4/async_client.cpp)
-- [code/torjo_boost_asio/4/async_server.cpp](code/torjo_boost_asio/4/async_server.cpp)
+- [code/torjo_boost_asio/4/async_client.cpp](../code/torjo_boost_asio/4/async_client.cpp)
+- [code/torjo_boost_asio/4/async_server.cpp](../code/torjo_boost_asio/4/async_server.cpp)
 
 ### 05. Synchronous Versus Asynchronous
 
@@ -117,15 +117,15 @@ sock.async_receive(buff.asio_buff(), boost::bind(on_read,buff,_1,_2));      // <
 
 Асинхронный ввод-вывод также может быть организован как `pull-like` или `push-like`. Асинхронный подход упрощает переход от однопоточного к многопоточному режиму, так как разные функции могут выполняться в разных потоках последовательно, что устраняет необходимость в мьютексах.
 
-- [code/torjo_boost_asio/5/async_server_multi_threaded.cpp](code/torjo_boost_asio/5/async_server_multi_threaded.cpp)
+- [code/torjo_boost_asio/5/async_server_multi_threaded.cpp](../code/torjo_boost_asio/5/async_server_multi_threaded.cpp)
 
 В главе также рассматривается возможность вызова асинхронных пользовательских функций
 
-- [code/torjo_boost_asio/5/async_op.cpp](code/torjo_boost_asio/5/async_op.cpp)
+- [code/torjo_boost_asio/5/async_op.cpp](../code/torjo_boost_asio/5/async_op.cpp)
 
 В главе также рассматривается реализация прокси-сервера, который работает между клиентом и сервером. Прокси обрабатывает два сокета (клиентский и серверный) и использует два буфера для передачи данных между ними, что добавляет сложности в реализацию. Прокси читает данные из клиентского сокета и записывает их в серверный, и наоборот.
 
-- [code/torjo_boost_asio/5/proxy.cpp](code/torjo_boost_asio/5/proxy.cpp)
+- [code/torjo_boost_asio/5/proxy.cpp](../code/torjo_boost_asio/5/proxy.cpp)
 
 ### 06. Boost.Asio - Other Features
 
@@ -142,7 +142,7 @@ write(sock, buf);
 
 `Boost Asio` поддерживает использование сопрограмм (`coroutines`), которые позволяют приостанавливать и возобновлять выполнение в определенных точках функции. Это упрощает создание классов с интерфейсом `step`, где в бесконечном цикле можно выполнять операции, такие как `async_write`, `async_read`, и другие, упрощая архитектуру приложения.
 
-- [code/torjo_boost_asio/6/coroutines.cpp](code/torjo_boost_asio/6/coroutines.cpp)
+- [code/torjo_boost_asio/6/coroutines.cpp](../code/torjo_boost_asio/6/coroutines.cpp)
 
 ### 07. Boost.Asio - Advanced Topics
 
@@ -150,4 +150,4 @@ write(sock, buf);
 
 `Boost Asio` также поддерживает `SSL`, однако для этого требуется сборка `OpenSSL`.
 
-- [code/torjo_boost_asio/7/ssl_client_connect_to_yahoo.cpp](code/torjo_boost_asio/7/ssl_client_connect_to_yahoo.cpp)
+- [code/torjo_boost_asio/7/ssl_client_connect_to_yahoo.cpp](../code/torjo_boost_asio/7/ssl_client_connect_to_yahoo.cpp)

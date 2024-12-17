@@ -49,6 +49,7 @@
   - [RTTI and dynamic\_cast](#rtti-and-dynamic_cast)
   - [Exceptions](#exceptions)
   - [Гарантии безопасности исключений](#гарантии-безопасности-исключений)
+    - [Deducing THIS `foo(this Self&& self)` (C++23)](#deducing-this-foothis-self-self-c23)
   - [Документировать методы static\_assert очень полезно](#документировать-методы-static_assert-очень-полезно)
   - [Вызывает ли вектор конструторы объектов при создании вектора заданного размера без инициализации?](#вызывает-ли-вектор-конструторы-объектов-при-создании-вектора-заданного-размера-без-инициализации)
   - [Оператор noexcept, аннотация noexcept и условный noexcept](#оператор-noexcept-аннотация-noexcept-и-условный-noexcept)
@@ -118,6 +119,13 @@
   - [Используйте итераторы вместо контейнеров для передачи функции](#используйте-итераторы-вместо-контейнеров-для-передачи-функции)
   - [Категории итераторов и `iterator_traits<iter>::iterator_category`](#категории-итераторов-и-iterator_traitsiteriterator_category)
   - [Разные категории итераторов с примерами](#разные-категории-итераторов-с-примерами)
+    - [1. **Raw Pointers**](#1-raw-pointers)
+    - [2. **Input Iterator**](#2-input-iterator)
+    - [3. **Output Iterator**](#3-output-iterator)
+    - [4. **Forward Iterator**](#4-forward-iterator)
+    - [5. **Bidirectional Iterator**](#5-bidirectional-iterator)
+    - [6. **Random Access Iterator**](#6-random-access-iterator)
+    - [Примеры использования итераторов в контейнерах STL](#примеры-использования-итераторов-в-контейнерах-stl)
   - [Пишем свой итератор](#пишем-свой-итератор)
 - [14. Containers](#14-containers)
   - [Sequence Containers](#sequence-containers)
@@ -165,7 +173,7 @@
 - [Youtube playlist](https://www.youtube.com/playlist?list=PL3BR09unfgciJ1_K_E914nohpiOiHnpsK)
 - [Original Code Samples](submodules/cpp-graduate/)
 - [Slides](https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/)
-- [My Code Samples](/code/tilir_basics/)
+- [My Code Samples](../code/tilir_basics/)
 - [Mini Notes](2024-07-18_0020_TILIR_BASICS_MINI.md)
 
 ## 01-04. Запах С++. Создание и управление объектами. RAII. Операторы.
@@ -375,7 +383,7 @@ int main()
 ### Dangling references
 
 - https://youtu.be/_mLDaU4wSOo?t=2732
-- [code/tilir_basics/raii_std_move_dangling_references_example.cpp](code/tilir_basics/raii_std_move_dangling_references_example.cpp)
+- [../code/tilir_basics/raii_std_move_dangling_references_example.cpp](../code/tilir_basics/raii_std_move_dangling_references_example.cpp)
 
 ```cpp
 
@@ -1353,8 +1361,8 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 
 **LINKS**
 
-- [code/tilir_basics/raii_diamond_problem_typeid.cpp](code/tilir_basics/raii_diamond_problem_typeid.cpp)
-- [code/tilir_basics/typeid_nullptr.cpp](code/tilir_basics/typeid_nullptr.cpp)
+- [../code/tilir_basics/raii_diamond_problem_typeid.cpp](../code/tilir_basics/raii_diamond_problem_typeid.cpp)
+- [../code/tilir_basics/typeid_nullptr.cpp](../code/tilir_basics/typeid_nullptr.cpp)
 
 ### RTTI and dynamic_cast
 
@@ -1376,7 +1384,7 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 04. Аннотация `noexcept` позволяет указать, что функция не бросает исключений. Это помогает компилятору оптимизировать код и помогает документировать код.
 05. Если мы даем обещание `noexcept` к виртуальной функции, то все переопределения этой функции также должны его выполнять (быть `noexcept`).
 06. Деструкторы всегда `noexcept`, просто они не аннотированы.
-07. В `try` блок можно поместить также функцию целиком и даже список инициализации конструктора [example](code/tilir_basics/raii_try_block_for_ctor_init_list.cpp).
+07. В `try` блок можно поместить также функцию целиком и даже список инициализации конструктора [example](../code/tilir_basics/raii_try_block_for_ctor_init_list.cpp).
 08. Catch block как бы расширяет область видимости try блока, поэтому переменные из try блока видны в catch блоке.
 09. Выброшенный объект живет до конца блока catch, который его перехватил. #TODO: read more about it.
 10. Если в функции `noexcept` произошло исключение, то программа завершается вызовом `std::terminate` (abort).
@@ -1393,9 +1401,9 @@ std::cout << "ba: " << ba << " | dynamic typeid: " << typeid( *ba ).name()
 **LINKS**
 
 - https://en.cppreference.com/w/cpp/error/exception
-- [code/tilir_basics/raii_exceptions_by_value.cpp](code/tilir_basics/raii_exceptions_by_value.cpp)
-- [code/tilir_basics/exception_with_multiple_inheritance.cpp](code/tilir_basics/exception_with_multiple_inheritance.cpp)
-- [code/tilir_basics/raii_try_block_for_ctor_init_list.cpp](code/tilir_basics/raii_try_block_for_ctor_init_list.cpp)
+- [../code/tilir_basics/raii_exceptions_by_value.cpp](../code/tilir_basics/raii_exceptions_by_value.cpp)
+- [../code/tilir_basics/exception_with_multiple_inheritance.cpp](../code/tilir_basics/exception_with_multiple_inheritance.cpp)
+- [../code/tilir_basics/raii_try_block_for_ctor_init_list.cpp](../code/tilir_basics/raii_try_block_for_ctor_init_list.cpp)
 
 ### Гарантии безопасности исключений
 
@@ -1726,7 +1734,7 @@ classDiagram
 ### SRP and OCP Conflict and Resolution
 
 **01. Bad SRP: Polygon3D has 3 reasons to change: geometry, screen, serialization**
-- [code/tilir_basics/origin/ocp-bad.cc](code/tilir_basics/origin/ocp-bad.cc)
+- [../code/tilir_basics/origin/ocp-bad.cc](../code/tilir_basics/origin/ocp-bad.cc)
 
 ```mermaid
 classDiagram
@@ -1755,7 +1763,7 @@ classDiagram
 ```
 
 **02. Good SRP: Add methods begin() and end() to Polygon3D**
-- [code/tilir_basics/origin/ocp-good.cc](code/tilir_basics/origin/ocp-good.cc)
+- [../code/tilir_basics/origin/ocp-good.cc](../code/tilir_basics/origin/ocp-good.cc)
 - Теперь эти методы позволяют итерироваться по вершинам многоугольника извне.
 - Но не дают менять его внутреннее состояние.
 - Таким образом мы убрали дополнительные причины менять класс.
@@ -1785,7 +1793,7 @@ classDiagram
 ```
 
 **03. Bad OCP**
-- [code/tilir_basics/origin/ocp-bad.cc](code/tilir_basics/origin/ocp-bad.cc)
+- [../code/tilir_basics/origin/ocp-bad.cc](../code/tilir_basics/origin/ocp-bad.cc)
 - Проблема 1: Класс закрыт для расширения - приходится изменять метод `render` при добавлении новых фигур. Открыт только для модификации. Должно быть наоборот.
 - Проблема 2: `Vector3D` при наследовании от `IFigure` перестает быть агрегатом. Приходится писать для него конструкторы и деструкторы.
   - **Агрегаты** хороши тем, что их можно передавать в C-интерфейсы.
@@ -1831,7 +1839,7 @@ classDiagram
 ```
 
 **04. Good OCP (but conflict with SRP)**
-- [code/tilir_basics/origin/ocp-good.cc](code/tilir_basics/origin/ocp-good.cc)
+- [../code/tilir_basics/origin/ocp-good.cc](../code/tilir_basics/origin/ocp-good.cc)
 - Используем виртуальные функции вместо switch-case. Интерфейс `IDrawable`. По сути заменяем `IFigure` на `IDrawable`.
 - Используем `std::shared_ptr` для хранения фигур в `Screen`, чтобы избежать утечек памяти.
 - Проблема 1: Класс `Vector3D` теперь вынужден не просто хранить данные, но и знать, как себя рисовать. Это нарушает принцип единственной ответственности (SRP). **Мы пришли к конфликту между OCP и SRP.** Эту проблему годами не видел Мартин Фаулер. Первый доклад, в котором это противоречение было замечено - это CppCon 2017: Klaus Iglberger - Breaking Dependencies: The SOLID Principles.
@@ -1871,7 +1879,7 @@ classDiagram
 ```
 
 **05. Good OCP and SRP**
-- [code/tilir_basics/origin/str-model.cc](code/tilir_basics/origin/str-model.cc)
+- [../code/tilir_basics/origin/str-model.cc](../code/tilir_basics/origin/str-model.cc)
 - **Sean Parent (Adobe)** - придумал **модель с нормальной value semantics**. Чтобы избежать проблемы хранения указателей на данные и incedental data structures (когда возникают циклы и кросс ссылки между данными). Наследование и динамический полиморфизм не должны быть частью интерфеса, они должны быть частью реализации.
   - У него есть цель в проектировании: **no sinchronization primitives** TODO (watch later).
   - Выражение: **Inheritance is the base class of evil**.
@@ -1922,7 +1930,7 @@ classDiagram
 ```
 
 **06. Good OCP and SRP (add template)**
-- [code/tilir_basics/origin/common-model.cc](code/tilir_basics/origin/common-model.cc)
+- [../code/tilir_basics/origin/common-model.cc](../code/tilir_basics/origin/common-model.cc)
 - Добавили шаблонный конструктор в Drawable.
 - Итого: у нас реализована value semantics.
 - Мы можем добавлять значения в документ по значению и не боятся реккурсивной вложенности - побороли проблему incedental data structures.
@@ -2045,7 +2053,7 @@ class Robot : public IWorkable {
 
 ### C Api Wrapper
 
-- [code/tilir_basics/template_specialisation_for_c_api.cpp](code/tilir_basics/template_specialisation_for_c_api.cpp)
+- [../code/tilir_basics/template_specialisation_for_c_api.cpp](../code/tilir_basics/template_specialisation_for_c_api.cpp)
 
 ```cpp
 
@@ -2122,7 +2130,7 @@ unsigned md = d.getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>();
 
 **Решение (упрощенный пример)**
 
-- [code/tilir_basics/template_type_traits.cpp](code/tilir_basics/template_type_traits.cpp)
+- [../code/tilir_basics/template_type_traits.cpp](../code/tilir_basics/template_type_traits.cpp)
 
 ```cpp
 
@@ -2273,7 +2281,7 @@ template <typename T> struct Foo
 
 ### Disambiguation #1: use `this->`
 
-- [code/tilir_basics/template_ambiguity_001.cpp](code/tilir_basics/template_ambiguity_001.cpp)
+- [../code/tilir_basics/template_ambiguity_001.cpp](../code/tilir_basics/template_ambiguity_001.cpp)
 - Если на первой фазе компилятор находит имя, то он связывает его.
 - Поэтому если имя валиндно на первой фазе и на второй фазе, то связано будет на первой фазе.
 - Для указания компилятору, что имя зависимое он базового класса, используется `this->`. Это единственный случай, когда **разумно использовать явный `this->`**.
@@ -2298,7 +2306,7 @@ template<typename T> struct Derived2 : Base<T> {
 
 ### Disambiguation #2: use `typename`
 
-- [code/tilir_basics/template_ambiguity_002.cpp](code/tilir_basics/template_ambiguity_002.cpp)
+- [../code/tilir_basics/template_ambiguity_002.cpp](../code/tilir_basics/template_ambiguity_002.cpp)
 - **Все что может трактоваться как поле класса, по умолчанию тракуется как поле класса**.
 - Чтобы указать, что это тип (который мы пока не знаем), используется `typename`.
 
@@ -2324,7 +2332,7 @@ int main()
 
 ### Disambiguation #3: use `template`
 
-- [code/tilir_basics/template_ambiguity_003.cpp](code/tilir_basics/template_ambiguity_003.cpp)
+- [../code/tilir_basics/template_ambiguity_003.cpp](../code/tilir_basics/template_ambiguity_003.cpp)
 - **Все что может трактоваться как поле класса, по умолчанию тракуется как поле класса**.
 - Поэтому в примере `s.foo<T>()` знак `<` трактуется как оператор сравнения.
 - Чтобы помочь компилятору догадаться, что это шаблонный метод, используется `template`.
@@ -2585,7 +2593,7 @@ auto&& f = foo(); // ok, const int& inferred
 
 ### `decltype(auto)` - точный вывод типа из правой части
 
-- [code/tilir_basics/template_decltype_auto.cpp](code/tilir_basics/template_decltype_auto.cpp)
+- [../code/tilir_basics/template_decltype_auto.cpp](../code/tilir_basics/template_decltype_auto.cpp)
 - `decltype(auto)` - совмещает преимущества `auto` и `decltype`.
 - `decltype(auto)` - выводит по правилам `decltype`, но при этом пользуется **правой частью** выражения.
 - `decltype(auto)` - очень опасная штука.
@@ -2599,7 +2607,7 @@ auto&& f = foo(); // ok, const int& inferred
 
 ### Perfect Forwarding and `std::forward`
 
-- [code/tilir_basics/template_forward.cpp](code/tilir_basics/template_forward.cpp)
+- [../code/tilir_basics/template_forward.cpp](../code/tilir_basics/template_forward.cpp)
 - `std::forward` - это условный move, который управляется типом аргумента.
 - Пример внизу называетя **perfect forwarding**. Для него нужно 3 вещи:
   - (1) Контекст вывода: `typename Arg`.
@@ -2712,7 +2720,7 @@ using is_same_t = typename is_same<T, U>::type; // type alias
 
 ### Пишем свои `is_same`, `is_reference`, `remove_reference`, `integral_constant`, `true_type`, `false_type`
 
-- [code/tilir_basics/template_sfinae_is_same.cpp](code/tilir_basics/template_sfinae_is_same.cpp)
+- [../code/tilir_basics/template_sfinae_is_same.cpp](../code/tilir_basics/template_sfinae_is_same.cpp)
 - Набор type_traits предопределенных в библиотеке: https://en.cppreference.com/w/cpp/header/type_traits
 
 ```cpp
@@ -2769,7 +2777,7 @@ int main()
 
 ### Проблемы и решения std::copy
 
-- [code/tilir_basics/origin/13-sfinae/benchcopy-2.cc](code/tilir_basics/origin/13-sfinae/benchcopy-2.cc)
+- [../code/tilir_basics/origin/13-sfinae/benchcopy-2.cc](../code/tilir_basics/origin/13-sfinae/benchcopy-2.cc)
 - https://quick-bench.com
 
 ```cpp
@@ -2902,7 +2910,7 @@ int main() {
 
 ### Использование `declval` для абстракции значения без необходимости создания объекта
 
-- [code/tilir_basics/template_declval.cpp](code/tilir_basics/template_declval.cpp)
+- [../code/tilir_basics/template_declval.cpp](../code/tilir_basics/template_declval.cpp)
 - Место в лекции про это: https://youtu.be/JC8yVbvDxyg?list=PL3BR09unfgciJ1_K_E914nohpiOiHnpsK&t=2760
 - Представим, что конструктор заблокирован, а нам нужно оценить тип возвращаемого значения метода объекта, который мы не можем создать.
   - Такое может быть актуально, потому что методы все еще могут вызываться по ссылке или правой ссылке на объекте.
@@ -2950,7 +2958,7 @@ MyVector v2(v1.begin(), v1.end());  // Вызывает второй конст�
 
 - Эта техника позволяет писать компактный и эффективный код для обработки произвольного числа аргументов.
 - https://en.cppreference.com/w/cpp/language/fold
-- [code/tilir_basics/template_fold_examples.cpp](code/tilir_basics/template_fold_examples.cpp)
+- [../code/tilir_basics/template_fold_examples.cpp](../code/tilir_basics/template_fold_examples.cpp)
 - Note that the opening and closing parentheses are a required part of the fold expression.
 
 - `( pack op ... )` - Unary right fold. Expands to `pack1 op (pack2 op (... op packN))`.
@@ -2970,7 +2978,7 @@ void print_all (T ... args) { (cout << ... << args) << endl; }
 
 ### Шаблон для перемещения по дереву, указывая левый или правый указатель, как вариабельные аргументы
 
-- [code/tilir_basics/template_fold_examples.cpp](code/tilir_basics/template_fold_examples.cpp)
+- [../code/tilir_basics/template_fold_examples.cpp](../code/tilir_basics/template_fold_examples.cpp)
 - `->*` - оператор указателя на член класса.
 
 ```cpp
@@ -3006,7 +3014,7 @@ int main()
 ### Как препроцессор разворачивает range-based for loop
 
 - https://cppinsights.io/ - Сайт для просмотра того, как препроцессор разворачивает код.
-- Пример написания итератора для чисел фибоначчи: [code/tilir_basics/iterators_fibonachi_example.cpp](code/tilir_basics/iterators_fibonachi_example.cpp)
+- Пример написания итератора для чисел фибоначчи: [../code/tilir_basics/iterators_fibonachi_example.cpp](../code/tilir_basics/iterators_fibonachi_example.cpp)
 
 ```cpp
 // RANGE BASE LOOP FOR STD::VECTOR use (https://cppinsights.io):
@@ -3099,7 +3107,7 @@ size_t traverse(It start, It fin, F func) {
 
 ### Категории итераторов и `iterator_traits<iter>::iterator_category`
 
-- [code/tilir_basics/origin/14-iterators/categories.cc](code/tilir_basics/origin/14-iterators/categories.cc)
+- [../code/tilir_basics/origin/14-iterators/categories.cc](../code/tilir_basics/origin/14-iterators/categories.cc)
 
 **Свойства указателей**, как база для категорий итераторов:
 01. Создание по умолчанию, копирование, копирующее присваивание
@@ -3289,10 +3297,10 @@ random_access_iterator_tag : public bidirectional_iterator_tag     |  X |  X |  
   - `++  --  *  ==  !=  ->`
   - `default-ctor`, `copy-ctor`, `copy-assignment`, `dtor`.
 
-- Пример студента [code/tilir_basics/origin/14-iterators/wrongit.cc](code/tilir_basics/origin/14-iterators/wrongit.cc)
+- Пример студента [../code/tilir_basics/origin/14-iterators/wrongit.cc](../code/tilir_basics/origin/14-iterators/wrongit.cc)
 - TODO: Написать свой контейнер по такому же принципу.
   - Можно попытаться написать zip_iterator, который будет выводить iterator_category общую для обеих итераторов.
-    - Пример Arthur O'Dwyer: [code/tilir_basics/origin/14-iterators/ziprange.hpp](code/tilir_basics/origin/14-iterators/ziprange.hpp)
+    - Пример Arthur O'Dwyer: [../code/tilir_basics/origin/14-iterators/ziprange.hpp](../code/tilir_basics/origin/14-iterators/ziprange.hpp)
     - `value_type = std::pair<T1, T2>`
     - `reference = std::pair<T1&, T2&>`
     - `pointer = void` - чтобы сказать компилятору, что у нас нет указателя на пару.
@@ -3343,7 +3351,7 @@ random_access_iterator_tag : public bidirectional_iterator_tag     |  X |  X |  
 
 ### `forward_iterator::before_begin()` and `forward_list::splice_after`
 
-- [code/tilir_basics/conteiners_forward_list_splice.cpp](code/tilir_basics/conteiners_forward_list_splice.cpp)
+- [../code/tilir_basics/conteiners_forward_list_splice.cpp](../code/tilir_basics/conteiners_forward_list_splice.cpp)
 - `splice` относится к методу, который используется для перемещения элементов из одного контейнера в другой без копирования или перемещения данных, но путем изменения указателей, которые связывают элементы. Это эффективная операция, так как она выполняется в O(1) времени.
 - `void splice_after( const_iterator pos, forward_list&& other, const_iterator first, const_iterator last )` - Moves elements from another `forward_list` to `*this`. The elements are inserted after the element pointed to by `pos`.
 
@@ -3419,9 +3427,9 @@ class vector { }
 **std::unordered_map**
 
 - [hash-map benchmarks](https://martin.ankerl.com/2019/04/01/hashmap-benchmarks-01-overview/)
-- [code/tilir_basics/containers_iota_sort_always_less.cpp](code/tilir_basics/containers_iota_sort_always_less.cpp)
-- [code/tilir_basics/containers_unordered_map_reserve.cpp](code/tilir_basics/containers_unordered_map_reserve.cpp)
-- [code/tilir_basics/conteiners_unordered_map_bucket_iteration.cpp](code/tilir_basics/conteiners_unordered_map_bucket_iteration.cpp)
+- [../code/tilir_basics/containers_iota_sort_always_less.cpp](../code/tilir_basics/containers_iota_sort_always_less.cpp)
+- [../code/tilir_basics/containers_unordered_map_reserve.cpp](../code/tilir_basics/containers_unordered_map_reserve.cpp)
+- [../code/tilir_basics/conteiners_unordered_map_bucket_iteration.cpp](../code/tilir_basics/conteiners_unordered_map_bucket_iteration.cpp)
 - `std::hash<Key>` / `std::equal_to<Key>` - by default. Для пользовательских типов нужно переопределить.
 - По сути если `std::vector<U>` - это отображение `целых чисел` в `U`, то `std::unordered_map<T, U>` - это отображение произвольного `T` в `U`.
 - https://youtu.be/uWoj4SV_V-Q?t=130
@@ -3471,7 +3479,7 @@ class vector { }
 
 ### strict weak ordering
 
-- [code/tilir_basics/conteiners_set_lower_upper_bound.cpp](code/tilir_basics/conteiners_set_lower_upper_bound.cpp)
+- [../code/tilir_basics/conteiners_set_lower_upper_bound.cpp](../code/tilir_basics/conteiners_set_lower_upper_bound.cpp)
 
 - Если вам достаточно `==` на элементах, то используйте `unordered` контейнеры.
 - Если вам нужен `operator<` на элементах, то используйте `ordered` контейнеры (ренджи). `lower_bound`, `upper_bound`, `equal_range` методы.
@@ -3506,8 +3514,8 @@ std::for_each(std::execution::par, begin, end, f);  // 2.1
 
 **Как устроена лямбда-функция**
 
-- [code/tilir_basics/algorithms_functors_basics.cpp](code/tilir_basics/algorithms_functors_basics.cpp)
-- [code/tilir_basics/algorithms_lambda_examples.cpp](code/tilir_basics/algorithms_lambda_examples.cpp)
+- [../code/tilir_basics/algorithms_functors_basics.cpp](../code/tilir_basics/algorithms_functors_basics.cpp)
+- [../code/tilir_basics/algorithms_lambda_examples.cpp](../code/tilir_basics/algorithms_lambda_examples.cpp)
 - Квадратные скобки в лябдах используются для захвата переменных и создании состояния для класса лямбда-функции.
 - `closure (замыкание)` - это объект, который хранит состояние лямбда-функции.
 - `mutable` у лямбды позволяет изменять захваченные переменные. Т.е. делает функцию `operator()` неконстантной.
@@ -3532,8 +3540,8 @@ std::for_each(std::execution::par, begin, end, f);  // 2.1
 
 ### `std::function`
 
-- [code/tilir_basics/algorithms_std_functions_type_erasure.cpp](code/tilir_basics/algorithms_std_functions_type_erasure.cpp)
-- [code/tilir_basics/algorithms_std_function_target_type_name.cpp](code/tilir_basics/algorithms_std_function_target_type_name.cpp)
+- [../code/tilir_basics/algorithms_std_functions_type_erasure.cpp](../code/tilir_basics/algorithms_std_functions_type_erasure.cpp)
+- [../code/tilir_basics/algorithms_std_function_target_type_name.cpp](../code/tilir_basics/algorithms_std_function_target_type_name.cpp)
 - `std::function<int()> f = [&x, &y] { return x + y; };` - происходит **стирание захвата**. Т.е. это единый тип, к которому приводятся все замыкания с данной сигнатурой.
 - `std::function` - делает лишний уровень косвенности. Он **выделяет динамическую память под захват**. Это похоже на механизм виртуальных функций (только вместо таблицы виртуальных функций - **таблица захвата**).
 - `std::function` - хранит внутри себя настоящий тип, который он стирает.
@@ -3563,7 +3571,7 @@ int main()
 }
 ```
 
-- Пример реализации Finally класса с использованием `std::function` и без [code/tilir_basics/raii_finally_labmda_to_replace_RAII.cpp](code/tilir_basics/raii_finally_labmda_to_replace_RAII.cpp):
+- Пример реализации Finally класса с использованием `std::function` и без [../code/tilir_basics/raii_finally_labmda_to_replace_RAII.cpp](../code/tilir_basics/raii_finally_labmda_to_replace_RAII.cpp):
   - Первый вариант с `std::function` - **наивный**. Он выделяет динамическую память под захват.
   - Второй вариант - **улучшенный**. Он не выделяет динамическую память под захват.
 
@@ -3602,21 +3610,21 @@ struct Finally
 
 ### `std::copy_if`
 
-- `std::copy_if` example: [code/tilir_basics/algorithms_std_copy_if_examples.cpp](code/tilir_basics/algorithms_std_copy_if_examples.cpp)
+- `std::copy_if` example: [../code/tilir_basics/algorithms_std_copy_if_examples.cpp](../code/tilir_basics/algorithms_std_copy_if_examples.cpp)
 
 ### `std::any_of`, `std::all_of`, `std::none_of`
 
 - Используйте `std::any_of`, `std::all_of`, `std::none_of` вместо `std::find_if != end`. И предпочитайте все это обычным циклам.
-- Для пустых диапазонов возвращают не очевидные значения: [code/tilir_basics/algorithms_std_all_of_any_of_none_of.cpp](code/tilir_basics/algorithms_std_all_of_any_of_none_of.cpp)
+- Для пустых диапазонов возвращают не очевидные значения: [../code/tilir_basics/algorithms_std_all_of_any_of_none_of.cpp](../code/tilir_basics/algorithms_std_all_of_any_of_none_of.cpp)
 
 ### `std::equal`
 
 - Используйте `std::equal` вместо `std::mismatch == end` в простых случаях:
-- [code/tilir_basics/algorithms_std_mismatch_example.cpp](code/tilir_basics/algorithms_std_mismatch_example.cpp)
+- [../code/tilir_basics/algorithms_std_mismatch_example.cpp](../code/tilir_basics/algorithms_std_mismatch_example.cpp)
 
 ### `std::copy_backward`
 
-- [code/tilir_basics/algorithms_std_copy_backward_example.cpp](code/tilir_basics/algorithms_std_copy_backward_example.cpp).
+- [../code/tilir_basics/algorithms_std_copy_backward_example.cpp](../code/tilir_basics/algorithms_std_copy_backward_example.cpp).
 - Используйте `std::copy_backward` вместо `std::copy` с обратными итераторами
 - Copy-подобный алгоритм нельзя указывать выходной итератор посередине входного диапазона.
 - `std::copy_backward` выкручивается так, что он принимает итератор в конец выходного диапазона и копирует в обратном порядке.
@@ -3626,33 +3634,33 @@ struct Finally
 ### `std::transform`, `std::transform_reduce` и `std::inner_product`
 
 - `std::for_each` - нужен для того, чтобы сделать побочный эффект, не затрагивающий сам элемент. В других случаях используйте `std::transform`.
-- `std::transform` - то, что в нормальных языках называется `map`: [code/tilir_basics/algorithms_std_transform.cpp](code/tilir_basics/algorithms_std_transform.cpp)
+- `std::transform` - то, что в нормальных языках называется `map`: [../code/tilir_basics/algorithms_std_transform.cpp](../code/tilir_basics/algorithms_std_transform.cpp)
 
 ![algorithms_std_transform_example](screenshots/algorithms_std_transform_example.png)
 
-- `std::transform` - который делает `zip` двух контейнеров: [code/tilir_basics/algorithms_std_transform_zip.cpp](code/tilir_basics/algorithms_std_transform_zip.cpp)
+- `std::transform` - который делает `zip` двух контейнеров: [../code/tilir_basics/algorithms_std_transform_zip.cpp](../code/tilir_basics/algorithms_std_transform_zip.cpp)
 - Частный случай функции может быть `std::make_pair`.
 
 ![alt text](screenshots/algorithms_std_transform_zip_example.png)
 
-- `std::transform_reduce` - применяет функцию к каждому элементу диапазона и складывает каждую пару получившихся значений в **произвольно порядке**: [code/tilir_basics/algorithms_std_transform_zip.cpp](code/tilir_basics/algorithms_std_transform_zip.cpp)
+- `std::transform_reduce` - применяет функцию к каждому элементу диапазона и складывает каждую пару получившихся значений в **произвольно порядке**: [../code/tilir_basics/algorithms_std_transform_zip.cpp](../code/tilir_basics/algorithms_std_transform_zip.cpp)
   - Если операция **не ассоциативная**, то результат будет неопределенным (**UB**).
 
-- `std::inner_product` - скалярное произведение двух диапазонов: [code/tilir_basics/algorithms_std_transform_zip.cpp](code/tilir_basics/algorithms_std_transform_zip.cpp).
+- `std::inner_product` - скалярное произведение двух диапазонов: [../code/tilir_basics/algorithms_std_transform_zip.cpp](../code/tilir_basics/algorithms_std_transform_zip.cpp).
   - работает также как `std::transform_reduce`, но может работать параллельно.
   - применяет функцию к каждому элементу диапазона и складывает каждую пару получившихся значений **последовательно**.
   - Если операция **не ассоциативная**, то результат будет все равно **определенным**.
 
 ### `std::accumulate` и `std::reduce`
 
-- [code/tilir_basics/algorithms_std_reduce_and_std_accumulate.cpp](code/tilir_basics/algorithms_std_resuce_and_std_accumulate.cpp)
+- [../code/tilir_basics/algorithms_std_reduce_and_std_accumulate.cpp](../code/tilir_basics/algorithms_std_resuce_and_std_accumulate.cpp)
 - Слово `reduce` переводится как **"свертка" или "уменьшение"**. Это функциональная операция, которая используется для агрегирования или сжатия набора данных в одно значение путем применения функции к элементам набора.
 - Операция `reduce` позволяет проходить по последовательности элементов и комбинировать их в одно значение, используя заданную бинарную функцию.
 - `std::accumulate` делает вычисления **последовательно**, а `std::reduce` в **произвольном порядке**.
 
 ### `std::partial_sum`, `std::inclusive_scan` и `std::exclusive_scan`
 
-- [code/tilir_basics/algorithms_std_inclusive_scan_partial_sum.cpp](code/tilir_basics/algorithms_std_inclusive_scan_partial_sum.cpp)
+- [../code/tilir_basics/algorithms_std_inclusive_scan_partial_sum.cpp](../code/tilir_basics/algorithms_std_inclusive_scan_partial_sum.cpp)
 
 - `std::partial_sum` - вычисляет частичные суммы элементов в диапазоне. Гарантированно **работает последовательно**.
 - `std::inclusive_scan` - вычисляет частичные суммы элементов в диапазоне. **Работает в любом порядке**.
@@ -3661,7 +3669,7 @@ struct Finally
 ### Идиома `erase-remove` или `erase-remove_if`
 
 - Как бы вы написали remove функцию `remove(Iter first, Iter last, const T& val)`?
-- [code/tilir_basics/algorithms_erase_remove_idiom.cpp](code/tilir_basics/algorithms_erase_remove_idiom.cpp)
+- [../code/tilir_basics/algorithms_erase_remove_idiom.cpp](../code/tilir_basics/algorithms_erase_remove_idiom.cpp)
 
 ```cpp
 template <typename Iter, typename T>
@@ -3692,7 +3700,7 @@ v.erase(std::unique(v.begin(), v.end()), v.end());
 
 ![algorithms_move_group](screenshots/algorithms_move_group.png)
 
-- [code/tilir_basics/algorithms_std_rotate.cpp](code/tilir_basics/algorithms_std_rotate.cpp)
+- [../code/tilir_basics/algorithms_std_rotate.cpp](../code/tilir_basics/algorithms_std_rotate.cpp)
 - `void rotate(ForwardIt first, ForwardIt n_first, ForwardIt last)` - перемещает элементы в диапазоне `[first, last)` так, что элемент, на который указывает `n_first`, становится первым элементом диапазона.
 - `std::rotate` - работает за `O(N)`.
 
@@ -3714,7 +3722,7 @@ v.erase(std::unique(v.begin(), v.end()), v.end());
 
 ### Поисковые алгоритмы: `std::binary_search`, `std::lower_bound`, `std::upper_bound`, `std::equal_range`
 
-- [code/tilir_basics/algorithms_std_lower_bound_upper_bound.cpp](code/tilir_basics/algorithms_std_lower_bound_upper_bound.cpp)
+- [../code/tilir_basics/algorithms_std_lower_bound_upper_bound.cpp](../code/tilir_basics/algorithms_std_lower_bound_upper_bound.cpp)
 
 - **binary_search** – есть элемент или его нет
 - **lower_bound** – где мог бы быть элемент, если бы он был (слева)
@@ -3730,10 +3738,10 @@ v.erase(std::unique(v.begin(), v.end()), v.end());
 
 ### Примеры `SFINAE` вычислений: `factorial`, `fibonacci`, `sqrt`, `is_prime`
 
-- [code/tilir_basics/meta_factorial_sfinae.cpp](code/tilir_basics/meta_factorial_sfinae.cpp)
-- [code/tilir_basics/meta_fibonacci_sfinae.cpp](code/tilir_basics/meta_fibonacci_sfinae.cpp)
-- [code/tilir_basics/meta_sqrt_int_sfinae.cpp](code/tilir_basics/meta_sqrt_int_sfinae.cpp)
-- [code/tilir_basics/meta_is_prime_sfinae.cpp](code/tilir_basics/meta_is_prime_sfinae.cpp) [TODO]
+- [../code/tilir_basics/meta_factorial_sfinae.cpp](../code/tilir_basics/meta_factorial_sfinae.cpp)
+- [../code/tilir_basics/meta_fibonacci_sfinae.cpp](../code/tilir_basics/meta_fibonacci_sfinae.cpp)
+- [../code/tilir_basics/meta_sqrt_int_sfinae.cpp](../code/tilir_basics/meta_sqrt_int_sfinae.cpp)
+- [../code/tilir_basics/meta_is_prime_sfinae.cpp](../code/tilir_basics/meta_is_prime_sfinae.cpp) [TODO]
 
 ### Квадранты вычислений
 
@@ -3755,8 +3763,8 @@ Type    |   4. Смешанные     | 3. Преобразования  |
 
 ### `constexpr`
 
-- [code/tilir_basics/meta_print_all_constexpr.cpp](code/tilir_basics/meta_print_all_constexpr.cpp)
-- [code/tilir_basics/meta_logint_constexpr.cpp](code/tilir_basics/meta_logint_constexpr.cpp)
+- [../code/tilir_basics/meta_print_all_constexpr.cpp](../code/tilir_basics/meta_print_all_constexpr.cpp)
+- [../code/tilir_basics/meta_logint_constexpr.cpp](../code/tilir_basics/meta_logint_constexpr.cpp)
 
 ```cpp
 template <size_t n> square: integral_constant<size_t, n*n>;
@@ -3799,7 +3807,7 @@ constexpr int * x = &arr[6];
 
 ### Литералы пользовательского типа через `constexpr ctor` и пользовательский суффикс
 
-- [code/tilir_basics/meta_user_defined_literals.cpp](code/tilir_basics/meta_user_defined_literals.cpp)
+- [../code/tilir_basics/meta_user_defined_literals.cpp](../code/tilir_basics/meta_user_defined_literals.cpp)
 - Любой объект класса, у которого есть `constexpr конструктор`, становится `литералом`.
 - У него могут быть `constexpr` методы.
 
@@ -3816,7 +3824,7 @@ constexpr Complex operator""_i (long double arg) {
 
 ### Техника перевода `std::initializer_list` в `std::array` через `std::make_index_sequence`.
 
-- [code/tilir_basics/meta_vector_to_array.cpp](code/tilir_basics/meta_vector_to_array.cpp)
+- [../code/tilir_basics/meta_vector_to_array.cpp](../code/tilir_basics/meta_vector_to_array.cpp)
 - Очень частая техника перевода `std::initializer_list` в `std::array` через `std::make_index_sequence`.
 - Эта техника очень распространена в `третьем` и `четвертом` квадрантах.
 - Но для простых случаев из второго квадранта вычислений в современных стандартах можно использовать `constexpr вектора` и другие структуры данных.
@@ -3839,7 +3847,7 @@ make_array(std::initializer_list<T> t) {
 
 ### SFINAE-constraints (`requires`)
 
-- [code/tilir_basics/meta_sfinae_problem.cpp](code/tilir_basics/meta_sfinae_problem.cpp)
+- [../code/tilir_basics/meta_sfinae_problem.cpp](../code/tilir_basics/meta_sfinae_problem.cpp)
 - `Constraints` - были введены чтобы сделать статические интерфейсы явными.
 - Больше **нет мусорного параметра шаблона**. Языковые средства используются для того, для чего должны.
 - Сообщение об ошибке куда как лучше.
@@ -3879,7 +3887,7 @@ struct is_random_iterator : std::is_base_of<
 
 ### `requires requires`
 
-- [code/tilir_basics/meta_requires_requires.cpp](code/tilir_basics/meta_requires_requires.cpp)
+- [../code/tilir_basics/meta_requires_requires.cpp](../code/tilir_basics/meta_requires_requires.cpp)
 - Первый `requires` — это **statement**,
   - Первый `requires` читает `true` или `false` и выкидывает шаблоны из инстанцирования или не выкидывает.
 - Второй `requires` — это **выражение**.
@@ -3901,7 +3909,7 @@ note: the required expression '(t == u)' would be ill-formed
 
 ### `requires requires` оценивает выражение, не делая вычислений
 
-- [code/tilir_basics/meta_requires_requires_no_eval.cpp](code/tilir_basics/meta_requires_requires_no_eval.cpp)
+- [../code/tilir_basics/meta_requires_requires_no_eval.cpp](../code/tilir_basics/meta_requires_requires_no_eval.cpp)
 
 ```cpp
 template <typename T> constexpr int somepred() { return 14; }
@@ -3940,7 +3948,7 @@ bool bar (T&& lhs, T&& rhs) { return lhs < rhs; }
 
 ### `concept` - новый синтаксис для `requires` (С++20)
 
-- [code/tilir_basics/meta_concept.cpp](code/tilir_basics/meta_concept.cpp)
+- [../code/tilir_basics/meta_concept.cpp](../code/tilir_basics/meta_concept.cpp)
 - Концепт — это предикат, выполняющийся на этапе компиляции.
 - Позволяют задавать ограничения на шаблонные параметры. Это видно явно в сигнатуре функции.
 - Обеспечивают более точные сообщения об ошибках компиляции, когда код не соответствует ожидаемым требованиям.
@@ -3988,7 +3996,7 @@ concept WeaklyEqualityComparableWith =
 
 ### `concept` - работает перегрузка по концептам
 
-- [code/tilir_basics/meta_concept_overload.cpp](code/tilir_basics/meta_concept_overload.cpp)
+- [../code/tilir_basics/meta_concept_overload.cpp](../code/tilir_basics/meta_concept_overload.cpp)
 - Поскольку концепт уже берет тип `T`, то **можно заменять `typename T` на название концепта**.
 
 ```cpp

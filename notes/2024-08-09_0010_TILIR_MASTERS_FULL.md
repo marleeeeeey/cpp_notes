@@ -263,7 +263,7 @@
 ### Побочные эффекты и asm
 
 - https://godbolt.org/z/TT7Ebjczf
-- [code/tilir_masters/01_10_side_effects.cpp](code/tilir_masters/01_10_side_effects.cpp)
+- [code/tilir_masters/01_10_side_effects.cpp](../code/tilir_masters/01_10_side_effects.cpp)
 - Компилятор должен сохранять порядок побочных эффектов.
 
 ```cpp
@@ -397,9 +397,9 @@ class basic_string { ... };
 
 ### Создаем шаблонный метод `do_nth_power` с концептами
 
-- [code/tilir_masters/02_10_nth_power.cpp](code/tilir_masters/02_10_nth_power.cpp)
-- [code/tilir_masters/02_12_nth_power_default_id_traits.cpp](code/tilir_masters/02_12_nth_power_default_id_traits.cpp)
-- [code/tilir_masters/02_14_nth_power_concepts.cpp](code/tilir_masters/02_14_nth_power_concepts.cpp)
+- [code/tilir_masters/02_10_nth_power.cpp](../code/tilir_masters/02_10_nth_power.cpp)
+- [code/tilir_masters/02_12_nth_power_default_id_traits.cpp](../code/tilir_masters/02_12_nth_power_default_id_traits.cpp)
+- [code/tilir_masters/02_14_nth_power_concepts.cpp](../code/tilir_masters/02_14_nth_power_concepts.cpp)
 
 ### Управление инстанцированием
 
@@ -429,7 +429,7 @@ int main() { return max<int>(3, 4); }
 ### Правила инстанцирования
 
 - https://youtu.be/FshTrPe_Woc?t=1840
-- [code/tilir_masters/02_18_instantiation_rules.cpp](code/tilir_masters/02_18_instantiation_rules.cpp)
+- [code/tilir_masters/02_18_instantiation_rules.cpp](../code/tilir_masters/02_18_instantiation_rules.cpp)
 - Явное инстанцирование единожды в программе.
 - Явная специализация единожды в программе.
 - Явное **инстанцирование должно следовать за явной специализацией**.
@@ -446,7 +446,7 @@ template <> int max<int>(int x, int y) { return x > y ? x : y; } // <===
 
 ### `Non-type parameters`
 
-- [code/tilir_masters/02_20_non_type_parameters.cpp](code/tilir_masters/02_20_non_type_parameters.cpp)
+- [code/tilir_masters/02_20_non_type_parameters.cpp](../code/tilir_masters/02_20_non_type_parameters.cpp)
 - `non-type template parameter` могут быть:
   - Скалярные типы.
   - Левые ссылки.
@@ -476,7 +476,7 @@ TEST(nontypes, foo) {
 
 ### Шаблонные параметры по умолчанию
 
-- [code/tilir_masters/02_22_template_default_params.cpp](code/tilir_masters/02_22_template_default_params.cpp)
+- [code/tilir_masters/02_22_template_default_params.cpp](../code/tilir_masters/02_22_template_default_params.cpp)
 
 ```cpp
 template <typename T = double>  // Defaults for type
@@ -497,7 +497,7 @@ TEST(deduce, context)
 ```
 
 - Можно использовать слово `auto` для автоматического вывода типа.
-- [code/tilir_masters/02_24_template_auto_type.cpp](code/tilir_masters/02_24_template_auto_type.cpp)
+- [code/tilir_masters/02_24_template_auto_type.cpp](../code/tilir_masters/02_24_template_auto_type.cpp)
 
 ```cpp
 template <auto n> // <=== auto for type deduction
@@ -526,7 +526,7 @@ bool operator==(const basic_string<CharT, Traits, Allocator>& lhs, const CharT* 
 
 ### Идея построения цепочки преобразований
 
-- [code/tilir_masters/02_26_chain_of_casts.cpp](code/tilir_masters/02_26_chain_of_casts.cpp)
+- [code/tilir_masters/02_26_chain_of_casts.cpp](../code/tilir_masters/02_26_chain_of_casts.cpp)
 - С наивной точки зрения цепочку преобразований входят:
   - С высшим приоритетом: **стандартные преобразования**.
   - Немного ниже: **пользовательские преобразования**.
@@ -613,7 +613,7 @@ foo(a); // → ?
 ### Частичная специализация шаблонов (работает только для классов)
 
 - *Это простые примеры специализации. А что, если передать `float*, float*`?* (риторический вопрос)
-- [code/tilir_masters/03_10_class_spec_example.cpp](code/tilir_masters/03_10_class_spec_example.cpp)
+- [code/tilir_masters/03_10_class_spec_example.cpp](../code/tilir_masters/03_10_class_spec_example.cpp)
 
 ```cpp
 template <typename T, typename U> class Foo {}; // 1
@@ -640,7 +640,7 @@ template <typename R, typename Arg> class X<R(Arg)> {};
 
 ### Трюк Саттера для создания частичной специализации функции через класс
 
-- [code/tilir_masters/03_12_satters_trick.cpp](code/tilir_masters/03_12_satters_trick.cpp)
+- [code/tilir_masters/03_12_satters_trick.cpp](../code/tilir_masters/03_12_satters_trick.cpp)
 - Частичная специализация функций запрещена.
 - Можно ли симитировать частичную специализацию функций через частичную специализацию классов?
 - Здесь используется то, что статический метод stateless класса мало отличается от свободной функции.
@@ -691,7 +691,7 @@ R DataReader<T>::read() {
 
 ### Для специализации шаблонного метода шаблонного класса нужно съедать и параметры класса и параметры метода
 
-- [code/tilir_masters/03_14_method_full_spec.cpp](code/tilir_masters/03_14_method_full_spec.cpp)
+- [code/tilir_masters/03_14_method_full_spec.cpp](../code/tilir_masters/03_14_method_full_spec.cpp)
 - Чтобы специализировать метод шаблонного класса, нужно не просто "съесть" параметр именно шаблонного метода, а также "съесть" параметр самого класса.
 - Иначе компилятор подумает, что это частичная специализация функции, которая запрещена, потому что функция передается на неявный указатель на `this`.
 
@@ -1258,9 +1258,9 @@ void foo() {
 
 ### `consteval` (C++20)
 
-- [code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp](code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp)
-- [code/tilir_masters/06_12_challange_math_array_size.cpp](code/tilir_masters/06_12_challange_math_array_size.cpp)
-- [code/tilir_masters/06_14_challange_bitmask_logic_or.cpp](code/tilir_masters/06_14_challange_bitmask_logic_or.cpp)
+- [code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp](../code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp)
+- [code/tilir_masters/06_12_challange_math_array_size.cpp](../code/tilir_masters/06_12_challange_math_array_size.cpp)
+- [code/tilir_masters/06_14_challange_bitmask_logic_or.cpp](../code/tilir_masters/06_14_challange_bitmask_logic_or.cpp)
 - `consteval` - это `constexpr`, который гарантирует, что функция будет вызвана во время компиляции.
 
 ```cpp
@@ -1317,7 +1317,7 @@ consteval bitmask operator|(bitmask v0, bitmask v1)
 
 ### `constinit` (С++20)
 
-- [code/tilir_masters/06_01_constinit.cpp](code/tilir_masters/06_01_constinit.cpp)
+- [code/tilir_masters/06_01_constinit.cpp](../code/tilir_masters/06_01_constinit.cpp)
 - `constinit` - не просто форсит `constexpr`, но гарантирует статическую констунтную инициализацию, что не возможно для объектов на стеке.
 - Невозможно создать локальную `constinit` переменную.
 
@@ -1341,7 +1341,7 @@ constexpr size_t int_log (size_t N)
 
 ### Core constant expressions
 
-- [code/tilir_masters/06_16_core_constant_expr.cpp](code/tilir_masters/06_16_core_constant_expr.cpp)
+- [code/tilir_masters/06_16_core_constant_expr.cpp](../code/tilir_masters/06_16_core_constant_expr.cpp)
 - Такое ощущение, что `constexpr` метод класса может быть `static`.
 - Все что использует этот метод, тоже должно быть `constexpr`.
 
@@ -1487,7 +1487,7 @@ constexpr unsigned long long operator "" _binary() {
 - Попытка применить: `10j01_tr1t` заставляет компилятор рассматривать `j01_tr1t` как суффикс.
 - Более общий подход: строковые литералы.
 - Нужно использовать кавычки и по-честному принимать указатель на `const char` и размер.
-- Дополнить существующий пример литераля времени компиляции для тритов [CODE](code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp) [TODO] [PRACTICE].
+- Дополнить существующий пример литераля времени компиляции для тритов [CODE](../code/tilir_masters/06_10_challange_math_trit_via_consteval.cpp) [TODO] [PRACTICE].
 
 ```cpp
 constexpr long long
@@ -1918,7 +1918,7 @@ public:
 
 ### C-style `...`
 
-- [code/tilir_masters/09_10_c-style-dot-dot-dot.cpp](code/tilir_masters/09_10_c-style-dot-dot-dot.cpp)
+- [code/tilir_masters/09_10_c-style-dot-dot-dot.cpp](../code/tilir_masters/09_10_c-style-dot-dot-dot.cpp)
 - C-style `...`
   - (1) `variadic function`:    `void f(int x, ...);`
   - (2) `variadic macros`:      `#define f(x, ...) ...`
@@ -1944,7 +1944,7 @@ int sum_all(int nargs, ...)
 ### C++ style `...`
 
 - Вместо `variadic функции` у нас рекурсивный `variadic template`.
-- [code/tilir_masters/09_12_variadic_templates.cpp](code/tilir_masters/09_12_variadic_templates.cpp)
+- [code/tilir_masters/09_12_variadic_templates.cpp](../code/tilir_masters/09_12_variadic_templates.cpp)
 
 ```cpp
 
@@ -2058,7 +2058,7 @@ TEST(variadic, exoticfold) {
 ### Светрки с пустыми пачками тоже работают
 
 - https://godbolt.org/z/z4h9E6ME9
-- [code/tilir_masters/09_14_variadic_templates_empty_pack.cpp](code/tilir_masters/09_14_variadic_templates_empty_pack.cpp)
+- [code/tilir_masters/09_14_variadic_templates_empty_pack.cpp](../code/tilir_masters/09_14_variadic_templates_empty_pack.cpp)
 - Пустая пачка для `&&` - это `true`, а для `||` - `false`.
 - Пустая пачка для `+` вызывает ошибку компиляции.
 
@@ -2187,7 +2187,7 @@ template <typename T> class Stack {
 
 ### Пример с `auto` для вывода указателя на поле класса
 
-- [code/tilir_basics/template_fold_examples.cpp](code/tilir_basics/template_fold_examples.cpp)
+- [../code/tilir_basics/template_fold_examples.cpp](../code/tilir_basics/template_fold_examples.cpp)
 - https://godbolt.org/z/j9YPnvdjs
 
 ```cpp
@@ -2249,7 +2249,7 @@ int (*pf)(int x, int y) = adder; // implicit cast   // <=== такой код б
 
 ### `std::invoke` и callable объекты
 
-- [code/tilir_masters/10_10_std_invoke.cpp](code/tilir_masters/10_10_std_invoke.cpp)
+- [code/tilir_masters/10_10_std_invoke.cpp](../code/tilir_masters/10_10_std_invoke.cpp)
 - Для вашего обобщённого кода он абстрагирует callables, включая stateful.
 - Т.е. вместо вызова `obj()` можно использовать `std::invoke(obj)`.
 - `std::invoke` позволяет также получать доступ к полям класса.
@@ -2409,7 +2409,7 @@ decltype(auto) transparent(Fun&& fun, Args&&... args) {
 
 ### Захват с вариабельными пачками (C++20)
 
-- [code/tilir_masters/10_20_lambda_and_folds.cpp](code/tilir_masters/10_20_lambda_and_folds.cpp)
+- [code/tilir_masters/10_20_lambda_and_folds.cpp](../code/tilir_masters/10_20_lambda_and_folds.cpp)
 
 ```cpp
 template <typename ... Args>
@@ -2445,7 +2445,7 @@ auto curry(Fun fun, Args... args)                   // <=== Съедаем пе�
 
 ### Захватывается только локальный нестатический контекст
 
-- [code/tilir_masters/10_24_lambda_local_context.cpp](code/tilir_masters/10_24_lambda_local_context.cpp)
+- [code/tilir_masters/10_24_lambda_local_context.cpp](../code/tilir_masters/10_24_lambda_local_context.cpp)
 
 ```cpp
 int g = 1;              // <=== не копируется в лямбду, т.к. глобальная.
@@ -2474,7 +2474,7 @@ void foo(int b)
 
 **ПРИМЕР НА ПОНИМАНИЕ**
 
-- [code/tilir_masters/10_24_lambda_local_context.cpp](code/tilir_masters/10_24_lambda_local_context.cpp)
+- [code/tilir_masters/10_24_lambda_local_context.cpp](../code/tilir_masters/10_24_lambda_local_context.cpp)
 
 ```cpp
 auto factory(int parameter)
@@ -2559,10 +2559,10 @@ auto t5 = std::forward_as_tuple(1, 2.0, "3");
 
 ### `std::forward_as_tuple` для решения проблемы форвардинга пачки агрументов в лямбда захват
 
-- [code/tilir_masters/10_28_lambda_perfect_forward_fail.cpp](code/tilir_masters/10_28_lambda_perfect_forward_fail.cpp)
-- [code/tilir_masters/10_30_lambda_perfect_forward_custom_wrapper.cpp](code/tilir_masters/10_30_lambda_perfect_forward_custom_wrapper.cpp)
-- [code/tilir_masters/10_32_lambda_perfect_forward_tuple_custom.cpp](code/tilir_masters/10_32_lambda_perfect_forward_tuple_custom.cpp)
-- [code/tilir_masters/10_34_lambda_perfect_forward_forward_as_tuple.cpp](code/tilir_masters/10_34_lambda_perfect_forward_forward_as_tuple.cpp)
+- [code/tilir_masters/10_28_lambda_perfect_forward_fail.cpp](../code/tilir_masters/10_28_lambda_perfect_forward_fail.cpp)
+- [code/tilir_masters/10_30_lambda_perfect_forward_custom_wrapper.cpp](../code/tilir_masters/10_30_lambda_perfect_forward_custom_wrapper.cpp)
+- [code/tilir_masters/10_32_lambda_perfect_forward_tuple_custom.cpp](../code/tilir_masters/10_32_lambda_perfect_forward_tuple_custom.cpp)
+- [code/tilir_masters/10_34_lambda_perfect_forward_forward_as_tuple.cpp](../code/tilir_masters/10_34_lambda_perfect_forward_forward_as_tuple.cpp)
 
 ```cpp
 auto foo = []<typename ... T>(T&&... a)
@@ -2579,7 +2579,7 @@ auto foo = []<typename ... T>(T&&... a)
 ### `std::apply` - для вызова функции на пачке аргументов
 
 - `std::apply`- нужен для вызова функции на пачке аргументов, например на tuple.
-- [code/tilir_masters/10_36_std_apply.cpp](code/tilir_masters/10_36_std_apply.cpp)
+- [code/tilir_masters/10_36_std_apply.cpp](../code/tilir_masters/10_36_std_apply.cpp)
 
 ```cpp
 auto add = [](auto x, auto y) { return x + y; };
@@ -2602,7 +2602,7 @@ EXPECT_EQ(mult, 120);
 ### `std::any` - стирает типы
 
 - Превращает С++ в Python.
-- [code/tilir_masters/10_38_std_any_type_erasure.cpp](code/tilir_masters/10_38_std_any_type_erasure.cpp)
+- [code/tilir_masters/10_38_std_any_type_erasure.cpp](../code/tilir_masters/10_38_std_any_type_erasure.cpp)
 
 ```cpp
 std::any a = 1;
@@ -2615,7 +2615,7 @@ auto h = std::make_any<HeavyObject>(100);
 
 ### `std::variant` - альтернатива `std::any`, которая хранит только один из заданных типов. Работает в сочетании с `std::visit`, который проверяет тип и вызывает соответствующую функцию.
 
-- [code/tilir_masters/10_40_std_variant.cpp](code/tilir_masters/10_40_std_variant.cpp)
+- [code/tilir_masters/10_40_std_variant.cpp](../code/tilir_masters/10_40_std_variant.cpp)
 
 ```cpp
 std::variant<int, float> v = 12;
@@ -2646,8 +2646,8 @@ for (auto& v : vec)
 
 ### Изобретаем свою перегрузку методов
 
-- [code/tilir_masters/10_42_lambda_overloading.cpp](code/tilir_masters/10_42_lambda_overloading.cpp)
-- [code/tilir_masters/10_44_lambda_overloading_deduction_hint.cpp](code/tilir_masters/10_44_lambda_overloading_deduction_hint.cpp)
+- [code/tilir_masters/10_42_lambda_overloading.cpp](../code/tilir_masters/10_42_lambda_overloading.cpp)
+- [code/tilir_masters/10_44_lambda_overloading_deduction_hint.cpp](../code/tilir_masters/10_44_lambda_overloading_deduction_hint.cpp)
 
 ```cpp
 template<typename ... F>
@@ -2722,7 +2722,7 @@ auto operator()(int) && { ..... }                   // <=== finally use captured
 
 **РЕШЕНИЕ - deducing this**
 
-- [code/tilir_masters/10_50_deducing_this.cpp](code/tilir_masters/10_50_deducing_this.cpp)
+- [code/tilir_masters/10_50_deducing_this.cpp](../code/tilir_masters/10_50_deducing_this.cpp)
 - Синтаксис языка был расширен таким образом чтобы иметь возможность аннотировать параметр this.
 - Разумеется не только в лямбдах, в методе любого класса.
 - Проблема: мы должны **сделать move захвата (y) в зависимости от свойств self**.
@@ -2783,7 +2783,7 @@ EXPECT_EQ(factorial_new(5), 120);
 
 ### `deducing this` and `std::visit` паттерн
 
-- [code/tilir_masters/10_52_deducing_this_with_variant_pattern.cpp](code/tilir_masters/10_52_deducing_this_with_variant_pattern.cpp)
+- [code/tilir_masters/10_52_deducing_this_with_variant_pattern.cpp](../code/tilir_masters/10_52_deducing_this_with_variant_pattern.cpp)
 
 ```cpp
 // Задача на подсчет количества листьев в дереве
@@ -2880,7 +2880,7 @@ std::transform(v.begin(), v.end(), d_start, [] (int n){ return n * 2; });    // 
 
 ### Примеры Ranges
 
-- [code/tilir_masters/11_12_meet_ranges.cpp](code/tilir_masters/11_12_meet_ranges.cpp)
+- [code/tilir_masters/11_12_meet_ranges.cpp](../code/tilir_masters/11_12_meet_ranges.cpp)
 
 ```cpp
 auto t = ranges::istream_view<int>(is) |
@@ -2929,7 +2929,7 @@ template<class T> concept forward_range =
 
 ### (2) Компараторы и проекции в ranges
 
-- [code/tilir_masters/11_16_ranges.cpp](code/tilir_masters/11_16_ranges.cpp)
+- [code/tilir_masters/11_16_ranges.cpp](../code/tilir_masters/11_16_ranges.cpp)
 - [submodules/cpp-masters/ranges/proj.cc](submodules/cpp-masters/ranges/proj.cc)
 - https://quick-bench.com/q/KZEK53ef70061_-N1gbjMOTOE7c - показывает, что короткая форма работает чуть дольше.
 - https://quick-bench.com/q/rUMr3meHTgQfYOIW7ValdUjSeIU
@@ -2993,7 +2993,7 @@ ranges::sort(v, {},
 ### Проблемы использования наивных аллокаторов. (С++98)
 
 - https://godbolt.org/z/d3MfWYfjj
-- [code/tilir_masters/12_10_alloc_problems.cpp](code/tilir_masters/12_10_alloc_problems.cpp)
+- [code/tilir_masters/12_10_alloc_problems.cpp](../code/tilir_masters/12_10_alloc_problems.cpp)
 
 ```cpp
 // Представим, что у вас в программе есть особый распределитель памяти s_malloc.
@@ -3209,7 +3209,7 @@ class allocator_traits {
 ### Пример `freelist_alloc`, который не освобождает память при удалении объектов
 
 - https://godbolt.org/z/qWY8rrGbz
-- [code/tilir_masters/12_12_freelist_alloc.cpp](code/tilir_masters/12_12_freelist_alloc.cpp) (С++11 works, C++20 doesn't work).
+- [code/tilir_masters/12_12_freelist_alloc.cpp](../code/tilir_masters/12_12_freelist_alloc.cpp) (С++11 works, C++20 doesn't work).
 - Основная идея этого аллокатора заключается в том, чтобы минимизировать количество операций выделения и освобождения памяти, которые могут быть дорогими с точки зрения производительности.
 
 ```cpp
@@ -3380,7 +3380,7 @@ template<typename T> struct polymorphic_allocator {                     // <=== 
 ### Пример современного полиморфного аллокатора в С++20 (std::pmr)
 
 - https://godbolt.org/z/bPs7TMjEq
-- [code/tilir_masters/12_14_polimorfic_alloc_cpp20.cpp](code/tilir_masters/12_14_polimorfic_alloc_cpp20.cpp)
+- [code/tilir_masters/12_14_polimorfic_alloc_cpp20.cpp](../code/tilir_masters/12_14_polimorfic_alloc_cpp20.cpp)
 - `std::pmr::vector` принимает аллокатор, в конструктор, а не в шаблонный тип.
 - Бенчмарк: https://quick-bench.com/q/Uxk1Z3xATEaf0JBw6xVwiiUezCQ
 
@@ -3409,7 +3409,7 @@ namespace pmr {
 ### Case study: тестовый memory resource
 
 - Тестовый ресурс памяти проверяет что аллокация соответствует деаллокации и проверяет утечки
-- [code/tilir_masters/12_18_custom_memory_resourse.cpp](code/tilir_masters/12_18_custom_memory_resourse.cpp)
+- [code/tilir_masters/12_18_custom_memory_resourse.cpp](../code/tilir_masters/12_18_custom_memory_resourse.cpp)
 - test_resource наследует `pmr::memory_resource`, что делает его специализированным ресурсом памяти.
 - `pmr::memory_resource *parent_;` - Этот указатель указывает на родительский ресурс памяти, к которому текущий ресурс может обращаться в случае нехватки собственной памяти. Это важный механизм, позволяющий создавать цепочки ресурсов, где один ресурс "делегирует" управление памятью другому.
 
@@ -3551,7 +3551,7 @@ slist& operator=(slist&& rhs) { // увы, никакого noexcept
 ### PRVALUE elision и NRVO
 
 - https://godbolt.org/z/E6G4W8azx
-- [code/tilir_masters/13_10_prvalue_ellision.cpp](code/tilir_masters/13_10_prvalue_ellision.cpp)
+- [code/tilir_masters/13_10_prvalue_ellision.cpp](../code/tilir_masters/13_10_prvalue_ellision.cpp)
 - Представим, что в классе `ScopedPointer` запрещен конструктор копирования и перемещения.
 - NRVO - Работает на возврате Named Object, если разрешен copy or move constructor.
 - PRVALUE elision - работает при передаче rvalue объектов на стек другой функции или при возврате prvalue, даже если у нас нет конструктора перемещения.
@@ -3829,7 +3829,7 @@ int main()
 ### CRTP, как альтернатива виртуальным функциям
 
 - https://godbolt.org/z/rG4EW4YPj
-- [code/tilir_masters/14_12_crtp_as_virt_alternative.cpp](code/tilir_masters/14_12_crtp_as_virt_alternative.cpp)
+- [code/tilir_masters/14_12_crtp_as_virt_alternative.cpp](../code/tilir_masters/14_12_crtp_as_virt_alternative.cpp)
 - https://godbolt.org/z/Eea11nh3a - ассемблер для понимания производительности.
 - Данный подход бесплатен в плане производительности.
 - CRTP не стирает тип, поэтому не получится использовать указатель на базовый класс, чтобы складывать объекты разных типов в контейнер.
@@ -3861,7 +3861,7 @@ void call_interface(object_t<T>& obj, std::ostream& os)
 ### CRTP mixin
 
 - https://godbolt.org/z/88rv3vhdn
-- [code/tilir_masters/14_14_crtp_mixin.cpp](code/tilir_masters/14_14_crtp_mixin.cpp)
+- [code/tilir_masters/14_14_crtp_mixin.cpp](../code/tilir_masters/14_14_crtp_mixin.cpp)
 - Используется множественное наследование от object_t для интерфейса и от Comparisons для операторов сравнения.
 
 ```cpp
@@ -3908,7 +3908,7 @@ bool operator<(const int_t& lhs, const int_t& rhs)
 ### CRTP-mixin для clone (C++20, C++23)
 
 - https://godbolt.org/z/865rEP1EW
-- [code/tilir_masters/14_16_crtp_mixin_clone.cpp](code/tilir_masters/14_16_crtp_mixin_clone.cpp)
+- [code/tilir_masters/14_16_crtp_mixin_clone.cpp](../code/tilir_masters/14_16_crtp_mixin_clone.cpp)
 - Чтобы не писать функцию clone в каждом классе наследника, можно использовать CRTP-mixin.
 - `deducing this` - убийца CRTP.
 
@@ -3947,7 +3947,7 @@ int data;
 ### Симметрия исключений и множественного наследования
 
 - https://godbolt.org/z/aWGb9WrEn
-- [code/tilir_masters/14_18_symmetry_exceptions_and_diamond_inh.cpp](code/tilir_masters/14_18_symmetry_exceptions_and_diamond_inh.cpp)
+- [code/tilir_masters/14_18_symmetry_exceptions_and_diamond_inh.cpp](../code/tilir_masters/14_18_symmetry_exceptions_and_diamond_inh.cpp)
 - Через RTTI не видимы неоднозначение базовые классы.
 - Через RTTI не видимы недоступные (protected inheritance) базовые классы.
 
@@ -3989,7 +3989,7 @@ struct IOFile : public InputFile, public OutputFile {
 ### `dynamic_cast`
 
 - https://godbolt.org/z/sjTKvofcs
-- [code/tilir_masters/14_20_dynamic_cast.cpp](code/tilir_masters/14_20_dynamic_cast.cpp)
+- [code/tilir_masters/14_20_dynamic_cast.cpp](../code/tilir_masters/14_20_dynamic_cast.cpp)
 - https://android.googlesource.com/platform/abi/cpp/+/eb789ea833d8d800662b67914d9c1785a58c2caa/src/dynamic_cast.cc
 
 - `dynamic_cast` может делать три вещи при виртуальном наследовании, которые не может делать `static_cast`.
@@ -4163,8 +4163,8 @@ public:
 
 **ФИНАЛЬНЫЙ КОД**
 
-- [code/tilir_masters/14_22_sean_parent_custom_poly.cpp](code/tilir_masters/14_22_sean_parent_custom_poly.cpp)
-- [code/tilir_masters/14_22_sean_parent_custom_poly.drawio](code/tilir_masters/14_22_sean_parent_custom_poly.drawio)
+- [code/tilir_masters/14_22_sean_parent_custom_poly.cpp](../code/tilir_masters/14_22_sean_parent_custom_poly.cpp)
+- [code/tilir_masters/14_22_sean_parent_custom_poly.drawio](../code/tilir_masters/14_22_sean_parent_custom_poly.drawio)
 
 ![sean_parrent_poly_by_value](screenshots/sean_parrent_poly_by_value.png)
 
@@ -4265,7 +4265,7 @@ int main()
 ### `std::thread`
 
 - https://godbolt.org/z/xbb1aKxzs
-- [code/tilir_masters/15_10_thread_basics.cpp](code/tilir_masters/15_10_thread_basics.cpp)
+- [code/tilir_masters/15_10_thread_basics.cpp](../code/tilir_masters/15_10_thread_basics.cpp)
 - Если вы не сделали `join` или `detach` на `std::thread`, то это UB.
 
 ```cpp
@@ -4281,7 +4281,7 @@ TEST(threads, basic)
 ### `data race`
 
 - https://godbolt.org/z/Gn3szo5ad
-- [code/tilir_masters/15_12_thread_race.cpp](code/tilir_masters/15_12_thread_race.cpp)
+- [code/tilir_masters/15_12_thread_race.cpp](../code/tilir_masters/15_12_thread_race.cpp)
 - `Data race`
   - Two expression evaluations **conflict** if **one of them modifies** a memory location and the **other one reads or modifies** the same memory location.
   - The execution of a program contains a data race if it contains two potentially concurrent **conflicting** actions, at least **one of which is not atomic**, and neither happens before the other, except for the special case for signal handlers described below. **Any such data race results in undefined behavior**.
@@ -4326,12 +4326,12 @@ void race() {
 ### `volatile` не работает для предупреждения `data race`
 
 - https://godbolt.org/z/GbbParKeh
-- [code/tilir_masters/15_14_volatile.cpp](code/tilir_masters/15_14_volatile.cpp)
+- [code/tilir_masters/15_14_volatile.cpp](../code/tilir_masters/15_14_volatile.cpp)
 - `volatile` - это обещание компилятору, что значение переменной может измениться вне текущего потока выполнения.
 
 ### `data race` и не скалярные типы
 
-- [code/tilir_masters/15_16_race2.cpp](code/tilir_masters/15_16_race2.cpp)
+- [code/tilir_masters/15_16_race2.cpp](../code/tilir_masters/15_16_race2.cpp)
 
 ```cpp
 unsigned x = 0,         // <=== x - является скалярным объектом, поэтому ниже data race
@@ -4395,7 +4395,7 @@ void writerf()
 
 - Пример Каргила по безопасности исключений (вспомнить):
   - https://godbolt.org/z/TWYK9Pr1M
-  - [code/tilir_masters/15_18_exception_safety_cargill_example.cpp](code/tilir_masters/15_18_exception_safety_cargill_example.cpp)
+  - [code/tilir_masters/15_18_exception_safety_cargill_example.cpp](../code/tilir_masters/15_18_exception_safety_cargill_example.cpp)
 
 ### 15.1 Если объект защищен `синхронизацией`, то он безопасен.
 
@@ -4442,8 +4442,8 @@ if (!s.empty()) {           // <=== Оба потока могут пройти 
 ### 15.4 `deadlock` - когда два потока ждут друг друга.
 
 - https://godbolt.org/z/aqsjGxaG7
-- [code/tilir_masters/15_20_deadlock.cpp](code/tilir_masters/15_20_deadlock.cpp)
-- [code/tilir_masters/15_22_philosofy_eats.cpp](code/tilir_masters/15_22_philosofy_eats.cpp)
+- [code/tilir_masters/15_20_deadlock.cpp](../code/tilir_masters/15_20_deadlock.cpp)
+- [code/tilir_masters/15_22_philosofy_eats.cpp](../code/tilir_masters/15_22_philosofy_eats.cpp)
 - `std::lock` - решает проблему `deadlock`. Он берет несколько мьютексов сразу и лочит их всегда в одном порядке.
 - `std::lock_guard` - дополнительным параметром принимает `std::adopt_lock`, чтобы не пытаться лочить мьютекс, который уже залочен.
 - `std::scoped_lock` (C++17) - RAII, который лочит сразу несколько мьютексов в правильном порядке. Заменяет `std::lock` + `std::lock_guard`.
@@ -4498,7 +4498,7 @@ void MyBuffer::swap(MyBuffer<T> &rhs) noexcept {
 ### DCL - Double-Checked Locking - плохой паттерн
 
 - https://godbolt.org/z/Ec3Kea6b1
-- [code/tilir_masters/15_24_dcl_bad_pattern.cpp](code/tilir_masters/15_23_dcl_bad_pattern.cpp)
+- [code/tilir_masters/15_24_dcl_bad_pattern.cpp](../code/tilir_masters/15_23_dcl_bad_pattern.cpp)
 - Код всегда работает корректно, но это все равно UB.
 
 ```cpp
@@ -4515,7 +4515,7 @@ if (!resptr)                                // <=== Мы читаем значе
 ### Класс `std::flag_once` и `std::call_once` решают проблему DCL
 
 - https://godbolt.org/z/rj8sd6ojM
-- [code/tilir_masters/15_26_once_flag.cpp](code/tilir_masters/15_26_once_flag.cpp)
+- [code/tilir_masters/15_26_once_flag.cpp](../code/tilir_masters/15_26_once_flag.cpp)
 - `std::call_once` берет в себя `std::flag_once`, что-то делает и потом если этот флаг не инициализирован, то вызывает функцию, переданную ей вторым аргументом.
 - Если `init_resource` бросает исключение, то `std::call_once` флаг не изменится и будет вызыван повторно. Так будет до тех пор, пока `init_resource` не завершится успешно.
 
@@ -4548,7 +4548,7 @@ resptr->use()
 ### Как посылать уведомления(события) между потоками - `std::condition_variable`
 
 - https://godbolt.org/z/n35bsq1sn
-- [code/tilir_masters/15_28_cond_variable.cpp](code/tilir_masters/15_28_cond_variable.cpp)
+- [code/tilir_masters/15_28_cond_variable.cpp](../code/tilir_masters/15_28_cond_variable.cpp)
 - [submodules/cpp-masters/concurrency/focus_demo.cc](submodules/cpp-masters/concurrency/focus_demo.cc)
 - Ожидание `std::condition_variable::wait(...)` может закончиться само по себе (`spurious wake up`)
 - Как пользоваться perf (https://youtu.be/vVRNJjf1MCE?list=PL3BR09unfgcgf7R88ZQRQqWOdLy4pRW2h&t=2860) [TODO]
@@ -4597,7 +4597,7 @@ public:
 ### Блокировки на чтении и записи, когда чтение происходит в 1000 раз чаще: `std::shared_mutex`
 
 - [submodules/cpp-masters/concurrency/shared_lock_bench.cc](submodules/cpp-masters/concurrency/shared_lock_bench.cc)
-- [code/tilir_masters/15_30_shared_mutex.cpp](code/tilir_masters/15_30_shared_mutex.cpp)
+- [code/tilir_masters/15_30_shared_mutex.cpp](../code/tilir_masters/15_30_shared_mutex.cpp)
 - https://quick-bench.com/q/UDLS-Js5aCo35Y64tiYoRgU5D2w
 - `std::shared_mutex` - умеет работать с `std::shared_lock` и `std::unique_lock`.
 - `std::shared_lock` - если `std::unique_lock` захвачен, тогда захвати тоже и остановись. А если `std::unique_lock` не захвачен, то проскочи насквозь.
@@ -4706,7 +4706,7 @@ void ts_queue::wake_and_done() {
 
 ### 2. Дальнейшие улучшения очереди - удаляем лишний condition_variable путем использования безграничной очереди
 
-- [code/tilir_masters/16_12_remote_consumer_cond_variable.cpp](code/tilir_masters/16_12_remote_consumer_cond_variable.cpp)
+- [code/tilir_masters/16_12_remote_consumer_cond_variable.cpp](../code/tilir_masters/16_12_remote_consumer_cond_variable.cpp)
 - Сделать очередь бесконечной, чтобы избавится от одной condition_variable для producer.
 - Но вместо уведомления для всех consumer, что мы закончили, мы можем использовать задачу-маркер (limiter task).
 
@@ -4726,8 +4726,8 @@ void ts_queue::wake_and_done() {
 
 ### Возврат данных из потоков - `std::future` и `std::promise`
 
-- Наивный возврат через глобальную переменную: [example](code/tilir_masters/16_14_thread_with_generic_lambda.cpp)
-- [code/tilir_masters/16_16_future_promise.cpp](code/tilir_masters/16_16_future_promise.cpp)
+- Наивный возврат через глобальную переменную: [example](../code/tilir_masters/16_14_thread_with_generic_lambda.cpp)
+- [code/tilir_masters/16_16_future_promise.cpp](../code/tilir_masters/16_16_future_promise.cpp)
 
 ```cpp
 TEST(threads, basic)
@@ -4765,7 +4765,7 @@ promise<int> pr; auto fut = pr.get_future();
 
 ### Маршаллинг исключений между потоками: `std::future` и `std::promise`
 
-- [code/tilir_masters/16_18_thread_exceptions.cpp](code/tilir_masters/16_18_thread_exceptions.cpp)
+- [code/tilir_masters/16_18_thread_exceptions.cpp](../code/tilir_masters/16_18_thread_exceptions.cpp)
 - `std::promise::set_exception` - устанавливает исключение в `std::future`. Встроенный механизм для передачи исключений между потоками. Выбрасывается в момент `std::future::get`.
 
 ```cpp
@@ -4872,7 +4872,7 @@ Snd.join();
 ### Представте, если вы хотите подождать чего-то, что произойдет в другом потоке - барьеры
 
 - https://godbolt.org/z/zda8Wjsch
-- [code/tilir_masters/16_22_bariers_analog.cpp](code/tilir_masters/16_22_bariers_analog.cpp)
+- [code/tilir_masters/16_22_bariers_analog.cpp](../code/tilir_masters/16_22_bariers_analog.cpp)
 - Пример ниже показывает, как можно сделать барьеры с помощью `std::promise` и `std::shared_future`.
 - Это похоже на корутину.
 
@@ -4888,8 +4888,8 @@ void prepare(std::promise<void> &&Ready, std::shared_future<void> BackLink) {
 ### `std::latch` - барьеры в C++20
 
 - https://godbolt.org/z/M8n1vTc3o
-- [code/tilir_masters/16_24_std_latch_from_docs.cpp](code/tilir_masters/16_24_std_latch_from_docs.cpp)
-- [code/tilir_masters/16_26_latch.cpp](code/tilir_masters/16_26_latch.cpp)
+- [code/tilir_masters/16_24_std_latch_from_docs.cpp](../code/tilir_masters/16_24_std_latch_from_docs.cpp)
+- [code/tilir_masters/16_26_latch.cpp](../code/tilir_masters/16_26_latch.cpp)
 - `std::latch` - это классический семафор с возможностью уменьшения счетчика.
 - Этот подход возвращает нам симмметрию.
 - Начальный счетчик ставится в конструкторе и уменьшается методом `count_down`.
@@ -4906,7 +4906,7 @@ void prepare(std::latch &L, std::latch &BackL) {
 
 ### Мы хотим перейти от очереди интов, к очереди задач (функторов, разных по сигнатуре).
 
-- [code/tilir_masters/16_28_sometimes_lost_tasks_example.cpp](code/tilir_masters/16_28_sometimes_lost_tasks_example.cpp)
+- [code/tilir_masters/16_28_sometimes_lost_tasks_example.cpp](../code/tilir_masters/16_28_sometimes_lost_tasks_example.cpp)
 - Пример выше иногда теряет таски. Хороший пример для дебаггинга и анализа многопоточных проблем. [TODO]
 - Кажется, что `std::function` умеет стирать типы и как будто бы решает проблему.
 - Но `std::function` нам не нравится, потому что его можно копировать. Мы хотим только перемещать.
@@ -4948,7 +4948,7 @@ auto create_task(F f, Args&&... args)
 ### `std::packaged_task` + `std::thread` = `std::async`
 
 - https://godbolt.org/z/fdKWorWGq
-- [code/tilir_masters/18_10_std_async.cpp](code/tilir_masters/18_10_std_async.cpp)
+- [code/tilir_masters/18_10_std_async.cpp](../code/tilir_masters/18_10_std_async.cpp)
 - Основной элемент синтаксического сахара это `std::async`.
 - Теперь вся механика скрыта внутри и маршалинг исключений мы получаем бесплатно.
 - `std::async` первым аргументом принимает стратегию запуска задачи - `std::launch::async` или `std::launch::deferred`.
@@ -5103,7 +5103,7 @@ generator natural_nums() {
 ### `std::generator` C++23: range-based generator
 
 - https://en.cppreference.com/w/cpp/coroutine/generator
-- [code/tilir_masters/19_10_std_generator.cpp](code/tilir_masters/19_10_std_generator.cpp)
+- [code/tilir_masters/19_10_std_generator.cpp](../code/tilir_masters/19_10_std_generator.cpp)
 
 ```cpp
 import std;
@@ -5121,17 +5121,17 @@ auto nums = natural_nums() | views::take(14);   // При итерации по 
 ### 1. Делаем свою корутину
 
 - https://godbolt.org/z/TnPzs19xj
-- [code/tilir_masters/19_12_naive_coroutine.cpp](code/tilir_masters/19_12_naive_coroutine.cpp)
+- [code/tilir_masters/19_12_naive_coroutine.cpp](../code/tilir_masters/19_12_naive_coroutine.cpp)
 
 ### 2. Добавляем `co_yield` к нашей корутине
 
 - https://godbolt.org/z/hdvc88rEK
-- [code/tilir_masters/19_14_naive_coroutine2.cpp](code/tilir_masters/19_14_naive_coroutine2.cpp)
+- [code/tilir_masters/19_14_naive_coroutine2.cpp](../code/tilir_masters/19_14_naive_coroutine2.cpp)
 
 ### 3. добавляем range-based for к нашей корутине
 
 - https://godbolt.org/z/3vEP5nE3T
-- [code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp](code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp)
+- [code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp](../code/tilir_masters/19_16_naive_coroutine_with_range_based.cpp)
 
 ```cpp
 // Если добавить к генератору begin и end, его можно использовать для rangebased итерации

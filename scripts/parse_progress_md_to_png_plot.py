@@ -2,10 +2,19 @@ import matplotlib.pyplot as plt
 import re
 from datetime import datetime
 
+'''
+This script reads the content of the INPUT_FILE file and generates a plot showing the progress over time.
+'''
+
+INPUT_FILE = "../PROGRESS.md"
+OUTPUT_FILE = "../PROGRESS_OVER_TIME.png"
+
 def main():
 
+    print(f"WARNING: don't forget to update the {INPUT_FILE} file before running this script.")
+
     # Reading the content of the file
-    with open("../PROGRESS.md", "r") as file:
+    with open(INPUT_FILE, "r") as file:
         data = file.read()
 
     # Extracting dates, DONE and TODO values from the file
@@ -30,7 +39,8 @@ def main():
     plt.grid()
 
     # Saving the plot
-    plt.savefig("PROGRESS_OVER_TIME.png", bbox_inches="tight")
+    plt.savefig(OUTPUT_FILE, bbox_inches="tight")
+    print(f"Plot saved as {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":

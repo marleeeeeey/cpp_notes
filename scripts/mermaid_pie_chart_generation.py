@@ -2,6 +2,14 @@ import re
 from collections import Counter
 from datetime import datetime
 
+'''
+This script reads the content of the INPUT_FILE file and counts the tags (TODO, IN_PROGRESS, DONE) from it.
+Then, it generates a pie chart using Mermaid syntax and appends it to the OUTPUT_FILE file.
+'''
+
+INPUT_FILE = "../LINKS.md"
+OUTPUT_FILE = "../PROGRESS.md"
+
 
 def parse_md_file(md_content, tag_pattern):
     """Parse the markdown content and count the tags."""
@@ -61,7 +69,7 @@ def update_debug_file(md_content):
     else:
         tag_pattern = re.compile(r"\[([\S_]*)\]")
     tag_counts = parse_md_file(md_content, tag_pattern)
-    dump_chart_to_file(tag_counts, "PROGRESS.md")
+    dump_chart_to_file(tag_counts, OUTPUT_FILE)
 
 
 # MAIN
@@ -70,7 +78,7 @@ def update_debug_file(md_content):
 
 def main():
     # read md_content from file `LINKS.md`
-    with open("LINKS.md", "r", encoding="utf8") as file:
+    with open(INPUT_FILE, "r", encoding="utf8") as file:
         md_content = file.read()
 
     update_debug_file(md_content)

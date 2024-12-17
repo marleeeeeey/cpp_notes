@@ -16,3 +16,6 @@
 [submodule "submodules/apolukhin_boost_code"]
 	path = submodules/apolukhin_boost_code
 	url = https://github.com/marleeeeeey/apolukhin_boost_code.git
+[submodule "notes_analyzer"]
+	path = notes_analyzer
+	url = https://github.com/marleeeeeey/notes_analyzer.git

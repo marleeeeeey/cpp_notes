@@ -1,5 +1,7 @@
 #include <iostream>
 
+int global = 100;
+
 int main()
 {
     const char* str = "hello world";

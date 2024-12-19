@@ -13,3 +13,4 @@ DEBUG.md
 **/*.drawio.bkp
 **/.$*.drawio.dtmp
 **/.vagrant/
+**/Debug/*

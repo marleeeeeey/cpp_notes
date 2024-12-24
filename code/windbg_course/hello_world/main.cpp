@@ -19,22 +19,53 @@ int ga = 100;
 int gb = 200;
 
 
-void foo(std::string str)
+void updateGlobals()
+{
+    ga++;
+    gb--;
+    std::cout << "123" << std::endl;
+}
+
+
+void foo(const char * str)
 {
     std::cout << "foo : " << str << "\n";
+    updateGlobals();
 }
 
-void foo2(std::string str)
+void foo2(const char* str)
 {
     std::cout << "foo2: " << str << "\n";
+    updateGlobals();
 }
 
-void foo3(std::string str)
+void __stdcall foo3(const char* str)
 {
     std::cout << "foo3: " << str << "\n";
+    updateGlobals();
+}
+
+void __stdcall bar2(int a, int b, int c)
+{
+    a + b + c;
+}
+
+int bar(int a, int b, int c, int d)
+{
+    int x = 1;
+    int y = 2;
+    int z = 3;
+    bar2(a + x, b + y, c + z);
+    return 0;
 }
 
 int main()
+{
+    bar(100, 200, 300, 400);
+    return 0;
+}
+
+int main2()
 {
     const char* str = "hello world";
     int c = ga + gb;
@@ -52,8 +83,8 @@ int main()
     foo2("goodbye");
     foo3("goodbye");
 
-    std::cout << str << c << "\n";
-    //_asm int 3;
-    std::cout << str << "\n";
+    //std::cout << str << c << "\n";
+    ////_asm int 3;
+    //std::cout << str << "\n";
     return 0;
 }

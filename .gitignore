@@ -14,3 +14,4 @@ DEBUG.md
 **/.$*.drawio.dtmp
 **/.vagrant/
 **/Debug/*
+**/Release/*

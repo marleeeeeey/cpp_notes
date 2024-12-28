@@ -59,8 +59,10 @@ int bar(int a, int b, int c, int d)
     return 0;
 }
 
-int main()
+int main(int argc, char** argv)
 {
+    int localA = 0;
+    localA = localA / localA; // Exception here
     bar(100, 200, 300, 400);
     return 0;
 }

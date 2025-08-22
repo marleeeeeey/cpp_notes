@@ -74,7 +74,7 @@
     },
     {
       "label": "020. Configure: 021. Windows: install local vcpkg",
-      "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-Windows",
+      "command": "git clone https://github.com/microsoft/vcpkg && .\\vcpkg\\bootstrap-vcpkg.bat && .\\vcpkg\\vcpkg install --triplet=x64-windows",
       "type": "shell"
     },
     {
